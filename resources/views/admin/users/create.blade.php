@@ -215,15 +215,15 @@ $authuser = Auth::user();
                                         @endif
 
                                         <div class="form-group {{ $errors->has('contract') ? ' has-danger' : '' }} col-sm-6 flex-column d-flex"> <label class="form-control-label required px-1">{{__('createUser.contractType')}}</label> <div class="form-check">
-                                            <input  class="btn-check" type="radio" name="contract" Value="Regular" id="regular" @if (old('contract') == "Regular") {{ 'checked' }} @endif>
-                                            <label class="form-check-label" for="regular">
-                                            {{__('createUser.reqularContract')}}
+                                            <input  class="btn-check" type="radio" name="contract" Value="National" id="national" @if (old('contract') == "National") {{ 'checked' }} @endif>
+                                            <label class="form-check-label" for="national">
+                                            {{__('createUser.nationalContract')}}
                                             </label>
                                           </div>
                                           <div class="form-check">
-                                            <input  class="btn-check" type="radio" name="contract" Value="Service" id="sc" @if (old('contract') == "Service") {{ 'checked' }} @endif>
-                                            <label class="form-check-label" for="sc">
-                                            {{__('createUser.serviceContract')}}
+                                            <input  class="btn-check" type="radio" name="contract" Value="International" id="International" @if (old('contract') == "International") {{ 'checked' }} @endif>
+                                            <label class="form-check-label" for="International">
+                                            {{__('createUser.InternationalContract')}}
                                             </label>
                                           </div> 
                                           <div class="form-check">
