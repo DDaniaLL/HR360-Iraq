@@ -16,29 +16,29 @@ class LeavetypeTableSeeder extends Seeder
         // id=1
         DB::table('leavetypes')->insert([
             'name' => 'Annual leave',
-            'value' => '15',
+            'value' => '21',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
         // id=2
         DB::table('leavetypes')->insert([
-            'name' => 'Sick leave',
-            'value' => '5',
+            'name' => 'Sick Leave SC',
+            'value' => '12',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
         // id=3
         DB::table('leavetypes')->insert([
-            'name' => 'Sick leave 30% deduction',
-            'value' => '90',
+            'name' => 'Sick Leave DC',
+            'value' => '365',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
         // id=4
         DB::table('leavetypes')->insert([
-            'name' => 'Sick leave 20% deduction',
-            'value' => '90',
+            'name' => 'Sick Leave DC - First half',
+            'value' => '365',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -52,15 +52,15 @@ class LeavetypeTableSeeder extends Seeder
 
         // id=6
         DB::table('leavetypes')->insert([
-            'name' => 'Compassionate - First degree relative',
-            'value' => '100',
+            'name' => 'Sick Leave DC - Second half',
+            'value' => '365',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
         // id=7
         DB::table('leavetypes')->insert([
-            'name' => 'Compassionate - Second degree relative',
+            'name' => 'Compassionate',
             'value' => '100',
             'created_at' => now(),
             'updated_at' => now(),
@@ -84,7 +84,7 @@ class LeavetypeTableSeeder extends Seeder
 
         // id=10
         DB::table('leavetypes')->insert([
-            'name' => 'Pilgrimage Islamic leave',
+            'name' => 'Pilgrimage',
             'value' => '30',
             'created_at' => now(),
             'updated_at' => now(),
@@ -92,16 +92,16 @@ class LeavetypeTableSeeder extends Seeder
 
         // id=11
         DB::table('leavetypes')->insert([
-            'name' => 'Pilgrimage Christian leave',
-            'value' => '7',
+            'name' => 'R&R',
+            'value' => '30',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
         // id=12
         DB::table('leavetypes')->insert([
-            'name' => 'Welfare leave',
-            'value' => '9',
+            'name' => 'Home Leave',
+            'value' => '30',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -109,7 +109,7 @@ class LeavetypeTableSeeder extends Seeder
         // id=13
         DB::table('leavetypes')->insert([
             'name' => 'Annual leave - First half',
-            'value' => '15',
+            'value' => '21',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -117,7 +117,7 @@ class LeavetypeTableSeeder extends Seeder
         // id=14
         DB::table('leavetypes')->insert([
             'name' => 'Annual leave - Second half',
-            'value' => '15',
+            'value' => '21',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -148,7 +148,7 @@ class LeavetypeTableSeeder extends Seeder
 
         // id=18
         DB::table('leavetypes')->insert([
-            'name' => 'Compensation',
+            'name' => 'CTO (Compensatory Time off)',
             'value' => '0',
             'created_at' => now(),
             'updated_at' => now(),
@@ -156,7 +156,7 @@ class LeavetypeTableSeeder extends Seeder
 
         // id=19 just for having it as an option when submitting leaves, the balance is irreveleant as it should be from id18
         DB::table('leavetypes')->insert([
-            'name' => 'Compensation - hours',
+            'name' => 'CTO (Compensatory Time off) - hours',
             'value' => '0',
             'created_at' => now(),
             'updated_at' => now(),
@@ -164,16 +164,16 @@ class LeavetypeTableSeeder extends Seeder
 
         //id=20
         DB::table('leavetypes')->insert([
-            'name' => 'Sick Leave - First half',
-            'value' => '5',
+            'name' => 'Sick Leave SC - First half',
+            'value' => '12',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
         //id=21
         DB::table('leavetypes')->insert([
-            'name' => 'Sick Leave - Second half',
-            'value' => '5',
+            'name' => 'Sick Leave SC - Second half',
+            'value' => '12',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
