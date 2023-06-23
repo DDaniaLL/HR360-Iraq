@@ -1026,6 +1026,8 @@ Route::group(['middleware' => ['auth', 'checkstatus']], function () {
     Route::post('/leaves/forward/{id}', [LeaveController::class, 'forward'])->name('leaves.forward');
     Route::post('/leaves/exapproved/{id}', [LeaveController::class, 'exapproved'])->name('leaves.exapproved');
     Route::post('/leaves/exdeclined/{id}', [LeaveController::class, 'exdeclined'])->name('leaves.exdeclined');
+    Route::post('/leaves/hrdelete/{id}', [LeaveController::class, 'hrdelete'])->name('leaves.hrdelete');
+    Route::post('/leaves/lmrevert/{id}', [LeaveController::class, 'lmrevert'])->name('leaves.lmrevert');
 
     Route::resource('comlists', ComlistController::class)->except(['show']);
 });
