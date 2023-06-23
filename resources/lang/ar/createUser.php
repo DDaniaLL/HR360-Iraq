@@ -19,7 +19,7 @@ return [
     'notAdmin' => 'ليس مسؤول' ,
     'Admin' => 'مسؤول' ,
     'contractType' => 'نوع ا لعقد' ,
-    'nationalContract' => 'عقد محلي' ,
+    'NationalContract' => 'عقد محلي' ,
     'InternationalContract' => 'عقد دولي' ,
     'notAvaillable' => 'ليس متاحاً' ,
     'email' => 'البريد الالكتروني' ,

@@ -131,8 +131,8 @@ $hruser = Auth::user();
                                                     name="contract[]" id="contract" type="text" multiple>
                                                    
 
-                                                    <option value="Regular">{{__('createUser.reqularContract')}}</option>
-                                                    <option value="Service">{{__('createUser.serviceContract')}}</option>
+                                                    <option value="National">{{__('createUser.NationalContract')}}</option>
+                                                    <option value="International">{{__('createUser.InternationalContract')}}</option>
                                                     <option value="NA">{{__('createUser.notAvaillable')}}</option>
                                                     
 

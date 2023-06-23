@@ -165,12 +165,12 @@
                                             </div>
                                             @endif
                                             @php
-                                        if ($user->contract == "Regular") {
-                                      $contract = "Regular";
+                                        if ($user->contract == "National") {
+                                      $contract = "National";
                                     }
 
-                                    elseif ($user->contract == "Service") {
-                                        $contract = "Service";
+                                    elseif ($user->contract == "International") {
+                                        $contract = "International";
                                     }
                                     elseif ($user->contract == "NA") {
                                       $contract = "NA";
@@ -180,15 +180,15 @@
                                     }
                                             @endphp
                                             <div class="form-group {{ $errors->has('contract') ? ' has-danger' : '' }} col-sm-6 flex-column d-flex"> <label class="form-control-label  px-1">{{__('edituser.contractType')}}</label> <div class="form-check">
-                                            <input  class="btn-check" type="radio" name="contract" Value="Regular" id="regular" {{ $contract=='Regular' ? ' checked' : '' }}>
-                                            <label class="form-check-label" for="regular">
-                                            {{__('edituser.reqularContract')}}
+                                            <input  class="btn-check" type="radio" name="contract" Value="National" id="National" {{ $contract=='National' ? ' checked' : '' }}>
+                                            <label class="form-check-label" for="National">
+                                            {{__('edituser.NationalContract')}}
                                             </label>
                                           </div>
                                           <div class="form-check">
-                                            <input  class="btn-check" type="radio" name="contract" Value="Service" id="sc" {{ $contract=='Service' ? ' checked' : '' }}>
-                                            <label class="form-check-label" for="sc">
-                                            {{__('edituser.serviceContract')}}
+                                            <input  class="btn-check" type="radio" name="contract" Value="International" id="International" {{ $contract=='International' ? ' checked' : '' }}>
+                                            <label class="form-check-label" for="International">
+                                            {{__('edituser.InternationalContract')}}
                                             </label>
                                           </div> 
                                           <div class="form-check">

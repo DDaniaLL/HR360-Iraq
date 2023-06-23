@@ -217,7 +217,7 @@ $authuser = Auth::user();
                                         <div class="form-group {{ $errors->has('contract') ? ' has-danger' : '' }} col-sm-6 flex-column d-flex"> <label class="form-control-label required px-1">{{__('createUser.contractType')}}</label> <div class="form-check">
                                             <input  class="btn-check" type="radio" name="contract" Value="National" id="national" @if (old('contract') == "National") {{ 'checked' }} @endif>
                                             <label class="form-check-label" for="national">
-                                            {{__('createUser.nationalContract')}}
+                                            {{__('createUser.NationalContract')}}
                                             </label>
                                           </div>
                                           <div class="form-check">

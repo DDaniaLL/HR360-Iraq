@@ -124,7 +124,7 @@ class UserController extends Controller
         $datenow = Carbon::now();
         $yearnow = $datenow->year;
 
-        if ($user->contract == "Service")
+        if ($user->contract == "National")
         {
             if ($year < $yearnow) {
                 $userannualleavebalance = '21';
@@ -597,7 +597,7 @@ class UserController extends Controller
             // dd($yearnoww);
 
 
-            if ($user->contract == "Service")
+            if ($user->contract == "National")
             {
                 if ($yearr < $yearnoww) {
                     $userannualleavebalancee = '21';
@@ -1204,7 +1204,7 @@ class UserController extends Controller
 
         if ($contract == Null)
         {
-            $contracte = ['Regular','Service','NA'];
+            $contracte = ['National','International','NA'];
         }
 
         else if ($contract !== Null)
@@ -1417,7 +1417,7 @@ class UserController extends Controller
 
         if ($contract == Null)
         {
-            $contracte = ['Regular','Service','NA'];
+            $contracte = ['Natioanl','International','NA'];
         }
 
         else if ($contract !== Null)

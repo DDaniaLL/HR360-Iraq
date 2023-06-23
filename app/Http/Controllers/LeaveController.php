@@ -49,7 +49,7 @@ class LeaveController extends Controller
 
         $user = Auth::user();
         $leavesIds = [1,13,14,15,16,17];
-        if ($user->contract == "Service")
+        if ($user->contract == "International")
         {
             $leavetypes = Leavetype::whereIn('id', $leavesIds)->get();
             return view('leaves.create', ['leavetypes' => $leavetypes]);
