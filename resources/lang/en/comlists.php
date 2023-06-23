@@ -2,7 +2,7 @@
 
 return [
 
-    'dashboard' => 'Some of your balance will end in 3 months - click here for more info' ,
+    'dashboard' => 'Some of your balance will end in 2 months - click here for more info' ,
     'mycomlists' => 'My Compesnation balance from overtimes' ,
     'overtimeid' => 'Overtime ID' ,
     'days' => 'Days added to Balance',

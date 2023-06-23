@@ -17,5 +17,5 @@ return [
     'remainingBalance' => 'Remaining Balance' ,
     'annualLeave' => 'Annual Leave' ,
     'sickLeave' => 'Sick Leave' ,
-    'compensationLeaveDays' => 'Compensation Leave Days' 
+    'compensationLeaveDays' => 'Compensatory time off - CTO days' 
 ];

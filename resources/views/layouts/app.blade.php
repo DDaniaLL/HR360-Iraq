@@ -129,74 +129,32 @@
             </a>
           </li>
           <div class="dropdown-divider" style="border-color:rgb(77, 77, 77);"></div>
-
+          <li class="nav-item">
+            <a class="nav-link {{ $activePage == 'my-leaves' ? ' active' : '' }}" href="{{ route('leaves.index') }}">
+                <i class="fas fa-running nav-icon"></i>
+                <p>{{ __('sidebar.leaves') }}</p>
+            </a>
+          </li>
+      
+      <li class="nav-item">
+        <a class="nav-link {{ $activePage == 'overtime' ? ' active' : '' }}" href="{{ route('overtimes.index') }}">
+            <i class="fas fa-adjust nav-icon"></i>
+            <p>{{ __('sidebar.overtimes') }}</p>
+        </a>
+      </li>
+      <!-- <li class="nav-item">
+        <a class="nav-link {{ $activePage == 'attendnace' ? ' active' : '' }}" href="{{ route('attendances.index') }}">
+            <i class="fas fa-clock nav-icon"></i>
+            <p>{{ __('Attendances') }}</p>
+        </a>
+      </li> -->
+      <div class="dropdown-divider" style="border-color:rgb(77, 77, 77);"></div>
   @php
   $user = Auth::user();
 
-//   dd($approvals);
+
   @endphp
- @if($user->usertype_id == '2')
-
- <li class="nav-item {{ $activePage == 'leavesapproval'||$activePage == 'overtimesapproval'||$activePage == 'attendancesapproval' ? ' menu-open' : ''  }}">
-    <a href="#" class="nav-link {{ $activePage == 'leavesapproval'||$activePage == 'overtimesapproval'||$activePage == 'attendancesapproval' ? ' active' : '' }} " >
-        <i class="fas fa-check nav-icon"></i>
-      <p>{{ __('sidebar.approvals') }}
-        {{-- @php
-            dd($numapproval);
-            @endphp --}}
-            @if ($numapproval > '0')
-
-            <span class="ml-1 badge badge-primary"> {{$numapproval}} </span>
-        @endif
-        <i class="fas fa-angle-down right"></i>
-      </p>
-    </a>
-
-
-      <ul class="nav nav-treeview">
-        <li class="nav-item" >
-          <a class="nav-link {{ $activePage == 'leavesapproval' ? ' active' : '' }}" href="{{ route('leaves.approval') }}">
-            <i style="padding-left:20px" class="fas fa-running nav-icon "></i>
-            <p style="padding-left:20px">{{ __('sidebar.leaveApproval') }}
-                @if ($numleaveapproval > '0')
-
-            <span class="ml-1 badge badge-primary"> {{$numleaveapproval}} </span>
-        @endif
-
-            </p>
-          </a>
-        </li>
-        <li class="nav-item" >
-          <a class="nav-link {{ $activePage == 'overtimesapproval' ? ' active' : '' }}" href="{{ route('overtimes.approval') }}">
-            <i style="padding-left:20px" class="fas fa-adjust nav-icon"></i>
-            <p style="padding-left:20px">{{ __('sidebar.overTimeApproval') }}
-                @if ($numoverapproval > '0')
-                <span class="ml-1 badge badge-primary"> {{$numoverapproval}} </span>
-            @endif</p>
-          </a>
-        </li>
-
-        <!-- <li class="nav-item" >
-            <a class="nav-link {{ $activePage == 'attendancesapproval' ? ' active' : '' }}" href="{{ route('attendances.lmapproval') }}">
-              <i style="padding-left:20px" class="fas fa-adjust nav-icon"></i>
-              <p style="padding-left:20px">{{ __('Attendances') }}</p>
-            </a>
-          </li> -->
-      </ul>
-
-  </li>
-
-
-
-<li class="nav-item">
-<a class="nav-link {{ $activePage == 'staffleaves' ? ' active' : '' }}" href="{{ route('staffleaves') }}">
-    <i class="fas fa-paste nav-icon"></i>
-    <p>{{ __('sidebar.myStaff') }}</p>
-</a>
-</li>
-
-<div class="dropdown-divider" style="border-color:rgb(77, 77, 77);"></div>
-@endif
+ 
 
 @if($user->hradmin == 'yes')
 
@@ -343,48 +301,69 @@
 
 
 
-           <li class="nav-item">
-            <a class="nav-link {{ $activePage == 'my-leaves' ? ' active' : '' }}" href="{{ route('leaves.index') }}">
-                <i class="fas fa-running nav-icon"></i>
-                <p>{{ __('sidebar.leaves') }}</p>
+
+      @if($user->usertype_id == '2')
+
+ <li class="nav-item {{ $activePage == 'leavesapproval'||$activePage == 'overtimesapproval'||$activePage == 'attendancesapproval' ? ' menu-open' : ''  }}">
+    <a href="#" class="nav-link {{ $activePage == 'leavesapproval'||$activePage == 'overtimesapproval'||$activePage == 'attendancesapproval' ? ' active' : '' }} " >
+        <i class="fas fa-check nav-icon"></i>
+      <p>{{ __('sidebar.approvals') }}
+        {{-- @php
+            dd($numapproval);
+            @endphp --}}
+            @if ($numapproval > '0')
+
+            <span class="ml-1 badge badge-primary"> {{$numapproval}} </span>
+        @endif
+        <i class="fas fa-angle-down right"></i>
+      </p>
+    </a>
+
+
+      <ul class="nav nav-treeview">
+        <li class="nav-item" >
+          <a class="nav-link {{ $activePage == 'leavesapproval' ? ' active' : '' }}" href="{{ route('leaves.approval') }}">
+            <i style="padding-left:20px" class="fas fa-running nav-icon "></i>
+            <p style="padding-left:20px">{{ __('sidebar.leaveApproval') }}
+                @if ($numleaveapproval > '0')
+
+            <span class="ml-1 badge badge-primary"> {{$numleaveapproval}} </span>
+        @endif
+
+            </p>
+          </a>
+        </li>
+        <li class="nav-item" >
+          <a class="nav-link {{ $activePage == 'overtimesapproval' ? ' active' : '' }}" href="{{ route('overtimes.approval') }}">
+            <i style="padding-left:20px" class="fas fa-adjust nav-icon"></i>
+            <p style="padding-left:20px">{{ __('sidebar.overTimeApproval') }}
+                @if ($numoverapproval > '0')
+                <span class="ml-1 badge badge-primary"> {{$numoverapproval}} </span>
+            @endif</p>
+          </a>
+        </li>
+
+        <!-- <li class="nav-item" >
+            <a class="nav-link {{ $activePage == 'attendancesapproval' ? ' active' : '' }}" href="{{ route('attendances.lmapproval') }}">
+              <i style="padding-left:20px" class="fas fa-adjust nav-icon"></i>
+              <p style="padding-left:20px">{{ __('Attendances') }}</p>
             </a>
-          </li>
-      {{-- <li class="nav-item">
-        <a href="#" class="nav-link">
-          <i class="nav-icon fas fa-tachometer-alt"></i>
-          <p>
-            Starter Pages
-            <i class="right fas fa-angle-left"></i>
-          </p>
-        </a>
-        <ul class="nav nav-treeview">
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="far fa-circle nav-icon"></i>
-              <p>Active Page</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="far fa-circle nav-icon"></i>
-              <p>Inactive Page</p>
-            </a>
-          </li>
-        </ul>
-      </li> --}}
-      <li class="nav-item">
-        <a class="nav-link {{ $activePage == 'overtime' ? ' active' : '' }}" href="{{ route('overtimes.index') }}">
-            <i class="fas fa-adjust nav-icon"></i>
-            <p>{{ __('sidebar.overtimes') }}</p>
-        </a>
-      </li>
-      <!-- <li class="nav-item">
-        <a class="nav-link {{ $activePage == 'attendnace' ? ' active' : '' }}" href="{{ route('attendances.index') }}">
-            <i class="fas fa-clock nav-icon"></i>
-            <p>{{ __('Attendances') }}</p>
-        </a>
-      </li> -->
-      <div class="dropdown-divider" style="border-color:rgb(77, 77, 77);"></div>
+          </li> -->
+      </ul>
+
+  </li>
+
+
+
+<li class="nav-item">
+<a class="nav-link {{ $activePage == 'staffleaves' ? ' active' : '' }}" href="{{ route('staffleaves') }}">
+    <i class="fas fa-paste nav-icon"></i>
+    <p>{{ __('sidebar.myStaff') }}</p>
+</a>
+</li>
+
+<div class="dropdown-divider" style="border-color:rgb(77, 77, 77);"></div>
+@endif
   <li class="nav-item">
     <a class="nav-link {{ $activePage == 'policies' ? ' active' : '' }}" href="{{ route('admin.policies.index') }}">
         <i class="fas fa-file-alt nav-icon"></i>
