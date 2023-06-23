@@ -66,19 +66,14 @@
                                                     @php
                                         $user = Auth::user();
                                         @endphp
-                                        @if($user->contract == "Service")
-                                        <option value="1">{{__('createLeave.AnnualLeave')}}</option>
-                                        <option value="13">{{__('createLeave.AnnualleaveFirsthalf')}}</option>
-                                                    <option value="14">{{__('createLeave.AnnualleaveSecondhalf')}}</option>
-                                                    <option value="15">{{__('createLeave.Unpaidleave')}}</option>
-                                                    <option value="16">{{__('createLeave.UnpaidleaveFirsthalf')}}</option>
-                                                    <option value="17">{{__('createLeave.UnpaidleaveSecondhalf')}}</option>
-                                                    <option value="18">{{__('createLeave.Compensation')}}</option>
-                                                    <option value="19">{{__('createLeave.Compensationhours')}}</option>
+                                        @if($user->contract == "International")
+                                        <option value="12">{{__('createLeave.HomeLeave')}}</option>
+                                        <option value="11">{{__('createLeave.R&R')}}</option>
+
                                         @endif
                                      
 
-                                        @if($user->contract !== "Service")
+                                        @if($user->contract == "National")
 
                                        
 
@@ -87,24 +82,29 @@
                                                     <option value="1">{{__('createLeave.AnnualLeave')}}</option>
                                                     <option value="13">{{__('createLeave.AnnualleaveFirsthalf')}}</option>
                                                     <option value="14">{{__('createLeave.AnnualleaveSecondhalf')}}</option>
+                                                    <option disabled>──────────</option>
                                                     <option value="2">{{__('createLeave.SickLeaveSC')}}</option>
                                                     <option value="20">{{__('createLeave.SickLeaveSCFirsthalf')}}</option>
                                                     <option value="21">{{__('createLeave.SickLeaveSCSecondhalf')}}</option>
+                                                    <option value="3">{{__('createLeave.SickLeaveDC')}}</option>
+                                                    <option value="4">{{__('createLeave.SickLeaveDCFirsthalf')}}</option>
+                                                    <option value="6">{{__('createLeave.SickLeaveDCSecondhalf')}}</option>
+                                                    <option disabled>──────────</option>
                                                     <option value="15">{{__('createLeave.Unpaidleave')}}</option>
                                                     <option value="16">{{__('createLeave.UnpaidleaveFirsthalf')}}</option>
                                                     <option value="17">{{__('createLeave.UnpaidleaveSecondhalf')}}</option>
+                                                    <option disabled>──────────</option>
                                                     <option value="18">{{__('createLeave.CTO')}}</option>
                                                     <option value="19">{{__('createLeave.CTOhours')}}</option>
-                                                    <option value="3">{{__('createLeave.SickLeaveDC')}}</option>
-                                                    <option value="4">{{__('createLeave.SickLeaveDCFirsthalf')}}</option>
-                                                    <option value="5">{{__('createLeave.Marriageleave')}}</option>
-                                                    <option value="6">{{__('createLeave.SickLeaveDCSecondhalf')}}</option>
+                                                    <option disabled>──────────</option>
                                                     <option value="7">{{__('createLeave.Compassionate')}}</option>
+                                                    <option disabled>──────────</option>
+                                                    <option value="5">{{__('createLeave.Marriageleave')}}</option>
                                                     <option value="8">{{__('createLeave.Maternityleave')}}</option>
                                                     <option value="9">{{__('createLeave.Paternityleave')}}</option>
-                                                    <option value="12">{{__('createLeave.HomeLeave')}}</option>
+                                                    <option disabled>──────────</option>
                                                     <option value="10">{{__('createLeave.Pilgrimage')}}</option>
-                                                    <option value="11">{{__('createLeave.R&R')}}</option>
+                                                   
                                                     @endif
 
                                                 </select>

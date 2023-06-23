@@ -21,7 +21,7 @@ return [
     'contractType' => 'Contract Type' ,
     'NationalContract' => 'National Contract' ,
     'InternationalContract' => 'International Contract' ,
-    'notAvaillable' => 'Not Availlabe' ,
+    'notAvaillable' => 'Not Available' ,
     'email' => 'Email' ,
     'whenSigningUsingEmployeeId' => 'when signin using employee ID',
     'password' => 'Password' ,

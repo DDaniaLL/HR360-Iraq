@@ -53,7 +53,7 @@ class BalanceExport implements FromCollection, WithHeadings, WithMapping
     public function map($user): array
     {
 
-        if ($user->contract !== "Service")
+        if ($user->contract !== "National")
         {
             return [
 
