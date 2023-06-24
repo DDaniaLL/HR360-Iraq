@@ -403,6 +403,19 @@ class LeaveController extends Controller
                 }
 
 
+                $leavesinstances = Leave::Where([
+                    ['user_id', $user->id],
+                ])->where(function($query) {
+                    $query->where('leavetype_id', '2')
+                                ->orWhere('leavetype_id', '20')
+                                ->orWhere('leavetype_id', '21');
+        })->get();
+        $counteinstances = count($leavesinstances);
+            // dd($counteinstances);
+            if ($counteinstances > 3) {
+                return redirect()->back()->with("error",trans('leaveerror.sixmonthserv'));
+            }
+
             $leavessubmitted = Leave::where([
                 ['user_id', $user->id],
                 // ['start_date', $request->start_date],
@@ -499,6 +512,21 @@ class LeaveController extends Controller
                 else if ($request->hasFile('file') == null) {
                     return redirect()->back()->with("error",trans('leaveerror.attachment'));
                 }
+
+                $leavesinstances = Leave::Where([
+                    ['user_id', $user->id],
+                ])->where(function($query) {
+                    $query->where('leavetype_id', '2')
+                                ->orWhere('leavetype_id', '20')
+                                ->orWhere('leavetype_id', '21');
+        })->get();
+        $counteinstances = count($leavesinstances);
+            // dd($counteinstances);
+            if ($counteinstances > 3) {
+                return redirect()->back()->with("error",trans('leaveerror.sixmonthserv'));
+            }
+
+            
                 $leavessubmitted = Leave::where([
                     ['user_id', $user->id],
                     ['leavetype_id','!=', '13'],
