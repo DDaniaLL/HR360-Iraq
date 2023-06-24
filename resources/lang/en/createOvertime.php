@@ -8,7 +8,7 @@ return [
     'Date' => 'Date',
     'starthour' => 'Start Hour',
     'endhour' => 'End Hour' ,
-'ServiceContractOvertime' => 'Service Contract Overtime',
+'NationalContractOvertime' => 'CTO Overtime',
 'workday' => 'Workday',
 'Week-end' => 'Week-end',
 'Holiday' => 'Holiday',

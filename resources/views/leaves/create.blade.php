@@ -167,9 +167,9 @@
                                             {{-- <a href="#" id="output" class="btn btn-sm btn-primary"></a> --}}
 
                                         </div>
-                                        <div id="note" class="row justify-content-center">
+                                        <!-- <div id="note" class="row justify-content-center">
                                         <h5 style='border-radius: 7px; padding:5px; border:2px orange solid; font-size:17px; width:fit-content; width:-webkit-fit-content; width:-moz-fit-content;'>{{__('createOvertime.note')}}</h5>
-                                        </div>
+                                        </div> -->
 
                                         <div class="row justify-content-center">
                                             <div class="justify-content-center form-group col-sm-2"> <button type="submit" class="disabled btn-1">{{__('createLeave.submit')}}</button> </div>

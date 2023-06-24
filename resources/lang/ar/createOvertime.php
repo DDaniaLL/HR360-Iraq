@@ -8,7 +8,7 @@ return [
     'Date' => 'التاريخ',
     'starthour' => 'وقت البدء',
     'endhour' => 'وقت الانتهاء' ,
-    'ServiceContractOvertime' => 'وقت إضافي لعقد الخدمة',
+    'NationalContractOvertime' => 'وقت إضافي لرصيد اجازات تعويضية',
     'workday' => 'يوم دوام',
 'Week-end' => 'نهاية الاسبوع',
 'Holiday' => 'يوم عطلة رسمية',

@@ -51,53 +51,36 @@
                                         @csrf
                                         <div class="row justify-content-between text-left">
                                         <div id="type" class="form-group col-sm-6 flex-column d-flex">
-                                        <label class="form-control-label required px-1">{{__('createOvertime.overtimeType')}}   <a class="text" style="color: #5a8efc;" id="reset" href="" > {{__('createLeave.changetype')}}
-                                                    <i class="fas fa-sync-alt" style="color: #5a8efc;"></i>
-                                                    </a></label>
+                                        <label class="form-control-label required px-1">{{__('createOvertime.overtimeType')}} 
+                                            <!-- <a class="text" style="color: #5a8efc;" id="reset" href="" > {{__('createLeave.changetype')}} -->
+                                                    <!-- <i class="fas fa-sync-alt" style="color: #5a8efc;"></i> -->
+                                                    <!-- </a> -->
+                                                  </label>
                                 
                                         @php
                                         $user = Auth::user();
-                                        if($user->contract == "Service")
+                                        if($user->contract == "National")
                                         {
-                                          $contract='service';
+                                          $contract='National';
                                         }
                                         else
                                         {
-                                          $contract='notservice';
+                                          $contract='notNational';
                                         }
 
                                         @endphp
-                                        @if ($contract=='service')
+                                        @if ($contract=='National')
                                         <div class="form-check">
-                                                <input  class="btn-check" type="radio" name="type" id="holiday" Value="SC-overtime"  >
+                                                <input  class="btn-check" type="radio" name="type" id="holiday" Value="CTO-overtime"  >
                                                 <label class="form-check-label " id="holidaylabel" for="holiday">
-                                                {{__('createOvertime.ServiceContractOvertime')}}
+                                                {{__('createOvertime.NationalContractOvertime')}}
                                                 </label>
                                               </div>
                                         @endif
-                                        @if ($contract=='notservice')
+                                        @if ($contract=='notNational')
                                           
                                         
-                                            
-                                                 
-                                                 <div class="form-check">
-                                                <input  class="btn-check"  type="radio" name="type" id="workday" Value="workday">
-                                                <label class="form-check-label" id="workdaylabel" for="workday">
-                                                {{__('createOvertime.workday')}} <small> {{__('createOvertime.suntothu')}}</small>
-                                                </label>
-                                              </div>
-                                              <div class="form-check">
-                                                <input  class="btn-check" type="radio" name="type" id="weekend" Value="week-end"  >
-                                                <label class="form-check-label" id="weekendlabel" for="weekend">
-                                                {{__('createOvertime.Week-end')}} <small>{{__('createOvertime.friorsat')}}</small>
-                                                </label>
-                                              </div>
-                                              <div class="form-check">
-                                                <input  class="btn-check" type="radio" name="type" id="holiday" Value="holiday"  >
-                                                <label class="form-check-label" id="holidaylabel" for="holiday">
-                                                {{__('createOvertime.Holiday')}}
-                                                </label>
-                                              </div>
+
                                               @endif
                                             </div>
 
@@ -117,22 +100,6 @@
                                           </div>
 
 
-<!-- <section class="container">
-  <h2 class="py-2">Datepicker in Bootstrap 5</h2>
-  <form class="row">
-    <label for="date" class="col-1 col-form-label">Date</label>
-    <div class="col-5">
-      <div class="input-group date" id="datepicker">
-        <input type="text" name="date" class="form-control" id="date"/>
-        <span class="input-group-append">
-          <span class="input-group-text bg-light d-block">
-            <i class="fa fa-calendar"></i>
-          </span>
-        </span>
-      </div>
-    </div>
-  </form>
-</section> -->
 
 
 
@@ -171,9 +138,9 @@
                                           {{-- </div> --}}
                                         </div>
                                         <br>
-                                        <div class="row justify-content-center">
+                                        <!-- <div class="row justify-content-center">
                                         <h5 style='border-radius: 7px; padding:5px; border:2px orange solid; font-size:17px; width:fit-content; width:-webkit-fit-content; width:-moz-fit-content;'>{{__('createOvertime.note')}}</h5>
-                                        </div>
+                                        </div> -->
                                         <br>
                                         <div class="row justify-content-center">
                                             <div class="justify-content-center form-group col-sm-2"> <button type="submit" class="btn-1">{{__('createOvertime.submit')}}</button> </div>
@@ -250,14 +217,14 @@ right: initial;
 
 $(document).ready(function() {
 
-  $(document).on('click', '.btn-1', function () {
-$(this).addClass('activate');
-$(this).html(
-        `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> `
-      );
-});
+//   $(document).on('click', '.btn-1', function () {
+// $(this).addClass('activate');
+// $(this).html(
+//         `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> `
+//       );
+// });
 
-  $('#reset').hide();
+//   $('#reset').hide();
   
 
   $('form').submit(function(){

@@ -106,30 +106,29 @@ class OvertimeController extends Controller
             
         ];
 
-        if ($user->grade == null )
-        {
+        // if ($user->grade == null )
+        // {
         
-            return redirect()->back()->with("error", trans('overtimeerror.grade'));
+        //     return redirect()->back()->with("error", trans('overtimeerror.grade'));
         
-        }
+        // }
 
-       if ($user->grade >= "7")
-       {
-        return redirect()->back()->with("error", trans('overtimeerror.gradetoohigh')); 
-       }
+    //    if ($user->grade >= "7")
+    //    {
+    //     return redirect()->back()->with("error", trans('overtimeerror.gradetoohigh')); 
+    //    }
 
 
-        if ($request->type == 'holiday' && !in_array($request->date , $nrcholidays))
-        {
+        // if ($request->type == 'holiday' && !in_array($request->date , $nrcholidays))
+        // {
         
-            return redirect()->back()->with("error", trans('overtimeerror.holiday'));
-        }
+        //     return redirect()->back()->with("error", trans('overtimeerror.holiday'));
+        // }
 
 
 
-        else
-        {
-
+    
+        
             $overtimessubmitted = Overtime::where([
                 ['user_id', $user->id],
                 ['date', $request->date],
@@ -164,31 +163,28 @@ class OvertimeController extends Controller
                 
 
                 //submitted hours during a month
-                $submittedhours = Overtime::where([
-                    ['user_id', $user->id],
-                    ])->where(function($query) {
-                        $query->where('status','Pending LM Approval')
-                                    ->orWhere('status','Pending HR Approval')
-                                    ->orWhere('status','Pending extra Approval')
-                                    ->orWhere('status','Approved');
-                    })->whereMonth('date',$monthnow)->sum('hours');
+                // $submittedhours = Overtime::where([
+                //     ['user_id', $user->id],
+                //     ])->where(function($query) {
+                //         $query->where('status','Pending LM Approval')
+                //                     ->orWhere('status','Pending HR Approval')
+                //                     ->orWhere('status','Pending extra Approval')
+                //                     ->orWhere('status','Approved');
+                //     })->whereMonth('date',$monthnow)->sum('hours');
 
 
-                $submittedwithrequest = $submittedhours + $last;
+                // $submittedwithrequest = $submittedhours + $last;
 
-                if ($submittedwithrequest > 40)
-                {
-                    return redirect()->back()->with("error", trans('overtimeerror.toomuch'));
-                }
+                // if ($submittedwithrequest > 40)
+                // {
+                //     return redirect()->back()->with("error", trans('overtimeerror.toomuch'));
+                // }
 
-                else
-                {
+               
+                
 
                    
             
-                    // dd($last);
-            
-                    // $hours = $hourss+'1';
                     if ($request->hasFile('file')) {
                         $path = $request->file('file')->store('public/overtimes');
                     }
@@ -232,31 +228,31 @@ class OvertimeController extends Controller
             
             
                     }
-                    if ($overtime->type == 'workday') {
-                        $overtime->value = $last * 1.5;
-                    }
-                    
-                    else if ($overtime->type == 'SC-overtime')
-                    {
+                    if ($overtime->type == 'CTO-overtime') {
                         $overtime->value = $last * 1;
                     }
-                    //holiday and weekends overtimes:
-                    else {
-                        $overtime->value = $last * 2;
-                    }
+                    
+                    // else if ($overtime->type == 'SC-overtime')
+                    // {
+                    //     $overtime->value = $last * 1;
+                    // }
+                    // //holiday and weekends overtimes:
+                    // else {
+                    //     $overtime->value = $last * 2;
+                    // }
             
                     $overtime->save();
                     $request->session()->flash('successMsg',trans('overtimeerror.success')); 
             
                     // dd($partialstoannual);
                     return redirect()->route('overtimes.index');
-                }
+                
             
 
                 
             }
     
-        }
+        
 
     }
 
@@ -435,26 +431,26 @@ class OvertimeController extends Controller
         $overtime->hrcomment = $request->comment;
         $overtime->save();
 
-        if ($overtime->type == 'week-end' || $overtime->type == 'holiday' || $overtime->type == 'SC-overtime') {
+        if ($overtime->type == 'CTO-overtime' || $overtime->type == 'holiday' || $overtime->type == 'SC-overtime') {
             $partialstoannual = $overtime->hours / 8;
            
             $user = $overtime->user;
-            $dateafter3months = Carbon::now()->addMonths(3);
-            $dateafter3monthsnewasdate = new DateTime($dateafter3months);
-            $dateafter3monthsnewasdatefinal = $dateafter3monthsnewasdate->format('Y-m-d');
-            // dd($dateafter3monthsnewasdatefinal);
+            $dateafter2months = Carbon::now()->addMonths(2);
+            $dateafter2monthsnewasdate = new DateTime($dateafter2months);
+            $dateafter2monthsnewasdatefinal = $dateafter2monthsnewasdate->format('Y-m-d');
+            // dd($dateafter2monthsnewasdatefinal);
 
             $overtime->comlists()->create([
                 'user_id' => $user->id,
                 'hours' => $partialstoannual,
-                // 'autodate' => $dateafter3monthsnewasdatefinal,
+                // 'autodate' => $dateafter2monthsnewasdatefinal,
             ]);
             
             $overtime->comlists()->where([
                 ['user_id', $user->id],
                 ['overtime_id',  $overtime->id],
             ])->update([
-                'autodate' => $dateafter3monthsnewasdatefinal,
+                'autodate' => $dateafter2monthsnewasdatefinal,
             ]);
             
 
@@ -479,48 +475,48 @@ class OvertimeController extends Controller
         }
 
 
-        if ($overtime->type == 'workday') {
-            $partialstoannual = $overtime->value / 8;
+        // if ($overtime->type == 'workday') {
+        //     $partialstoannual = $overtime->value / 8;
            
-            $user = $overtime->user;
-            $dateafter3months = Carbon::now()->addMonths(3);
-            $dateafter3monthsnewasdate = new DateTime($dateafter3months);
-            $dateafter3monthsnewasdatefinal = $dateafter3monthsnewasdate->format('Y-m-d');
-            // dd($dateafter3monthsnewasdatefinal);
+        //     $user = $overtime->user;
+        //     $dateafter3months = Carbon::now()->addMonths(3);
+        //     $dateafter3monthsnewasdate = new DateTime($dateafter3months);
+        //     $dateafter3monthsnewasdatefinal = $dateafter3monthsnewasdate->format('Y-m-d');
+        //     // dd($dateafter3monthsnewasdatefinal);
 
-            $overtime->comlists()->create([
-                'user_id' => $user->id,
-                'hours' => $partialstoannual,
-                // 'autodate' => $dateafter3monthsnewasdatefinal,
-            ]);
+        //     $overtime->comlists()->create([
+        //         'user_id' => $user->id,
+        //         'hours' => $partialstoannual,
+        //         // 'autodate' => $dateafter3monthsnewasdatefinal,
+        //     ]);
             
-            $overtime->comlists()->where([
-                ['user_id', $user->id],
-                ['overtime_id',  $overtime->id],
-            ])->update([
-                'autodate' => $dateafter3monthsnewasdatefinal,
-            ]);
+        //     $overtime->comlists()->where([
+        //         ['user_id', $user->id],
+        //         ['overtime_id',  $overtime->id],
+        //     ])->update([
+        //         'autodate' => $dateafter3monthsnewasdatefinal,
+        //     ]);
             
 
-            $balances = Balance::where('user_id', $overtime->user->id)->get();
-            $subsets = $balances->map(function ($balance) {
-                return collect($balance->toArray())
+        //     $balances = Balance::where('user_id', $overtime->user->id)->get();
+        //     $subsets = $balances->map(function ($balance) {
+        //         return collect($balance->toArray())
 
-                    ->only(['value', 'leavetype_id'])
-                    ->all();
-            });
-            $final = $subsets->firstwhere('leavetype_id', '18');
+        //             ->only(['value', 'leavetype_id'])
+        //             ->all();
+        //     });
+        //     $final = $subsets->firstwhere('leavetype_id', '18');
 
-            $finalfinal = $final['value'];
-            $currentbalance = $finalfinal;
+        //     $finalfinal = $final['value'];
+        //     $currentbalance = $finalfinal;
 
-            $newbalance = $currentbalance + $partialstoannual;
+        //     $newbalance = $currentbalance + $partialstoannual;
 
-            Balance::where([
-                ['user_id', $overtime->user->id],
-                ['leavetype_id', '18'],
-            ])->update(['value' => $newbalance]);
-        }
+        //     Balance::where([
+        //         ['user_id', $overtime->user->id],
+        //         ['leavetype_id', '18'],
+        //     ])->update(['value' => $newbalance]);
+        // }
 
 
         $dayname = Carbon::parse($overtime->date)->format('l');
