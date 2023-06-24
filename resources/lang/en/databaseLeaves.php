@@ -23,6 +23,8 @@ return [
     'Unpaid leave - Second half' => 'Unpaid Leave - Second half' ,
     'CTO'=> 'CTO - Full day',
     'CTOhours'=> 'CTO - Hours',
+    'CTO (Compensatory Time off)'=> 'CTO - Full day',
+    'CTO (Compensatory Time off) - hours'=> 'CTO - Hours',
     'HomeLeave'=> 'Home Leave',
     'R&R'=> 'R&R',
     'Pending LM Approval' => 'Pending LM Approval',

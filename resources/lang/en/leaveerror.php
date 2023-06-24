@@ -21,6 +21,7 @@ return [
     'totalNumberOfDays' => 'Total Number of Days' ,
     'enterStartDateAndEndDate' => 'Enter Start Date and End Date' ,
     'submit' => 'Submit' ,
+    'scinstances' => 'You cant submit more than 4 requests of Sick leave - SC in one year' ,
     'sicknotzero' => 'You must use all of your sick leave balance first' ,
     'cancel' => 'Cancel'
 ];

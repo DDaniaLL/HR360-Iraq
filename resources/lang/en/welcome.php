@@ -16,6 +16,8 @@ return [
     'leaves' => 'Leaves' ,
     'remainingBalance' => 'Remaining Balance' ,
     'annualLeave' => 'Annual Leave' ,
+    'homeleave'=>'Home Leave',
+    'r&r'=>'R & R',
     'sickLeave' => 'Sick Leave' ,
     'compensationLeaveDays' => 'Compensatory time off - CTO days' 
 ];

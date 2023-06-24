@@ -606,13 +606,19 @@ Route::group(['middleware' => ['auth', 'checkstatus']], function () {
         $leave2 = $subsets->firstwhere('leavetype_id', '2');
         $balance2 = round($leave2['value'],3);
 
+        $leave2 = $subsets->firstwhere('leavetype_id', '2');
+        $balance2 = round($leave2['value'],3);
+
+        $leave11 = $subsets->firstwhere('leavetype_id', '11');
+        $balance11 = round($leave2['value'],3);
+
         $leave12 = $subsets->firstwhere('leavetype_id', '12');
-        $balance12 = $leave12['value'];
+        $balance12 = round($leave12['value'],3);
 
         $leave18 = $subsets->firstwhere('leavetype_id', '18');
         $balance18 = round($leave18['value'],3);
 
-        return view('dashboard', ['user' => $user, 'balance1' => $balance1, 'balance2' => $balance2, 'balance12' => $balance12, 'balance18' => $balance18]);
+        return view('dashboard', ['user' => $user, 'balance1' => $balance1, 'balance2' => $balance2, 'balance11'=>$balance11, 'balance12' => $balance12, 'balance18' => $balance18]);
     })->name('welcome');
 
 

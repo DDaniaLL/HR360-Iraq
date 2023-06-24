@@ -23,7 +23,8 @@ return [
     'Unpaid leave - Second half' => 'إجازة غير مدفوعة - النصف الثاني من اليوم' ,
     'CTO'=> 'إجازة تعويضية - يوم كامل',
     'CTOhours'=> 'إجازة تعويضية - ساعات',
-   
+    'CTO (Compensatory Time off)'=>  'إجازة تعويضية - يوم كامل',
+    'CTO (Compensatory Time off) - hours'=> 'إجازة تعويضية - ساعات',
     'Pending LM Approval' => 'انتظار موافقة المدير',
     'Pending HR Approval' => 'انتظار موافقة الموارد البشرية',
     'Pending extra Approval' => 'انتظار المواففة الإضافية',

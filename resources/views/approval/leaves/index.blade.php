@@ -47,7 +47,7 @@
                                 @endif
                                     <td><a href="{{ route('leaves.show', encrypt($leave->id)) }}" ><strong>{{ $leave->id }}</strong></a></td>
                                   <td>{{ $leave->user->name }}</td>
-                                  <td class="text-center">{{ $leave->leavetype->name }}</td>
+                                  <td class="text-center">{{ __("databaseLeaves.{$leave->leavetype->name}") }}</td>
                                   @php
                               $startdayname = Carbon\Carbon::parse($leave->start_date)->format('l');
                               $enddayname = Carbon\Carbon::parse($leave->end_date)->format('l');

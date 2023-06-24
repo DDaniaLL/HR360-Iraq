@@ -75,12 +75,19 @@
                     
                           <div class="row">
                               <div class="col">
+                              @if ($user->contract == "International")
+                              <strong>{{__('welcome.homeleave')}}:</strong> {{$balance12}}
+                                  <br>
+                                  <strong>{{__('welcome.r&r')}}:</strong> {{$balance11}}
+                                  <br>
+                              @endif
+                              @if ($user->contract == "National")
                                   <strong>{{__('welcome.annualLeave')}}:</strong> {{$balance1}}
                                   <br>
                                   {{--<strong>{{__('welcome.sickLeave')}}:</strong> {{$balance2}}
                                   <br> --}}
                                 <strong>{{__('welcome.compensationLeaveDays')}}:</strong> {{$balance18}} - <a href="{{ route('comlists.index') }}"><strong>({{__('comlists.dashboard')}})</strong></a>
-
+@endif
                                 </div>
 
                           </div>

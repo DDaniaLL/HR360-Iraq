@@ -16,6 +16,8 @@ return [
     'leaves' => 'الإجازات' ,
     'remainingBalance' => 'رصيد الإجازات المتبقي' ,
     'annualLeave' => 'الإجازات السنوية' ,
+    'homeleave'=>'Home Leave',
+    'r&r'=>'R & R',
     'sickLeave' => 'الإجازات المرضية' ,
     'compensationLeaveDays' => 'رصيد ايام الإجازات التعويضية' 
 ];

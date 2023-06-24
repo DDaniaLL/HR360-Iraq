@@ -413,7 +413,7 @@ class LeaveController extends Controller
         $counteinstances = count($leavesinstances);
             // dd($counteinstances);
             if ($counteinstances > 3) {
-                return redirect()->back()->with("error",trans('leaveerror.sixmonthserv'));
+                return redirect()->back()->with("error",trans('leaveerror.scinstances'));
             }
 
             $leavessubmitted = Leave::where([
