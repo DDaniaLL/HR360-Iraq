@@ -28,6 +28,6 @@ return [
     'submit' => 'Submit' ,
     'cancel' => 'Cancel',
     'extra' =>'Extra Approver:',
-    'note' =>'Overtime Request will be approved only if 48 work hours are completed in the week',
+    'note' =>'A written email approval from CD must be attached with this request',
 
 ];

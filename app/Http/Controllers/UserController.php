@@ -320,14 +320,14 @@ class UserController extends Controller
             $leave3 = $subsets->firstwhere('leavetype_id', '3');
             $balance3 = round($leave3['value'],3);
     
-            $leave4 = $subsets->firstwhere('leavetype_id', '4');
-            $balance4 = round($leave4['value'],3);
+            // $leave4 = $subsets->firstwhere('leavetype_id', '4');
+            // $balance4 = round($leave4['value'],3);
     
             $leave5 = $subsets->firstwhere('leavetype_id', '5');
             $balance5 = round($leave5['value'],3);
     
-            $leave6 = $subsets->firstwhere('leavetype_id', '6');
-            $balance6 = round($leave6['value'],3);
+            // $leave6 = $subsets->firstwhere('leavetype_id', '6');
+            // $balance6 = round($leave6['value'],3);
     
             $leave7 = $subsets->firstwhere('leavetype_id', '7');
             $balance7 = round($leave7['value'],3);
@@ -372,9 +372,7 @@ class UserController extends Controller
                 'balance1' => $balance1,
                 'balance2' => $balance2,
                 'balance3' => $balance3,
-                'balance4' => $balance4,
                 'balance5' => $balance5,
-                'balance6' => $balance6,
                 'balance7' => $balance7,
                 'balance8' => $balance8,
                 'balance9' => $balance9,

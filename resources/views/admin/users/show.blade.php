@@ -174,9 +174,9 @@
                           <div class="row">
                               <div class="col">
                               @if ($user->contract == "International")
-                              <strong>{{__('showuser.annualLeave')}}:</strong> {{$balance1}}
+                              <strong>{{__('showuser.homeleave')}}:</strong> {{$balance12}}
                               <br>
-                                  <strong>{{__('showuser.compansetion')}}:</strong> {{$balance18}}
+                                  <strong>{{__('showuser.r&r')}}:</strong> {{$balance11}}
 
                               @endif
                                   
@@ -185,15 +185,14 @@
                                   <br>
                                   
 
-                                  <strong>{{__('showuser.sickLeave')}}:</strong> {{$balance2}}
+                                  <strong>{{__('showuser.sickLeaveSC')}}:</strong> {{$balance2}}
                                   <br>
-                                  <strong>{{__('showuser.sickLeave30%Deduction')}}:</strong> {{$balance3}}
+                                  <strong>{{__('showuser.sickLeaveDC')}}:</strong> {{$balance3}}
                                     <br>
-                                    <strong>{{__('showuser.sickLeave20%Deduction')}}:</strong> {{$balance4}}
-                                    <br>
+                                   
                                   <strong>{{__('showuser.marriageLeave')}}:</strong> {{$balance5}}
                                     <br>
-                                    <strong>{{__('showuser.welfareLeave')}}:</strong> {{$balance12}}
+                                    <strong>{{__('showuser.compassionateSecondDegree')}}:</strong> {{$balance7}}
                                 </div>
 
                                 <div class="col">
@@ -203,11 +202,10 @@
                                     <br>
                                     <strong>{{__('showuser.paternityLeave')}}:</strong> {{$balance9}}
                                     <br>
-                                  <strong>{{__('showuser.compassionateSecondDegree')}}:</strong> {{$balance7}}
+                                    <strong>{{__('showuser.PilgrimageLeave')}}:</strong> {{$balance10}}
                                   <br>
                               
-                                  <strong>{{__('showuser.compassionateFirstDegree')}}:</strong> {{$balance6}}
-                                  <br>
+                                  
                                   <strong>{{__('showuser.compansetion')}}:</strong> {{$balance18}}
                                   </div>
                                   @endif

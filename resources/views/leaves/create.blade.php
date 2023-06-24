@@ -167,6 +167,9 @@
                                             {{-- <a href="#" id="output" class="btn btn-sm btn-primary"></a> --}}
 
                                         </div>
+                                        <div id="note" class="row justify-content-center">
+                                        <h5 style='border-radius: 7px; padding:5px; border:2px orange solid; font-size:17px; width:fit-content; width:-webkit-fit-content; width:-moz-fit-content;'>{{__('createOvertime.note')}}</h5>
+                                        </div>
 
                                         <div class="row justify-content-center">
                                             <div class="justify-content-center form-group col-sm-2"> <button type="submit" class="disabled btn-1">{{__('createLeave.submit')}}</button> </div>
@@ -259,6 +262,7 @@ $(this).html(
 //   $("input[type=date]").val("");
 // });
 
+$('#note').hide();
   $('#hourslabel').hide();
         $('#hours').hide();
         $('#minus').hide();
@@ -285,18 +289,22 @@ $('#leavetype_id').on('change',function(){
   $('#reset').show();
 
   
-  if ($(this).val() == '3' || $(this).val() == '4' || $(this).val() == '15')
+  if ($(this).val() == '3' || $(this).val() == '15')
   {
     sickpercentage = "yes";
     
 
   }
 
-    else if ($(this).val() == '13' || $(this).val() == '14' || $(this).val() == '16' || $(this).val() == '17' || $(this).val() == '20' || $(this).val() == '21' ) {
+    else if ($(this).val() == '13' || $(this).val() == '14' || $(this).val() == '16' || $(this).val() == '17' || $(this).val() == '20' || $(this).val() == '21' || $(this).val() == '4' || $(this).val() == '6') {
         $('#end_date').prop('readonly',true);
         $('#numofdays').hide();
         $('#labelnumofdays').hide();
         sickpercentage = "no";
+    }
+    else if ($(this).val() == '7')
+    {
+      $('#note').show();
     }
 //19 is the comensation hour leave
     else if ($(this).val() == '19') {
