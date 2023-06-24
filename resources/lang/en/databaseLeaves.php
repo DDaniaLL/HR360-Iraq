@@ -37,6 +37,7 @@ return [
     'workday' => 'workday',
     'week-end' => 'week-end',
     'weekend' => 'weekend',
+    'CTO-overtime' => 'CTO-overtime',
     'holiday' => 'holiday',
     'National' => 'National',
     'International' => 'International',

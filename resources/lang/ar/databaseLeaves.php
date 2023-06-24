@@ -14,7 +14,7 @@ return [
     'Paternity leave' => 'أجازة الأبوة' ,
     'Pilgrimage' => 'إجازة دينية' ,
     'HomeLeave'=> 'إجازة منزلية',
-
+    'CTO-overtime' => 'وقت اضافي',
     'R&R'=> 'إجازة راحة وتعافي',
     'Annual leave - First half' => ' إجازة سنوية - النصف الأول من اليوم' ,
     'Annual leave - Second half' => 'إجازة سنوية - النصف الثاني من اليوم' ,
