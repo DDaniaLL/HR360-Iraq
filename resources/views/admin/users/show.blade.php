@@ -27,7 +27,7 @@
                                 }
                                 @endphp
 
-                                @if ($authuser->office == "AO2")
+                                @if ($authuser->office == "CO-Erbil")
                                
                                 @if ($userstatus == 'suspended')
 

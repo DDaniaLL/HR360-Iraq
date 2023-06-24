@@ -36,28 +36,28 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $currentuser = Auth::user();
-        if ($currentuser->office == "AO3")
+        if ($currentuser->office == "NIAO")
         {
-            $users = User::where('office','AO3')->get();
+            $users = User::where('office','NIAO')->get();
             $variablee = '';
             return view('admin.users.index', ['users' => $users, 'variablee' => $variablee, 'user' => $currentuser]);
         }
 
-        elseif ($currentuser->office == "AO4")
+        elseif ($currentuser->office == "KRAO")
         {
-            $users = User::where('office','AO4')->get();
+            $users = User::where('office','KRAO')->get();
             $variablee = '';
             return view('admin.users.index', ['users' => $users, 'variablee' => $variablee, 'user' => $currentuser]);
         }
-        elseif ($currentuser->office == "AO6")
+        elseif ($currentuser->office == "CIAO")
         {
-            $users = User::where('office','AO6')->get();
+            $users = User::where('office','CIAO')->get();
             $variablee = '';
             return view('admin.users.index', ['users' => $users, 'variablee' => $variablee, 'user' => $currentuser]);
         }
-        elseif ($currentuser->office == "AO7")
+        elseif ($currentuser->office == "SIAO")
         {
-            $users = User::where('office','AO7')->get();
+            $users = User::where('office','SIAO')->get();
             $variablee = '';
             return view('admin.users.index', ['users' => $users, 'variablee' => $variablee, 'user' => $currentuser]);
         }
@@ -296,7 +296,7 @@ class UserController extends Controller
         $hruser = Auth::user();
         // dd($hruser->office);
 
-        if ($hruser->office == "AO3" || $hruser->office == "AO4" || $hruser->office == "AO6" || $hruser->office == "AO7")
+        if ($hruser->office == "NIAO" || $hruser->office == "KRAO" || $hruser->office == "CIAO" || $hruser->office == "SIAO")
         {
             if ($hruser->office !== $user->office)
             {
@@ -483,7 +483,7 @@ class UserController extends Controller
         $hruser = Auth::user();
         // dd($hruser->office);test
 
-        if ($hruser->office == "AO3" || $hruser->office == "AO4" || $hruser->office == "AO6" || $hruser->office == "AO7")
+        if ($hruser->office == "NIAO" || $hruser->office == "KRAO" || $hruser->office == "CIAO" || $hruser->office == "SIAO")
         {
             if ($hruser->office !== $user->office)
             {
@@ -554,7 +554,7 @@ class UserController extends Controller
         $user->birth_date = $request->birth_date;
         $user->contract = $request->contract;
         $user->position = $request->position;
-        if ($hruser->office == "AO2")
+        if ($hruser->office == "CO-Erbil")
         {
             $user->office = $request->office;
 
@@ -1102,7 +1102,7 @@ class UserController extends Controller
     {
 
         $hruser = Auth::user();
-        if ($hruser->office == "AO2")
+        if ($hruser->office == "CO-Erbil")
         {
             $users= User::all()->except(1);
 
@@ -1180,7 +1180,7 @@ class UserController extends Controller
 
         if ($office == Null)
         {
-            $officee = ['AO2','AO3','AO4','AO6','AO7'];
+            $officee = ['CO-Erbil','NIAO','KRAO','CIAO','SIAO'];
         }
 
         else if ($office !== Null)
@@ -1213,7 +1213,7 @@ class UserController extends Controller
 
         if ($request->name == null)
         {   
-            if ($hruser->office == "AO2") {
+            if ($hruser->office == "CO-Erbil") {
 
                 $staffwithsameoffice = User::whereIn('office',$officee)->WhereIn('status', $staffstatuse)->get();
                 if (count($staffwithsameoffice))
@@ -1393,7 +1393,7 @@ class UserController extends Controller
 
         if ($office == Null)
         {
-            $officee = ['AO2','AO3','AO4','AO6','AO7'];
+            $officee = ['CO-Erbil','NIAO','KRAO','CIAO','SIAO'];
         }
 
         else if ($office !== Null)
@@ -1426,7 +1426,7 @@ class UserController extends Controller
 
         if ($request->name == null)
         {   
-            if ($hruser->office == "AO2") {
+            if ($hruser->office == "CO-Erbil") {
 
                 $staffwithsameoffice = User::whereIn('office',$officee)->WhereIn('status', $staffstatuse)->get();
                 if (count($staffwithsameoffice))

@@ -33,7 +33,7 @@
                             <tr style=" background-color: #ffb678 !important;">
                                 <th style="width: 3%"scope="col">{{__('allStaffOvertimes.id')}}</th>
                                 <th style="width: 10%" scope="col">{{__('allStaffOvertimes.name')}}</th>
-                                @if ($hruser->office == "AO2")
+                                @if ($hruser->office == "CO-Erbil")
                                     <th style="width: 10%" class="text-center" scope="col">{{__('hrApprovalLeave.office')}}</th>
                                     @endif
                                 <th style="width: 10%" class="text-center" scope="col">{{__('allStaffOvertimes.type')}}</th>
@@ -52,7 +52,7 @@
                             <tr>
                               <td class="text-center"><a style = "color: #007bff;" href="{{ route('overtimes.show', encrypt($overtime->id)) }}" target="_blank">{{ $overtime->id }}</a></td>
                               <td>{{ $overtime->user->name }}</td>
-                              @if ($hruser->office == "AO2")
+                              @if ($hruser->office == "CO-Erbil")
                                   <td class="text-center">{{ $overtime->user->office }}</td>
                                     @endif
                               <td class="text-center">{{__("databaseLeaves.$overtime->type")}}</td>

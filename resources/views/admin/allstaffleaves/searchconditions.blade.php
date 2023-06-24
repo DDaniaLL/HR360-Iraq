@@ -54,7 +54,7 @@ $hruser = Auth::user();
                                         </datalist>
                                      </div>
 
-                                    @if ($hruser->office == "AO2")    
+                                    @if ($hruser->office == "CO-Erbil")    
                                      <div class="form-group col-sm-6 flex-column d-flex">
                                         <label  class=" form-control-label  px-1">{{__('advancedSearchLeave.staffoffice')}}</label>
                                         <select
@@ -62,11 +62,11 @@ $hruser = Auth::user();
                                                     name="office[]" id="stafffoffice" type="text" multiple>
                                                    
 
-                                                    <option value="AO2">AO2</option>
-                                                    <option value="AO3">AO3</option>
-                                                    <option value="AO4">AO4</option>
-                                                    <option value="AO6">AO6</option>
-                                                    <option value="AO7">AO7</option>
+                                                    <option value="CO-Erbil">CO-Erbil</option>
+                                                    <option value="NIAO">NIAO</option>
+                                                    <option value="KRAO">KRAO</option>
+                                                    <option value="CIAO">CIAO</option>
+                                                    <option value="SIAO">SIAO</option>
 
 
                                                 </select>

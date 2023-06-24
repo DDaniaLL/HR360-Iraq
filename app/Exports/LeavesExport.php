@@ -54,7 +54,7 @@ class LeavesExport implements FromCollection, WithHeadings, WithMapping
         return $this->leaves;
 
     //     $hruser = Auth::user();
-    //     if ($hruser->office == "AO2")
+    //     if ($hruser->office == "CO-Erbil")
     //     {
     //         return Leave::all();
 

@@ -60,7 +60,7 @@ Route::group(['middleware' => ['auth', 'checkstatus', 'hradmin'], 'prefix' => '/
 
         $hruser = Auth::user();
 
-        if ($hruser->office == "AO2") {
+        if ($hruser->office == "CO-Erbil") {
             $users = User::all();
             $leaves = Leave::all();
             return view('admin.allstaffleaves.reportconditions', ['leaves' => $leaves,'users' => $users]);
@@ -105,7 +105,7 @@ Route::group(['middleware' => ['auth', 'checkstatus', 'hradmin'], 'prefix' => '/
     Route::post('/overtimes/pdf/show', [OvertimeController::class, 'pdf'])->name('overtimes.pdfshow');
     Route::get('allstaffleaves', function () {
         $hruser = Auth::user();
-        if ($hruser->office == "AO2") {
+        if ($hruser->office == "CO-Erbil") {
             $leaves = Leave::all();
             return view('admin.allstaffleaves.index', ['leaves' => $leaves]);
         }
@@ -129,7 +129,7 @@ Route::group(['middleware' => ['auth', 'checkstatus', 'hradmin'], 'prefix' => '/
     Route::get('allleavessearch', function () {
         $hruser = Auth::user();
 
-        if ($hruser->office == "AO2") {
+        if ($hruser->office == "CO-Erbil") {
             $users = User::all()->except(1);
             $leaves = Leave::all();
             return view('admin.allstaffleaves.searchconditions', ['leaves' => $leaves,'users' => $users]);
@@ -157,7 +157,7 @@ Route::group(['middleware' => ['auth', 'checkstatus', 'hradmin'], 'prefix' => '/
     Route::get('alluserssearch', function () {
         $hruser = Auth::user();
 
-        if ($hruser->office == "AO2") {
+        if ($hruser->office == "CO-Erbil") {
             $users = User::all()->except(1);
             
             return view('admin.users.searchconditions', ['users' => $users]);
@@ -186,7 +186,7 @@ Route::group(['middleware' => ['auth', 'checkstatus', 'hradmin'], 'prefix' => '/
     Route::get('allusersbalanceexport', function () {
         $hruser = Auth::user();
 
-        if ($hruser->office == "AO2") {
+        if ($hruser->office == "CO-Erbil") {
             $users = User::all()->except(1);
             
             return view('admin.users.balanceconditions', ['users' => $users]);
@@ -213,7 +213,7 @@ Route::group(['middleware' => ['auth', 'checkstatus', 'hradmin'], 'prefix' => '/
     Route::get('allovertimessearch', function () {
         $hruser = Auth::user();
 
-        if ($hruser->office == "AO2") {
+        if ($hruser->office == "CO-Erbil") {
             $users = User::all()->except(1);
             $overtimes = Overtime::all();
             return view('admin.allstaffovertimes.searchconditions', ['overtimes' => $overtimes,'users' => $users]);
@@ -241,7 +241,7 @@ Route::group(['middleware' => ['auth', 'checkstatus', 'hradmin'], 'prefix' => '/
     Route::get('allstaffovertimes', function () {
  
         $hruser = Auth::user();
-        if ($hruser->office == "AO2") {
+        if ($hruser->office == "CO-Erbil") {
             $overtimes = Overtime::all();
             return view('admin.allstaffovertimes.index', ['overtimes' => $overtimes]);
         }
@@ -295,7 +295,7 @@ Route::group(['middleware' => ['auth', 'checkstatus', 'hradmin']], function () {
 
         $hrcurrentuser = Auth::user();
         $users = User::all();
-        if($hrcurrentuser->office == "AO2")
+        if($hrcurrentuser->office == "CO-Erbil")
         {
             $leaves = Leave::where('status', 'Pending HR Approval')->orWhere('status', 'Approved by extra Approval')->orWhere('status', 'Declined by extra Approval')->get();
             
@@ -352,7 +352,7 @@ Route::group(['middleware' => ['auth', 'checkstatus', 'hradmin']], function () {
         $hrcurrentuser = Auth::user();
         $users = User::all();
         
-        if($hrcurrentuser->office == "AO2")
+        if($hrcurrentuser->office == "CO-Erbil")
         {
             $overtimes = Overtime::where('status', 'Pending HR Approval')->orWhere('status', 'Approved by extra Approval')->orWhere('status', 'Declined by extra Approval')->get();
             

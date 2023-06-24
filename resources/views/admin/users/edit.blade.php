@@ -52,17 +52,17 @@
                                             $authuser = Auth::user();
                                             @endphp
 
-                                            @if ($authuser->office == "AO2")
+                                            @if ($authuser->office == "CO-Erbil")
                                             <div class="form-group col-sm-6 flex-column d-flex {{ $errors->has('office') ? ' has-danger' : '' }}"> <label class="dropdown form-control-label required px-1 {{ $errors->has('joined_date') ? ' is-invalid' : '' }}">{{__('edituser.office')}}</label>
                                         <select class="form-control form-outline"  id="office" name="office" aria-label="Default select example" >
                                           
                                           <option value selected disabled ="">Choose office..</option>
                                         
-                                          <option value="AO2" @if ($user->office == "AO2") {{ 'selected' }} @endif>AO2</option>
-                                          <option value="AO3" @if ($user->office == "AO3") {{ 'selected' }} @endif>AO3</option>
-                                          <option value="AO4" @if ($user->office == "AO4") {{ 'selected' }} @endif>AO4</option>
-                                          <option value="AO6" @if ($user->office == "AO6") {{ 'selected' }} @endif>AO6</option>
-                                          <option value="AO7" @if ($user->office == "AO7") {{ 'selected' }} @endif>AO7</option>
+                                          <option value="CO-Erbil" @if ($user->office == "CO-Erbil") {{ 'selected' }} @endif>CO-Erbil</option>
+                                          <option value="NIAO" @if ($user->office == "NIAO") {{ 'selected' }} @endif>NIAO</option>
+                                          <option value="KRAO" @if ($user->office == "KRAO") {{ 'selected' }} @endif>KRAO</option>
+                                          <option value="CIAO" @if ($user->office == "CIAO") {{ 'selected' }} @endif>CIAO</option>
+                                          <option value="SIAO" @if ($user->office == "SIAO") {{ 'selected' }} @endif>SIAO</option>
                                           
                                         </select>
                                         @if ($errors->has('office'))  

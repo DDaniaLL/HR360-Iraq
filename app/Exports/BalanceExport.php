@@ -32,7 +32,7 @@ class BalanceExport implements FromCollection, WithHeadings, WithMapping
 
 
     //     $hruser = Auth::user();
-    //     if ($hruser->office == "AO2")
+    //     if ($hruser->office == "CO-Erbil")
     //     {
     //         return User::all()->except(1);
 

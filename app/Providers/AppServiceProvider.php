@@ -61,7 +61,7 @@ class AppServiceProvider extends ServiceProvider
                         $numoverapproval = count($overtimes);
                         $numapproval = $numleaveapproval + $numoverapproval;
 
-                        if ($user->office == "AO2")
+                        if ($user->office == "CO-Erbil")
                         {
                             $hrleaves = Leave::where('status', 'Pending HR Approval')->orWhere('status', 'Approved by extra Approval')->orWhere('status', 'Declined by extra Approval')->get();
                             $hrovertimes = Overtime::where('status', 'Pending HR Approval')->orWhere('status', 'Approved by extra Approval')->orWhere('status', 'Declined by extra Approval')->get();
@@ -79,7 +79,7 @@ class AppServiceProvider extends ServiceProvider
                         }
                           
                         else
-                        // if i am LM but not AO2 HR
+                        // if i am LM but not CO-Erbil HR
                         {
                             $staffwithsameoffice = User::where('office',$user->office)->get();
                             if  (count($staffwithsameoffice))
@@ -125,8 +125,8 @@ class AppServiceProvider extends ServiceProvider
                     } else {
                         // if i am not LM but still HR:
 
-                            if ($user->office == "AO2")
-                            // if i am AO2 HR
+                            if ($user->office == "CO-Erbil")
+                            // if i am CO-Erbil HR
                             {
                         $hrleaves = Leave::where('status', 'Pending HR Approval')->orWhere('status', 'Approved by extra Approval')->orWhere('status', 'Declined by extra Approval')->get();
                         $hrovertimes = Overtime::where('status', 'Pending HR Approval')->orWhere('status', 'Approved by extra Approval')->orWhere('status', 'Declined by extra Approval')->get();
@@ -142,7 +142,7 @@ class AppServiceProvider extends ServiceProvider
                             }
 
                             else
-                            // i am not LM and HR but not AO2 HR
+                            // i am not LM and HR but not CO-Erbil HR
                             {
                                 $staffwithsameoffice = User::where('office',$user->office)->get();
                                 if  (count($staffwithsameoffice))

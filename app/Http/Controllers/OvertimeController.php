@@ -591,7 +591,7 @@ class OvertimeController extends Controller
     public function export()
     {
         $hruser = Auth::user();
-        if ($hruser->office == "AO2")
+        if ($hruser->office == "CO-Erbil")
         {
             $overtimes = Overtime::all();
 
@@ -707,7 +707,7 @@ class OvertimeController extends Controller
 
         if ($office == Null)
         {
-            $officee = ['AO2','AO3','AO4','AO6','AO7'];
+            $officee = ['CO-Erbil','NIAO','KRAO','CIAO','SIAO'];
         }
 
         else if ($office !== Null)
@@ -743,7 +743,7 @@ class OvertimeController extends Controller
         if ($request->name == null)
         {
 
-            if ($hruser->office == "AO2") {
+            if ($hruser->office == "CO-Erbil") {
 
                 $staffwithsameoffice = User::whereIn('office',$officee)->WhereIn('status', $staffstatuse)->get();
                 if (count($staffwithsameoffice))

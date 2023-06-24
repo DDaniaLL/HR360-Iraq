@@ -22,7 +22,7 @@
                           @php
                           $user = Auth::user()
                       @endphp
-                      @if ($user->office == "AO2")
+                      @if ($user->office == "CO-Erbil")
                       @if ($user->hradmin == 'yes')
                              <div   div class="col-12 text-right">
                                 <a href="{{route('admin.policies.create')}}" class="btn btn-sm btn-primary">{{__('hrPolicies.addPolicy')}}</a>
@@ -53,7 +53,7 @@
                               <td class="text-center">{{ $policy->created_date }}</td>
                               <td class="text-center">{{ $policy->lastupdate_date }}</td>
                               @if ($user->hradmin == 'yes')
-                              @if ($user->office == "AO2")
+                              @if ($user->office == "CO-Erbil")
                               <td class="text-center">
                                 <div class="text-center"><button type="button" class=" form-group btn btn-sm btn-danger" data-toggle="modal" data-target="#myModal{{$policy->id}}">Delete</button></div>
                             </td>

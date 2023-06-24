@@ -22,7 +22,7 @@
                           @php
                           $user = Auth::user()
                       @endphp
-                      @if ($user->office == "AO2")
+                      @if ($user->office == "CO-Erbil")
                       @if ($user->hradmin == 'yes')
                           <div   div class="col-12 text-right">
                             <a href="{{route('admin.holidays.create')}}" class="btn btn-sm btn-primary">{{__('holidays.addcalendar')}}</a>
@@ -47,7 +47,7 @@
                             <tr>
                               <td class="text-center"><a href="/storage/files/{{$holiday->name}}.pdf" target="_blank">{{ $holiday->name }}</a></td>
                               <td class="text-center">{{ $holiday->year }}</td>
-                              @if ($user->office == "AO2")
+                              @if ($user->office == "CO-Erbil")
                               @if ($user->hradmin == 'yes')
                               <td class="text-center">
                                 <div class="text-center"><button type="button" class=" form-group btn btn-sm btn-danger" data-toggle="modal" data-target="#myModal{{$holiday->id}}">Delete</button></div>

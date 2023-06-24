@@ -120,7 +120,7 @@
                             $showapproval = '2';
                           }
 
-                          elseif ($authuser->hradmin == "yes" && $authuser->office == "AO2" && $leave->status == "Pending HR Approval")
+                          elseif ($authuser->hradmin == "yes" && $authuser->office == "CO-Erbil" && $leave->status == "Pending HR Approval")
                           {
                             $showapproval = '2';
                           }

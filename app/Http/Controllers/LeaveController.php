@@ -2777,7 +2777,7 @@ class LeaveController extends Controller
     {
         
         $hruser = Auth::user();
-        if ($hruser->office == "AO2")
+        if ($hruser->office == "CO-Erbil")
         {
             $leaves= Leave::all();
 
@@ -3074,7 +3074,7 @@ class LeaveController extends Controller
 
         if ($office == Null)
         {
-            $officee = ['AO2','AO3','AO4','AO6','AO7'];
+            $officee = ['CO-Erbil','NIAO','KRAO','CIAO','SIAO'];
         }
 
         else if ($office !== Null)
@@ -3107,7 +3107,7 @@ class LeaveController extends Controller
 
         if ($request->name == null)
         {   
-            if ($hruser->office == "AO2") {
+            if ($hruser->office == "CO-Erbil") {
 
                 $staffwithsameoffice = User::whereIn('office',$officee)->WhereIn('status', $staffstatuse)->get();
                 if (count($staffwithsameoffice))
