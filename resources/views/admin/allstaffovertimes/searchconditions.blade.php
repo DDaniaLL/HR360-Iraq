@@ -126,11 +126,11 @@ $hruser = Auth::user();
                                                     >
                                                    
 
-                                                    <option value="workday">{{__('createOvertime.workday')}}</option>
-                                                    <option value="week-end">{{__('createOvertime.Week-end')}}</option>
+                                                    <option value="CTO-overtime">{{__('createOvertime.NationalContractOvertime')}}</option>
+                                                    <!-- <option value="week-end">{{__('createOvertime.Week-end')}}</option>
                                                     <option value="holiday">{{__('createOvertime.Holiday')}}</option>
                                                     <option value="SC-overtime">{{__('createOvertime.ServiceContractOvertime')}}</option>
-                                                  
+                                                   -->
                                                     
                                                     
 
