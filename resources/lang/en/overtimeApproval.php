@@ -2,15 +2,15 @@
 
 return [
 
-    'overtimesPendingYourApproval' => 'Overtimes Pending Your Approvals' ,
-    'id' => '#' ,
+    'overtimesPendingYourApproval' => 'Overtimes Pending Your Approvals',
+    'id' => '#',
     'name' => 'Requester',
-    'date' => 'Date' ,
+    'date' => 'Date',
     'overtimeType' => 'Overtime Type',
     'startHour' => 'Start Hours',
     'endHour' => 'End Hours',
-    'hours' => 'Hours' ,
-    'status' => 'Status' ,
+    'hours' => 'Hours',
+    'status' => 'Status',
     'approve' => 'Approve',
-    'decline' => 'Decline' ,
+    'decline' => 'Decline',
 ];

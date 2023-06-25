@@ -10,12 +10,9 @@ use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class UsersImport implements ToModel, WithHeadingRow
 {
-    /**
-    * @param array $row
-    */
     public function model(array $row)
     {
-        return new User ([
+        return new User([
             'name' => $row['name'],
             'birth_date' => Date::excelToDateTimeObject($row['birth']),
             'employee_number' => $row['employee'],
@@ -30,11 +27,9 @@ class UsersImport implements ToModel, WithHeadingRow
             'status' => $row['status'],
             'email' => $row['email'],
             'usertype_id' => $row['usertype'],
-            'password' => Hash::make('password')
+            'password' => Hash::make('password'),
 
         ]);
-        
-            
-        
+
     }
 }

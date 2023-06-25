@@ -34,7 +34,6 @@ class PolicyController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -48,7 +47,7 @@ class PolicyController extends Controller
             'file' => 'required',
         ]);
 
-        $path = $request->file('file')->storeAs('public/files', $request->name . '.pdf');
+        $path = $request->file('file')->storeAs('public/files', $request->name.'.pdf');
 
         $policy = new Policy();
         $policy->name = $request->name;
@@ -59,13 +58,13 @@ class PolicyController extends Controller
         $policy->save();
 
         $policy = Policy::all();
+
         return view('admin.policies.index', ['policies' => $policy]);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Policy  $policy
      * @return \Illuminate\Http\Response
      */
     public function show(Policy $policy)
@@ -76,7 +75,6 @@ class PolicyController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Policy  $policy
      * @return \Illuminate\Http\Response
      */
     public function edit(Policy $policy)
@@ -88,15 +86,13 @@ class PolicyController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Policy  $policy
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Policy $policy)
     {
 
         if (isset($request->file)) {
-            $path = $request->file('file')->storeAs('public/files', $request->name . '.pdf');
+            $path = $request->file('file')->storeAs('public/files', $request->name.'.pdf');
             $policy->path = $path;
         }
 
@@ -108,22 +104,23 @@ class PolicyController extends Controller
         $policy->save();
 
         $policy = Policy::all();
+
         return view('admin.policies.index', ['policies' => $policy]);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Policy  $policy
      * @return \Illuminate\Http\Response
      */
     public function destroy(Policy $policy)
     {
         // File::delete($policy->name);
         // File::delete(public_path("files/{{$policy->name}} . '.pdf'"));
-        $file_path = public_path() . '/storage/files/' . $policy->name . '.pdf';
+        $file_path = public_path().'/storage/files/'.$policy->name.'.pdf';
         unlink($file_path);
         $policy->delete();
+
         return redirect()->route('admin.policies.index');
     }
 }

@@ -32,6 +32,7 @@ class AttendancesExport implements FromCollection, WithHeadings, WithMapping
 
         ];
     }
+
     public function collection()
     {
         return Attendance::where('id', '>=', '13')->get();
@@ -57,5 +58,4 @@ class AttendancesExport implements FromCollection, WithHeadings, WithMapping
 
         ];
     }
-
 }

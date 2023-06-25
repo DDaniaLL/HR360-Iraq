@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Exports\AttendancesExport;
 use App\Models\Attendance;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
@@ -19,6 +18,7 @@ class AttendanceController extends Controller
     public function index()
     {
         $attendances = Attendance::whereNull('user_id')->get();
+
         return view('attendances.index', ['attendances' => $attendances]);
     }
 
@@ -35,7 +35,6 @@ class AttendanceController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -46,7 +45,6 @@ class AttendanceController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Attendance  $attendance
      * @return \Illuminate\Http\Response
      */
     public function show(Attendance $attendance)
@@ -58,21 +56,21 @@ class AttendanceController extends Controller
             $search = '-01-';
             $attendances = Attendance::where([
                 ['user_id', $user->id],
-                ['day', 'LIKE', '%' . $search . '%']])->get();
+                ['day', 'LIKE', '%'.$search.'%']])->get();
         } //end januaury if
 
         if ($attendance->month == 'February') {
             $search = '-02-';
             $attendances = Attendance::where([
                 ['user_id', $user->id],
-                ['day', 'LIKE', '%' . $search . '%']])->get();
+                ['day', 'LIKE', '%'.$search.'%']])->get();
         } //end januaury if
 
         if ($attendance->month == 'March') {
             $search = '-03-';
             $attendances = Attendance::where([
                 ['user_id', $user->id],
-                ['day', 'LIKE', '%' . $search . '%']])->get();
+                ['day', 'LIKE', '%'.$search.'%']])->get();
         } //end januaury if
 
         if ($attendance->month == 'April') {
@@ -80,55 +78,55 @@ class AttendanceController extends Controller
             $search = '-04-';
             $attendances = Attendance::where([
                 ['user_id', $user->id],
-                ['day', 'LIKE', '%' . $search . '%']])->get();
+                ['day', 'LIKE', '%'.$search.'%']])->get();
         } //end januaury if
         if ($attendance->month == 'May') {
             $search = '-05-';
             $attendances = Attendance::where([
                 ['user_id', $user->id],
-                ['day', 'LIKE', '%' . $search . '%']])->get();
+                ['day', 'LIKE', '%'.$search.'%']])->get();
         } //end januaury if
         if ($attendance->month == 'June') {
             $search = '-06-';
             $attendances = Attendance::where([
                 ['user_id', $user->id],
-                ['day', 'LIKE', '%' . $search . '%']])->get();
+                ['day', 'LIKE', '%'.$search.'%']])->get();
         } //end januaury if
         if ($attendance->month == 'July') {
             $search = '-07-';
             $attendances = Attendance::where([
                 ['user_id', $user->id],
-                ['day', 'LIKE', '%' . $search . '%']])->get();
+                ['day', 'LIKE', '%'.$search.'%']])->get();
         } //end januaury if
         if ($attendance->month == 'August') {
             $search = '-08-';
             $attendances = Attendance::where([
                 ['user_id', $user->id],
-                ['day', 'LIKE', '%' . $search . '%']])->get();
+                ['day', 'LIKE', '%'.$search.'%']])->get();
         } //end januaury if
         if ($attendance->month == 'September') {
             $search = '-09-';
             $attendances = Attendance::where([
                 ['user_id', $user->id],
-                ['day', 'LIKE', '%' . $search . '%']])->get();
+                ['day', 'LIKE', '%'.$search.'%']])->get();
         } //end januaury if
         if ($attendance->month == 'October') {
             $search = '-10-';
             $attendances = Attendance::where([
                 ['user_id', $user->id],
-                ['day', 'LIKE', '%' . $search . '%']])->get();
+                ['day', 'LIKE', '%'.$search.'%']])->get();
         } //end januaury if
         if ($attendance->month == 'November') {
             $search = '-11-';
             $attendances = Attendance::where([
                 ['user_id', $user->id],
-                ['day', 'LIKE', '%' . $search . '%']])->get();
+                ['day', 'LIKE', '%'.$search.'%']])->get();
         } //end januaury if
         if ($attendance->month == 'December') {
             $search = '-12-';
             $attendances = Attendance::where([
                 ['user_id', $user->id],
-                ['day', 'LIKE', '%' . $search . '%']])->get();
+                ['day', 'LIKE', '%'.$search.'%']])->get();
         } //end januaury if
 
         if (count($attendances)) {
@@ -151,7 +149,6 @@ class AttendanceController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Attendance  $attendance
      * @return \Illuminate\Http\Response
      */
     public function edit(Attendance $attendance)
@@ -162,12 +159,14 @@ class AttendanceController extends Controller
     public function lmapproval()
     {
         $attendances = Attendance::whereNull('user_id')->get();
+
         return view('approval.attendances.index', ['attendances' => $attendances]);
     }
 
     public function hrapproval()
     {
         $attendances = Attendance::whereNull('user_id')->get();
+
         return view('hrapproval.attendances.index', ['attendances' => $attendances]);
     }
 
@@ -249,7 +248,10 @@ class AttendanceController extends Controller
         } elseif ($month == 'December') {
             $attendance = '12';
         }
-        return redirect()->route('attendances.approval.lm.staff', ['attendance' => $attendance]);return redirect()->back();
+
+        return redirect()->route('attendances.approval.lm.staff', ['attendance' => $attendance]);
+
+        return redirect()->back();
     }
 
     public function hrapproved($user, $month)
@@ -320,21 +322,22 @@ class AttendanceController extends Controller
         } elseif ($month == 'December') {
             $attendance = '12';
         }
-        return redirect()->route('attendances.approval.hr.staff', ['attendance' => $attendance]);return redirect()->back();
+
+        return redirect()->route('attendances.approval.hr.staff', ['attendance' => $attendance]);
+
+        return redirect()->back();
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Attendance  $attendance
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Attendance $attendance)
     {
         // $user = Auth::user();
 
-        if (!isset($attendance->start_hour)) {
+        if (! isset($attendance->start_hour)) {
 
             $request->validate([
                 'start_hour' => 'required',
@@ -380,6 +383,7 @@ class AttendanceController extends Controller
                     'remarks' => $request->remarks,
                     'leave_overtime_id' => $request->leave_overtime_id,
                 ]);
+
                 return redirect()->back();
             }
         }
@@ -388,7 +392,6 @@ class AttendanceController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Attendance  $attendance
      * @return \Illuminate\Http\Response
      */
     public function destroy(Attendance $attendance)
@@ -409,5 +412,4 @@ class AttendanceController extends Controller
     {
         return Excel::download(new AttendancesExport, 'attendances.xlsx');
     }
-
 }

@@ -19,6 +19,7 @@ class User extends Authenticatable
     use Sortable;
     use SoftDeletes;
     use LogsActivity;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -63,6 +64,7 @@ class User extends Authenticatable
         'token',
 
     ];
+
     public $sortable = ['name', 'position', 'created_at', 'updated_at'];
 
     /**
@@ -113,5 +115,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(Attendance::class);
     }
-
 }

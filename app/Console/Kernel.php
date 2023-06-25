@@ -14,7 +14,6 @@ class Kernel extends ConsoleKernel
     /**
      * Define the application's command schedule.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
     protected function schedule(Schedule $schedule)
@@ -22,67 +21,54 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         $schedule->call(function () {
             $comlists = Comlist::whereNull('expired_date')->get();
-          
 
-            foreach($comlists as $comlist)
-            {
+            foreach ($comlists as $comlist) {
                 $userid = $comlist->user_id;
                 $y = floatval($comlist->hours);
-    
+
                 $datenow = Carbon::now();
                 $comlistcreatedate = new DateTime($comlist->created_at);
                 $dateenow = new DateTime($datenow);
                 $intervall = $comlistcreatedate->diff($dateenow);
                 $probationdays = $intervall->format('%a');
-    
-                if ($probationdays > '60')
-                {  
-                    $comlist->expired_date=$datenow;
+
+                if ($probationdays > '60') {
+                    $comlist->expired_date = $datenow;
                     $comlist->save();
-    
+
                     $x = Balance::where([
                         ['user_id', '1'],
                         ['leavetype_id', '18'],
                     ])->pluck('value')->first();
-    
-                    if ($x == '0')
 
-                    {
-                        $comlist->status="Used";
-                        
+                    if ($x == '0') {
+                        $comlist->status = 'Used';
+
                         $comlist->save();
 
-                    }
-                    else if ($x >= $y)
-                    {
+                    } elseif ($x >= $y) {
                         $newbalance = $x - $y;
-                        $comlist->status="fulllost";
-                        $comlist->expired_value=$y;
+                        $comlist->status = 'fulllost';
+                        $comlist->expired_value = $y;
                         $comlist->save();
                         Balance::where([
                             ['user_id', $userid],
                             ['leavetype_id', '18'],
                         ])->first()?->update(['value' => $newbalance]);
-                    }
-    
-                    else 
-                    {
-                        $comlist->status="partiallost";
-                        $comlist->expired_value=$x;
+                    } else {
+                        $comlist->status = 'partiallost';
+                        $comlist->expired_value = $x;
                         $comlist->save();
                         Balance::where([
                             ['user_id', $userid],
                             ['leavetype_id', '18'],
                         ])->first()?->update(['value' => '0']);
                     }
-                       
+
                 }
             }
         })->everyMinute();
 
-
-
-      
     }
 
     /**

@@ -10,6 +10,7 @@ class Leavetype extends Model
     protected $fillable = [
         'leavetype_id',
     ];
+
     use HasFactory;
 
     public function leaves()

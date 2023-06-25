@@ -15,6 +15,7 @@ class HolidayController extends Controller
     public function index()
     {
         $holiday = Holiday::all();
+
         return view('admin.holidays.index', ['holidays' => $holiday]);
     }
 
@@ -31,7 +32,6 @@ class HolidayController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -44,7 +44,7 @@ class HolidayController extends Controller
             'file' => 'required',
         ]);
 
-        $path = $request->file('file')->storeAs('public/files', $request->name . '.pdf');
+        $path = $request->file('file')->storeAs('public/files', $request->name.'.pdf');
 
         $holiday = new Holiday();
         $holiday->name = $request->name;
@@ -54,13 +54,13 @@ class HolidayController extends Controller
         $holiday->save();
 
         $holiday = Holiday::all();
+
         return view('admin.holidays.index', ['holidays' => $holiday]);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Holiday  $holiday
      * @return \Illuminate\Http\Response
      */
     public function show(Holiday $holiday)
@@ -71,7 +71,6 @@ class HolidayController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Holiday  $holiday
      * @return \Illuminate\Http\Response
      */
     public function edit(Holiday $holiday)
@@ -82,14 +81,12 @@ class HolidayController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Holiday  $holiday
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Holiday $holiday)
     {
         if (isset($request->file)) {
-            $path = $request->file('file')->storeAs('public/files', $request->name . '.pdf');
+            $path = $request->file('file')->storeAs('public/files', $request->name.'.pdf');
             $holiday->path = $path;
         }
 
@@ -101,20 +98,21 @@ class HolidayController extends Controller
         $holiday->save();
 
         $holiday = Holiday::all();
+
         return view('admin.holidays.index', ['holidays' => $holiday]);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Holiday  $holiday
      * @return \Illuminate\Http\Response
      */
     public function destroy(Holiday $holiday)
     {
-        $file_path = public_path() . '/storage/files/' . $holiday->name . '.pdf';
+        $file_path = public_path().'/storage/files/'.$holiday->name.'.pdf';
         unlink($file_path);
         $holiday->delete();
+
         return redirect()->route('admin.holidays.index');
     }
 }

@@ -28,9 +28,9 @@ class ComlistController extends Controller
         });
 
         $leave18 = $subsets->firstwhere('leavetype_id', '18');
-        $balance18 = round($leave18['value'],3);
-       
-        return view('comlists.index', ['comlists' => $comlist,'balance18' => $balance18]);
+        $balance18 = round($leave18['value'], 3);
+
+        return view('comlists.index', ['comlists' => $comlist, 'balance18' => $balance18]);
     }
 
     /**
@@ -46,7 +46,6 @@ class ComlistController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -57,7 +56,6 @@ class ComlistController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Comlist  $comlist
      * @return \Illuminate\Http\Response
      */
     public function show(Comlist $comlist)
@@ -68,7 +66,6 @@ class ComlistController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Comlist  $comlist
      * @return \Illuminate\Http\Response
      */
     public function edit(Comlist $comlist)
@@ -79,8 +76,6 @@ class ComlistController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Comlist  $comlist
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Comlist $comlist)
@@ -91,7 +86,6 @@ class ComlistController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Comlist  $comlist
      * @return \Illuminate\Http\Response
      */
     public function destroy(Comlist $comlist)

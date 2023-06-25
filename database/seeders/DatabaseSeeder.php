@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
         $this->call([BalanceTableSeeder::class]);
         $this->call([AttendancesTableSeeder::class]);
         // $this->call([BalanceTableSeeder::class]);
-        
+
         // \App\Models\User::factory(10)->create();
 
         // \App\Models\User::factory()->create([

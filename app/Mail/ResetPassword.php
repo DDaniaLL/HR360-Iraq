@@ -12,6 +12,7 @@ class ResetPassword extends Mailable implements ShouldQueue
     use Queueable, SerializesModels;
 
     public $details;
+
     /**
      * Create a new message instance.
      *
@@ -30,7 +31,7 @@ class ResetPassword extends Mailable implements ShouldQueue
     public function build()
     {
         return $this->from('hr360@systems.nrc.no', 'HR 360')
-        ->subject('Reset Password')
-        ->markdown('emails.resetpassword');
+            ->subject('Reset Password')
+            ->markdown('emails.resetpassword');
     }
 }

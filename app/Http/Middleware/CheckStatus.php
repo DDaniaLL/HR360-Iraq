@@ -11,7 +11,6 @@ class CheckStatus
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
@@ -19,13 +18,14 @@ class CheckStatus
     {
         if (Auth::check() && Auth::user()->status == 'suspended') {
             Auth::logout();
+
+            return redirect(route('login'))->withErrors(['Account is deactivated - Contact HR']);
+        } elseif (Auth::user()->employee_number == null) {
+            Auth::logout();
+
             return redirect(route('login'))->withErrors(['Account is deactivated - Contact HR']);
         }
 
-        else if (Auth::user()->employee_number == NULL) {
-            Auth::logout();
-            return redirect(route('login'))->withErrors(['Account is deactivated - Contact HR']);
-        }
         return $next($request);
     }
 }

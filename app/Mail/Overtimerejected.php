@@ -8,10 +8,11 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
 class Overtimerejected extends Mailable implements ShouldQueue
-{ 
+{
     use Queueable, SerializesModels;
 
     public $details;
+
     /**
      * Create a new message instance.
      *
@@ -30,8 +31,8 @@ class Overtimerejected extends Mailable implements ShouldQueue
     public function build()
     {
         return $this
-        ->from('hr360@systems.nrc.no', 'HR 360')
-        ->subject('Overtime Request - Declined')
-        ->markdown('emails.overtimerejected');
+            ->from('hr360@systems.nrc.no', 'HR 360')
+            ->subject('Overtime Request - Declined')
+            ->markdown('emails.overtimerejected');
     }
 }

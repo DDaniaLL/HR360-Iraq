@@ -2,28 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\BalanceExport;
 use App\Exports\UsersExport;
 use App\Imports\UsersImport;
-use App\Exports\BalanceExport;
 use App\Models\Attendance;
 use App\Models\Balance;
 use App\Models\Leave;
 use App\Models\Leavetype;
+use App\Models\Overtime;
 use App\Models\User;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
-use App\Mail\Leave as MailLeave;
-use App\Models\Overtime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
-use PHPUnit\Framework\Constraint\IsFalse;
-
-use function PHPUnit\Framework\isFalse;
-use function PHPUnit\Framework\isNull;
 
 class UserController extends Controller
 {
@@ -36,44 +30,39 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $currentuser = Auth::user();
-        if ($currentuser->office == "NIAO")
-        {
-            $users = User::where('office','NIAO')->get();
+        if ($currentuser->office == 'NIAO') {
+            $users = User::where('office', 'NIAO')->get();
             $variablee = '';
+
+            return view('admin.users.index', ['users' => $users, 'variablee' => $variablee, 'user' => $currentuser]);
+        } elseif ($currentuser->office == 'KRAO') {
+            $users = User::where('office', 'KRAO')->get();
+            $variablee = '';
+
+            return view('admin.users.index', ['users' => $users, 'variablee' => $variablee, 'user' => $currentuser]);
+        } elseif ($currentuser->office == 'CIAO') {
+            $users = User::where('office', 'CIAO')->get();
+            $variablee = '';
+
+            return view('admin.users.index', ['users' => $users, 'variablee' => $variablee, 'user' => $currentuser]);
+        } elseif ($currentuser->office == 'SIAO') {
+            $users = User::where('office', 'SIAO')->get();
+            $variablee = '';
+
+            return view('admin.users.index', ['users' => $users, 'variablee' => $variablee, 'user' => $currentuser]);
+        } else {
+            $users = User::all()->except(1);
+            $variablee = '';
+
             return view('admin.users.index', ['users' => $users, 'variablee' => $variablee, 'user' => $currentuser]);
         }
 
-        elseif ($currentuser->office == "KRAO")
-        {
-            $users = User::where('office','KRAO')->get();
-            $variablee = '';
-            return view('admin.users.index', ['users' => $users, 'variablee' => $variablee, 'user' => $currentuser]);
-        }
-        elseif ($currentuser->office == "CIAO")
-        {
-            $users = User::where('office','CIAO')->get();
-            $variablee = '';
-            return view('admin.users.index', ['users' => $users, 'variablee' => $variablee, 'user' => $currentuser]);
-        }
-        elseif ($currentuser->office == "SIAO")
-        {
-            $users = User::where('office','SIAO')->get();
-            $variablee = '';
-            return view('admin.users.index', ['users' => $users, 'variablee' => $variablee, 'user' => $currentuser]);
-        }
-        else 
-        {
-            $users = User::all()->except(1);
-            $variablee = '';
-            return view('admin.users.index', ['users' => $users, 'variablee' => $variablee, 'user' => $currentuser]);
-        }
-  
     }
 
     public function create()
     {
         $users = User::all();
-     
+
         return view('admin.users.create', ['users' => $users]);
     }
 
@@ -92,8 +81,8 @@ class UserController extends Controller
             'office' => 'required',
             'linemanager',
             'hradmin',
-            'email'  => 'required|email|unique:users,email',
-            
+            'email' => 'required|email|unique:users,email',
+
         ]);
 
         $user = new User();
@@ -113,43 +102,35 @@ class UserController extends Controller
 
         $user->save();
 
-
-
-
-       
-
-        $year = date("Y", strtotime($user->joined_date));
-        $day = date("d", strtotime($user->joined_date));
-        $month = date("m", strtotime($user->joined_date));
+        $year = date('Y', strtotime($user->joined_date));
+        $day = date('d', strtotime($user->joined_date));
+        $month = date('m', strtotime($user->joined_date));
         $datenow = Carbon::now();
         $yearnow = $datenow->year;
 
-        if ($user->contract == "National")
-        {
+        if ($user->contract == 'National') {
             if ($year < $yearnow) {
                 $userannualleavebalance = '21';
             } else {
-    
+
                 if ($day < '15') {
                     $userannualleavebalance = (1.75 * (12 - $month + 1));
                 }
-    
+
                 if ($day >= '15') {
                     $userannualleavebalance = ((1.75 * (12 - $month)) + 0.5);
                 }
             }
-        }
-
-        else{
+        } else {
 
             if ($year < $yearnow) {
                 $userannualleavebalance = '15';
             } else {
-    
+
                 if ($day < '15') {
                     $userannualleavebalance = (1.25 * (12 - $month + 1));
                 }
-    
+
                 if ($day >= '15') {
                     $userannualleavebalance = ((1.25 * (12 - $month)) + 0.5);
                 }
@@ -161,7 +142,7 @@ class UserController extends Controller
         $leavetypes = Leavetype::all();
         foreach ($leavetypes as $leavetype) {
 
-            if ($leavetype->name == "Annual leave") {
+            if ($leavetype->name == 'Annual leave') {
                 $user->balances()->create([
 
                     'name' => $leavetype->name,
@@ -169,7 +150,7 @@ class UserController extends Controller
                     'leavetype_id' => $leavetype->id,
                 ]);
 
-            } elseif ($leavetype->name == "Annual leave - First half") {
+            } elseif ($leavetype->name == 'Annual leave - First half') {
                 $user->balances()->create([
 
                     'name' => $leavetype->name,
@@ -177,7 +158,7 @@ class UserController extends Controller
                     'leavetype_id' => $leavetype->id,
                 ]);
 
-            } elseif ($leavetype->name == "Annual leave - Second half") {
+            } elseif ($leavetype->name == 'Annual leave - Second half') {
                 $user->balances()->create([
 
                     'name' => $leavetype->name,
@@ -292,164 +273,157 @@ class UserController extends Controller
     public function show(User $user)
     {
 
-
         $hruser = Auth::user();
         // dd($hruser->office);
 
-        if ($hruser->office == "NIAO" || $hruser->office == "KRAO" || $hruser->office == "CIAO" || $hruser->office == "SIAO")
-        {
-            if ($hruser->office !== $user->office)
-            {
+        if ($hruser->office == 'NIAO' || $hruser->office == 'KRAO' || $hruser->office == 'CIAO' || $hruser->office == 'SIAO') {
+            if ($hruser->office !== $user->office) {
                 abort(403);
+            } else {
+
+                $balances = Balance::where('user_id', $user->id)->get();
+                $subsets = $balances->map(function ($balance) {
+                    return collect($balance->toArray())
+
+                        ->only(['value', 'leavetype_id'])
+                        ->all();
+                });
+                $leave1 = $subsets->firstwhere('leavetype_id', '1');
+                $balance1 = round($leave1['value'], 3);
+
+                $leave2 = $subsets->firstwhere('leavetype_id', '2');
+                $balance2 = round($leave2['value'], 3);
+
+                $leave3 = $subsets->firstwhere('leavetype_id', '3');
+                $balance3 = round($leave3['value'], 3);
+
+                // $leave4 = $subsets->firstwhere('leavetype_id', '4');
+                // $balance4 = round($leave4['value'],3);
+
+                $leave5 = $subsets->firstwhere('leavetype_id', '5');
+                $balance5 = round($leave5['value'], 3);
+
+                // $leave6 = $subsets->firstwhere('leavetype_id', '6');
+                // $balance6 = round($leave6['value'],3);
+
+                $leave7 = $subsets->firstwhere('leavetype_id', '7');
+                $balance7 = round($leave7['value'], 3);
+
+                $leave8 = $subsets->firstwhere('leavetype_id', '8');
+                $balance8 = round($leave8['value'], 3);
+
+                $leave9 = $subsets->firstwhere('leavetype_id', '9');
+                $balance9 = round($leave9['value'], 3);
+
+                $leave10 = $subsets->firstwhere('leavetype_id', '10');
+                $balance10 = round($leave10['value'], 3);
+
+                $leave11 = $subsets->firstwhere('leavetype_id', '11');
+                $balance11 = round($leave11['value'], 3);
+
+                $leave12 = $subsets->firstwhere('leavetype_id', '12');
+                $balance12 = round($leave12['value'], 3);
+
+                // $leave13 = $subsets->firstwhere('leavetype_id', '13');
+                // $balance13 = round($leave13['value'],3);
+
+                // $leave14 = $subsets->firstwhere('leavetype_id', '14');
+                // $balance14 = round($leave14['value'],3);
+
+                $leave15 = $subsets->firstwhere('leavetype_id', '15');
+                $balance15 = round($leave15['value'], 3);
+
+                // $leave16 = $subsets->firstwhere('leavetype_id', '16');
+                // $balance16 = round($leave16['value'],3);
+
+                // $leave17 = $subsets->firstwhere('leavetype_id', '17');
+                // $balance17 = round($leave17['value'],3);
+                $leave18 = $subsets->firstwhere('leavetype_id', '18');
+                $balance18 = round($leave18['value'], 3);
+
+                $leaves = Leave::where('user_id', $user->id)->get();
+                $overtimes = Overtime::where('user_id', $user->id)->get();
+
+                return view('admin.users.show', [
+                    'user' => $user,
+                    'balance1' => $balance1,
+                    'balance2' => $balance2,
+                    'balance3' => $balance3,
+                    'balance5' => $balance5,
+                    'balance7' => $balance7,
+                    'balance8' => $balance8,
+                    'balance9' => $balance9,
+                    'balance10' => $balance10,
+                    'balance11' => $balance11,
+                    'balance12' => $balance12,
+                    'balance15' => $balance15,
+                    'balance18' => $balance18,
+                    'leaves' => $leaves,
+                    'overtimes' => $overtimes,
+                ]);
+
             }
-            else{
-                
+        } else {
             $balances = Balance::where('user_id', $user->id)->get();
             $subsets = $balances->map(function ($balance) {
                 return collect($balance->toArray())
-    
+
                     ->only(['value', 'leavetype_id'])
                     ->all();
             });
             $leave1 = $subsets->firstwhere('leavetype_id', '1');
-            $balance1 = round($leave1['value'],3);
-    
-            $leave2 = $subsets->firstwhere('leavetype_id', '2');
-            $balance2 = round($leave2['value'],3);
-    
-            $leave3 = $subsets->firstwhere('leavetype_id', '3');
-            $balance3 = round($leave3['value'],3);
-    
-            // $leave4 = $subsets->firstwhere('leavetype_id', '4');
-            // $balance4 = round($leave4['value'],3);
-    
-            $leave5 = $subsets->firstwhere('leavetype_id', '5');
-            $balance5 = round($leave5['value'],3);
-    
-            // $leave6 = $subsets->firstwhere('leavetype_id', '6');
-            // $balance6 = round($leave6['value'],3);
-    
-            $leave7 = $subsets->firstwhere('leavetype_id', '7');
-            $balance7 = round($leave7['value'],3);
-    
-            $leave8 = $subsets->firstwhere('leavetype_id', '8');
-            $balance8 = round($leave8['value'],3);
-    
-            $leave9 = $subsets->firstwhere('leavetype_id', '9');
-            $balance9 = round($leave9['value'],3);
-    
-            $leave10 = $subsets->firstwhere('leavetype_id', '10');
-            $balance10 = round($leave10['value'],3);
-    
-            $leave11 = $subsets->firstwhere('leavetype_id', '11');
-            $balance11 = round($leave11['value'],3);
-    
-            $leave12 = $subsets->firstwhere('leavetype_id', '12');
-            $balance12 = round($leave12['value'],3);
-    
-            // $leave13 = $subsets->firstwhere('leavetype_id', '13');
-            // $balance13 = round($leave13['value'],3);
-    
-            // $leave14 = $subsets->firstwhere('leavetype_id', '14');
-            // $balance14 = round($leave14['value'],3);
-    
-            $leave15 = $subsets->firstwhere('leavetype_id', '15');
-            $balance15 = round($leave15['value'],3);
-    
-            // $leave16 = $subsets->firstwhere('leavetype_id', '16');
-            // $balance16 = round($leave16['value'],3);
-    
-            // $leave17 = $subsets->firstwhere('leavetype_id', '17');
-            // $balance17 = round($leave17['value'],3);
-            $leave18 = $subsets->firstwhere('leavetype_id', '18');
-            $balance18 = round($leave18['value'],3);
+            $balance1 = round($leave1['value'], 3);
 
-            $leaves = Leave::where('user_id', $user->id)->get();
-            $overtimes = Overtime::where('user_id', $user->id)->get();
-    
-            return view('admin.users.show', [
-                'user' => $user,
-                'balance1' => $balance1,
-                'balance2' => $balance2,
-                'balance3' => $balance3,
-                'balance5' => $balance5,
-                'balance7' => $balance7,
-                'balance8' => $balance8,
-                'balance9' => $balance9,
-                'balance10' => $balance10,
-                'balance11' => $balance11,
-                'balance12' => $balance12,
-                'balance15' => $balance15,
-                'balance18' => $balance18,
-                'leaves'=> $leaves,
-                'overtimes' => $overtimes,
-            ]);
-    
-            }
-        }
-
-        else
-        {
-            $balances = Balance::where('user_id', $user->id)->get();
-            $subsets = $balances->map(function ($balance) {
-                return collect($balance->toArray())
-    
-                    ->only(['value', 'leavetype_id'])
-                    ->all();
-            });
-            $leave1 = $subsets->firstwhere('leavetype_id', '1');
-            $balance1 = round($leave1['value'],3);
-    
             $leave2 = $subsets->firstwhere('leavetype_id', '2');
-            $balance2 = round($leave2['value'],3);
-    
+            $balance2 = round($leave2['value'], 3);
+
             $leave3 = $subsets->firstwhere('leavetype_id', '3');
-            $balance3 = round($leave3['value'],3);
-    
+            $balance3 = round($leave3['value'], 3);
+
             $leave4 = $subsets->firstwhere('leavetype_id', '4');
-            $balance4 = round($leave4['value'],3);
-    
+            $balance4 = round($leave4['value'], 3);
+
             $leave5 = $subsets->firstwhere('leavetype_id', '5');
-            $balance5 = round($leave5['value'],3);
-    
+            $balance5 = round($leave5['value'], 3);
+
             $leave6 = $subsets->firstwhere('leavetype_id', '6');
-            $balance6 = round($leave6['value'],3);
-    
+            $balance6 = round($leave6['value'], 3);
+
             $leave7 = $subsets->firstwhere('leavetype_id', '7');
-            $balance7 = round($leave7['value'],3);
-    
+            $balance7 = round($leave7['value'], 3);
+
             $leave8 = $subsets->firstwhere('leavetype_id', '8');
-            $balance8 = round($leave8['value'],3);
-    
+            $balance8 = round($leave8['value'], 3);
+
             $leave9 = $subsets->firstwhere('leavetype_id', '9');
-            $balance9 = round($leave9['value'],3);
-    
+            $balance9 = round($leave9['value'], 3);
+
             $leave10 = $subsets->firstwhere('leavetype_id', '10');
-            $balance10 = round($leave10['value'],3);
-    
+            $balance10 = round($leave10['value'], 3);
+
             $leave11 = $subsets->firstwhere('leavetype_id', '11');
-            $balance11 = round($leave11['value'],3);
-    
+            $balance11 = round($leave11['value'], 3);
+
             $leave12 = $subsets->firstwhere('leavetype_id', '12');
-            $balance12 = round($leave12['value'],3);
-    
+            $balance12 = round($leave12['value'], 3);
+
             // $leave13 = $subsets->firstwhere('leavetype_id', '13');
             // $balance13 = round($leave13['value'],3);
-    
+
             // $leave14 = $subsets->firstwhere('leavetype_id', '14');
             // $balance14 = round($leave14['value'],3);
-    
+
             $leave15 = $subsets->firstwhere('leavetype_id', '15');
-            $balance15 = round($leave15['value'],3);
-    
+            $balance15 = round($leave15['value'], 3);
+
             // $leave16 = $subsets->firstwhere('leavetype_id', '16');
             // $balance16 = round($leave16['value'],3);
-    
+
             // $leave17 = $subsets->firstwhere('leavetype_id', '17');
             // $balance17 = round($leave17['value'],3);
             $leave18 = $subsets->firstwhere('leavetype_id', '18');
-            $balance18 = round($leave18['value'],3);
-    
+            $balance18 = round($leave18['value'], 3);
+
             $leaves = Leave::where('user_id', $user->id)->get();
             $overtimes = Overtime::where('user_id', $user->id)->get();
 
@@ -469,12 +443,12 @@ class UserController extends Controller
                 'balance12' => $balance12,
                 'balance15' => $balance15,
                 'balance18' => $balance18,
-                'leaves'=> $leaves,
+                'leaves' => $leaves,
                 'overtimes' => $overtimes,
             ]);
-    
+
         }
-        
+
     }
 
     public function edit(User $user)
@@ -483,26 +457,20 @@ class UserController extends Controller
         $hruser = Auth::user();
         // dd($hruser->office);test
 
-        if ($hruser->office == "NIAO" || $hruser->office == "KRAO" || $hruser->office == "CIAO" || $hruser->office == "SIAO")
-        {
-            if ($hruser->office !== $user->office)
-            {
+        if ($hruser->office == 'NIAO' || $hruser->office == 'KRAO' || $hruser->office == 'CIAO' || $hruser->office == 'SIAO') {
+            if ($hruser->office !== $user->office) {
                 abort(403);
-            }
-
-            else
-            {
+            } else {
                 $userss = User::all();
                 $hruser = Auth::user();
-                return view('admin.users.edit', ['user' => $user,  'hruser'=> $hruser, 'userss' => $userss]);
-            }
-        }
 
-        else
-        {
+                return view('admin.users.edit', ['user' => $user,  'hruser' => $hruser, 'userss' => $userss]);
+            }
+        } else {
             $userss = User::all();
             $hruser = Auth::user();
-            return view('admin.users.edit', ['user' => $user,  'hruser'=> $hruser, 'userss' => $userss]);
+
+            return view('admin.users.edit', ['user' => $user,  'hruser' => $hruser, 'userss' => $userss]);
         }
 
         // $balances = Balance::where('user_id', $user->id)->get();
@@ -527,18 +495,18 @@ class UserController extends Controller
         $request->validate([
 
             'name' => 'required',
-            'employee_number' => 'required|unique:users,employee_number,' . $user->id,
+            'employee_number' => 'required|unique:users,employee_number,'.$user->id,
             // 'employee_number' => 'required',
-            'contract' ,
+            'contract',
             'birth_date',
             'position',
             'office',
             'department',
-            'grade'=> 'required',
+            'grade' => 'required',
             'joined_date' => 'required',
             'linemanager',
             'hradmin',
-            'email'  => 'required|email|unique:users,email,' .$user->id,
+            'email' => 'required|email|unique:users,email,'.$user->id,
             'password',
             // hradminrole?
             // staffrole?
@@ -554,8 +522,7 @@ class UserController extends Controller
         $user->birth_date = $request->birth_date;
         $user->contract = $request->contract;
         $user->position = $request->position;
-        if ($hruser->office == "CO-Erbil")
-        {
+        if ($hruser->office == 'CO-Erbil') {
             $user->office = $request->office;
 
         }
@@ -563,12 +530,11 @@ class UserController extends Controller
         $user->grade = $request->grade;
         $user->linemanager = $request->linemanager;
         $user->joined_date = $request->joined_date;
-        if ($hruser->superadmin == "yes")
-        {
+        if ($hruser->superadmin == 'yes') {
             $user->hradmin = $request->hradmin;
 
         }
-        
+
         $user->email = $request->email;
 
         if (isset($request->password)) {
@@ -587,53 +553,46 @@ class UserController extends Controller
         // disable the update of balances when updating user (joined date/contract) after a while (after he has at least one approved leave)
         if ($checkifuserhasleave->isEmpty() && $user->id > 208) {
 
-            $yearr = date("Y", strtotime($user->joined_date));
-            $dayy = date("d", strtotime($user->joined_date));
-            $monthh = date("m", strtotime($user->joined_date));
+            $yearr = date('Y', strtotime($user->joined_date));
+            $dayy = date('d', strtotime($user->joined_date));
+            $monthh = date('m', strtotime($user->joined_date));
             $datenoww = Carbon::now();
             $yearnoww = $datenoww->year;
             // dd($yearnoww);
 
-
-            if ($user->contract == "National")
-            {
+            if ($user->contract == 'National') {
                 if ($yearr < $yearnoww) {
                     $userannualleavebalancee = '21';
                 } else {
-    
+
                     if ($dayy < '15') {
-    
+
                         $userannualleavebalancee = (1.75 * (12 - $monthh + 1));
-    
+
                     }
-    
+
                     if ($dayy >= '15') {
                         $userannualleavebalancee = ((1.75 * (12 - $monthh)) + 0.5);
                     }
                 }
-            }
-
-            else
-            {
+            } else {
                 if ($yearr < $yearnoww) {
                     $userannualleavebalancee = '15';
                 } else {
-    
+
                     if ($dayy < '15') {
-    
+
                         $userannualleavebalancee = (1.25 * (12 - $monthh + 1));
-    
+
                     }
-    
+
                     if ($dayy >= '15') {
                         $userannualleavebalancee = ((1.25 * (12 - $monthh)) + 0.5);
                     }
                 }
-    
-            }
-            
 
-           
+            }
+
             $annualleavehalfdayy = $userannualleavebalancee * 2;
 
             // dd($userannualleavebalancee);
@@ -700,6 +659,7 @@ class UserController extends Controller
         $user->overtimes()->delete();
         $user->balances()->delete();
         $user->delete();
+
         return redirect()->route('admin.users.index');
     }
 
@@ -727,74 +687,71 @@ class UserController extends Controller
     {
 
         $hruser = Auth::user();
-        if ($hruser->superadmin !== 'yes')
-        {
+        if ($hruser->superadmin !== 'yes') {
             abort(403);
 
-        }
-        else
-        {
+        } else {
 
             $balances = Balance::where('user_id', $user->id)->get();
             $subsets = $balances->map(function ($balance) {
                 return collect($balance->toArray())
-    
+
                     ->only(['value', 'leavetype_id'])
                     ->all();
             });
             $leave1 = $subsets->firstwhere('leavetype_id', '1');
             $balance1 = $leave1['value'];
-    
+
             $leave2 = $subsets->firstwhere('leavetype_id', '2');
             $balance2 = $leave2['value'];
-    
+
             $leave3 = $subsets->firstwhere('leavetype_id', '3');
             $balance3 = $leave3['value'];
-    
+
             $leave4 = $subsets->firstwhere('leavetype_id', '4');
             $balance4 = $leave4['value'];
-    
+
             $leave5 = $subsets->firstwhere('leavetype_id', '5');
             $balance5 = $leave5['value'];
-    
+
             $leave6 = $subsets->firstwhere('leavetype_id', '6');
             $balance6 = $leave6['value'];
-    
+
             $leave7 = $subsets->firstwhere('leavetype_id', '7');
             $balance7 = $leave7['value'];
-    
+
             $leave8 = $subsets->firstwhere('leavetype_id', '8');
             $balance8 = $leave8['value'];
-    
+
             $leave9 = $subsets->firstwhere('leavetype_id', '9');
             $balance9 = $leave9['value'];
-    
+
             $leave10 = $subsets->firstwhere('leavetype_id', '10');
             $balance10 = $leave10['value'];
-    
+
             $leave11 = $subsets->firstwhere('leavetype_id', '11');
             $balance11 = $leave11['value'];
-    
+
             $leave12 = $subsets->firstwhere('leavetype_id', '12');
             $balance12 = $leave12['value'];
-    
+
             // $leave13 = $subsets->firstwhere('leavetype_id', '13');
             // $balance13 = $leave13['value'];
-    
+
             // $leave14 = $subsets->firstwhere('leavetype_id', '14');
             // $balance14 = $leave14['value'];
-    
+
             $leave15 = $subsets->firstwhere('leavetype_id', '15');
             $balance15 = $leave15['value'];
-    
+
             // $leave16 = $subsets->firstwhere('leavetype_id', '16');
             // $balance16 = $leave16['value'];
-    
+
             // $leave17 = $subsets->firstwhere('leavetype_id', '17');
             // $balance17 = $leave17['value'];
             $leave18 = $subsets->firstwhere('leavetype_id', '18');
             $balance18 = $leave18['value'];
-    
+
             return view('admin.users.balanceedit', [
                 'user' => $user,
                 'balance1' => $balance1,
@@ -813,7 +770,6 @@ class UserController extends Controller
                 'balance18' => $balance18,
             ]);
         }
-
 
     }
 
@@ -1102,51 +1058,41 @@ class UserController extends Controller
     {
 
         $hruser = Auth::user();
-        if ($hruser->office == "CO-Erbil")
-        {
-            $users= User::all()->except(1);
+        if ($hruser->office == 'CO-Erbil') {
+            $users = User::all()->except(1);
 
-        }
-        else
-        {
-        $staffwithsameoffice = User::where('office',$hruser->office)->get();
-            if (count($staffwithsameoffice))
-            {
+        } else {
+            $staffwithsameoffice = User::where('office', $hruser->office)->get();
+            if (count($staffwithsameoffice)) {
                 $hrsubsets = $staffwithsameoffice->map(function ($staffwithsameoffice) {
                     return collect($staffwithsameoffice->toArray())
                         ->only(['id'])
                         ->all();
                 });
-                $users= User::wherein('id', $hrsubsets)->get(); 
-    }
+                $users = User::wherein('id', $hrsubsets)->get();
+            }
         }
 
-        
         return Excel::download(new UsersExport($users), 'users.xlsx');
     }
-
-
-
 
     public function balanceexport(Request $request)
     {
 
         $request->validate([
-       
+
             'start_date',
             // 'end_date' => 'nullable|after_or_equal:start_date',
             // 'leavetype' => 'required',
             'name',
-           
-        ]);
 
+        ]);
 
         $hruser = Auth::user();
 
-
-        $name= $request->name;
+        $name = $request->name;
         $contract = $request->contract;
-        $start_date=$request->start_date;
+        $start_date = $request->start_date;
         // $end_date=$request->end_date;
         $office = $request->office;
         // $permission = $request->permission;
@@ -1156,42 +1102,28 @@ class UserController extends Controller
         // dd($request->name);
         // dd($leavetype);
 
-        if ($start_date == Null)
-        {
-            $start_datee = "2015-01-01";
-        }
-
-        else if ($start_date !== Null)
-        {
+        if ($start_date == null) {
+            $start_datee = '2015-01-01';
+        } elseif ($start_date !== null) {
             $start_datee = $start_date;
         }
 
-     
-
-        if ($staffstatus == Null)
-        {
-            $staffstatuse = ['active','suspended'];
-        }
-
-        else if ($staffstatus !== Null)
-        {
+        if ($staffstatus == null) {
+            $staffstatuse = ['active', 'suspended'];
+        } elseif ($staffstatus !== null) {
             $staffstatuse = $staffstatus;
         }
 
-        if ($office == Null)
-        {
-            $officee = ['CO-Erbil','NIAO','KRAO','CIAO','SIAO'];
-        }
-
-        else if ($office !== Null)
-        {
+        if ($office == null) {
+            $officee = ['CO-Erbil', 'NIAO', 'KRAO', 'CIAO', 'SIAO'];
+        } elseif ($office !== null) {
             $officee = $office;
         }
-        
+
         // if ($permission == Null)
         // {
         //     $permissione = ['yes',Null,'no'];
-            
+
         // }
 
         // else if ($permission !== Null)
@@ -1199,25 +1131,17 @@ class UserController extends Controller
         //     $permissione = $permission;
         // }
 
-
-        if ($contract == Null)
-        {
-            $contracte = ['National','International','NA'];
-        }
-
-        else if ($contract !== Null)
-        {
+        if ($contract == null) {
+            $contracte = ['National', 'International', 'NA'];
+        } elseif ($contract !== null) {
             $contracte = $contract;
         }
 
+        if ($request->name == null) {
+            if ($hruser->office == 'CO-Erbil') {
 
-        if ($request->name == null)
-        {   
-            if ($hruser->office == "CO-Erbil") {
-
-                $staffwithsameoffice = User::whereIn('office',$officee)->WhereIn('status', $staffstatuse)->get();
-                if (count($staffwithsameoffice))
-                {
+                $staffwithsameoffice = User::whereIn('office', $officee)->WhereIn('status', $staffstatuse)->get();
+                if (count($staffwithsameoffice)) {
                     $hrsubsets = $staffwithsameoffice->map(function ($staffwithsameoffice) {
                         return collect($staffwithsameoffice->toArray())
                             ->only(['id'])
@@ -1225,81 +1149,62 @@ class UserController extends Controller
                     });
                     $users = User::whereIn('id', $hrsubsets)->where([
                         ['joined_date', '>=', $start_datee],
-                
+
                     ])->WhereIn('contract', $contracte)->get();
-                    
-                }  
-                
-                
-               
+
+                }
+
+            } else {
+                $staffwithsameoffice = User::where('office', $hruser->office)->WhereIn('status', $staffstatuse)->get();
+                if (count($staffwithsameoffice)) {
+                    $hrsubsets = $staffwithsameoffice->map(function ($staffwithsameoffice) {
+                        return collect($staffwithsameoffice->toArray())
+                            ->only(['id'])
+                            ->all();
+                    });
+                    $users = User::whereIn('id', $hrsubsets)->where([
+                        ['joined_date', '>=', $start_datee],
+
+                    ])->WhereIn('contract', $contracte)->get();
+
+                }
             }
 
-            else {
-                $staffwithsameoffice = User::where('office',$hruser->office)->WhereIn('status', $staffstatuse)->get();
-            if (count($staffwithsameoffice))
-            {
-                $hrsubsets = $staffwithsameoffice->map(function ($staffwithsameoffice) {
-                    return collect($staffwithsameoffice->toArray())
+        } else {
+            $userid = User::where('name', $name)->value('id');
+
+            $users = User::where([
+
+                ['id', $userid],
+                ['joined_date', '>=', $start_datee],
+
+            ])->WhereIn('contract', $contracte)->get();
+        }
+
+        if ($linemanager !== null) {
+            $staff = User::where('linemanager', $linemanager)->get();
+            if (count($staff)) {
+                $subsets = $staff->map(function ($staff) {
+                    return collect($staff->toArray())
+
                         ->only(['id'])
                         ->all();
                 });
-                $users = User::whereIn('id', $hrsubsets)->where([
+
+                $users = User::whereIn('id', $subsets)->where([
                     ['joined_date', '>=', $start_datee],
-            
+
                 ])->WhereIn('contract', $contracte)->get();
-                
-            }       
+            } else {
+                $users = User::where([
+                    ['joined_date', '>=', $start_datee],
+
+                ])->WhereIn('contract', $contracte)->Where('status', 'nothing to show')->get();
             }
-            
-
-        }
-        else
-        {
-            $userid = User::where('name',$name)->value('id');
-        
-  
- 
-            $users = User::where([
-    
-                ['id', $userid],
-                ['joined_date', '>=', $start_datee],
-        
-    
-    
-            ])->WhereIn('contract', $contracte)->get();
-        }
-
-        if ($linemanager !== Null)
-        {
-            $staff = User::where('linemanager', $linemanager)->get();
-            if (count($staff))
-            {
-            $subsets = $staff->map(function ($staff) {
-                return collect($staff->toArray())
-
-                    ->only(['id'])
-                    ->all();
-            });
-
-            $users = User::whereIn('id', $subsets)->where([
-                ['joined_date', '>=', $start_datee],
-        
-            ])->WhereIn('contract', $contracte)->get();
-        }
-
-        else {
-            $users = User::where([
-                ['joined_date', '>=', $start_datee],
-        
-            ])->WhereIn('contract', $contracte)->Where('status', "nothing to show")->get();
-        }
-
-        
 
         }
 
         return Excel::download(new BalanceExport($users), 'balances.xlsx');
-        
 
     }
 
@@ -1307,8 +1212,8 @@ class UserController extends Controller
     {
         $file = $request->file('file');
 
-    Excel::import(new UsersImport, $request->file('file'));
-       
+        Excel::import(new UsersImport, $request->file('file'));
+
     }
 
     public function importshow()
@@ -1322,44 +1227,39 @@ class UserController extends Controller
 
         $leavetypes = Leavetype::all();
 
-        foreach ($users as $user)
-        {
+        foreach ($users as $user) {
             foreach ($leavetypes as $leavetype) {
 
-              
-                    $user->balances()->create([
-                        'name' => $leavetype->name,
-                        'value' => $leavetype->value,
-                        'leavetype_id' => $leavetype->id,
-                    ]);
-                
+                $user->balances()->create([
+                    'name' => $leavetype->name,
+                    'value' => $leavetype->value,
+                    'leavetype_id' => $leavetype->id,
+                ]);
+
             }
         }
 
         return redirect()->route('admin.users.index');
-        
-    }
 
+    }
 
     public function search(Request $request)
     {
 
         $request->validate([
-       
+
             'start_date',
             // 'end_date' => 'nullable|after_or_equal:start_date',
             // 'leavetype' => 'required',
             'name',
-           
-        ]);
 
+        ]);
 
         $hruser = Auth::user();
 
-
-        $name= $request->name;
+        $name = $request->name;
         $contract = $request->contract;
-        $start_date=$request->start_date;
+        $start_date = $request->start_date;
         // $end_date=$request->end_date;
         $office = $request->office;
         // $permission = $request->permission;
@@ -1369,42 +1269,28 @@ class UserController extends Controller
         // dd($request->name);
         // dd($leavetype);
 
-        if ($start_date == Null)
-        {
-            $start_datee = "2015-01-01";
-        }
-
-        else if ($start_date !== Null)
-        {
+        if ($start_date == null) {
+            $start_datee = '2015-01-01';
+        } elseif ($start_date !== null) {
             $start_datee = $start_date;
         }
 
-     
-
-        if ($staffstatus == Null)
-        {
-            $staffstatuse = ['active','suspended'];
-        }
-
-        else if ($staffstatus !== Null)
-        {
+        if ($staffstatus == null) {
+            $staffstatuse = ['active', 'suspended'];
+        } elseif ($staffstatus !== null) {
             $staffstatuse = $staffstatus;
         }
 
-        if ($office == Null)
-        {
-            $officee = ['CO-Erbil','NIAO','KRAO','CIAO','SIAO'];
-        }
-
-        else if ($office !== Null)
-        {
+        if ($office == null) {
+            $officee = ['CO-Erbil', 'NIAO', 'KRAO', 'CIAO', 'SIAO'];
+        } elseif ($office !== null) {
             $officee = $office;
         }
-        
+
         // if ($permission == Null)
         // {
         //     $permissione = ['yes',Null,'no'];
-            
+
         // }
 
         // else if ($permission !== Null)
@@ -1412,25 +1298,17 @@ class UserController extends Controller
         //     $permissione = $permission;
         // }
 
-
-        if ($contract == Null)
-        {
-            $contracte = ['Natioanl','International','NA'];
-        }
-
-        else if ($contract !== Null)
-        {
+        if ($contract == null) {
+            $contracte = ['Natioanl', 'International', 'NA'];
+        } elseif ($contract !== null) {
             $contracte = $contract;
         }
 
+        if ($request->name == null) {
+            if ($hruser->office == 'CO-Erbil') {
 
-        if ($request->name == null)
-        {   
-            if ($hruser->office == "CO-Erbil") {
-
-                $staffwithsameoffice = User::whereIn('office',$officee)->WhereIn('status', $staffstatuse)->get();
-                if (count($staffwithsameoffice))
-                {
+                $staffwithsameoffice = User::whereIn('office', $officee)->WhereIn('status', $staffstatuse)->get();
+                if (count($staffwithsameoffice)) {
                     $hrsubsets = $staffwithsameoffice->map(function ($staffwithsameoffice) {
                         return collect($staffwithsameoffice->toArray())
                             ->only(['id'])
@@ -1438,92 +1316,70 @@ class UserController extends Controller
                     });
                     $users = User::whereIn('id', $hrsubsets)->where([
                         ['joined_date', '>=', $start_datee],
-                
+
                     ])->WhereIn('contract', $contracte)->get();
-                    
-                }  
-                
-                
-               
+
+                }
+
+            } else {
+                $staffwithsameoffice = User::where('office', $hruser->office)->WhereIn('status', $staffstatuse)->get();
+                if (count($staffwithsameoffice)) {
+                    $hrsubsets = $staffwithsameoffice->map(function ($staffwithsameoffice) {
+                        return collect($staffwithsameoffice->toArray())
+                            ->only(['id'])
+                            ->all();
+                    });
+                    $users = User::whereIn('id', $hrsubsets)->where([
+                        ['joined_date', '>=', $start_datee],
+
+                    ])->WhereIn('contract', $contracte)->get();
+
+                }
             }
 
-            else {
-                $staffwithsameoffice = User::where('office',$hruser->office)->WhereIn('status', $staffstatuse)->get();
-            if (count($staffwithsameoffice))
-            {
-                $hrsubsets = $staffwithsameoffice->map(function ($staffwithsameoffice) {
-                    return collect($staffwithsameoffice->toArray())
+        } else {
+            $userid = User::where('name', $name)->value('id');
+
+            $users = User::where([
+
+                ['id', $userid],
+                ['joined_date', '>=', $start_datee],
+
+            ])->WhereIn('contract', $contracte)->get();
+        }
+
+        if ($linemanager !== null) {
+            $staff = User::where('linemanager', $linemanager)->get();
+            if (count($staff)) {
+                $subsets = $staff->map(function ($staff) {
+                    return collect($staff->toArray())
+
                         ->only(['id'])
                         ->all();
                 });
-                $users = User::whereIn('id', $hrsubsets)->where([
+
+                $users = User::whereIn('id', $subsets)->where([
                     ['joined_date', '>=', $start_datee],
-            
+
                 ])->WhereIn('contract', $contracte)->get();
-                
-            }       
+            } else {
+                $users = User::where([
+                    ['joined_date', '>=', $start_datee],
+
+                ])->WhereIn('contract', $contracte)->Where('status', 'nothing to show')->get();
             }
-            
-
-        }
-        else
-        {
-            $userid = User::where('name',$name)->value('id');
-        
-  
- 
-            $users = User::where([
-    
-                ['id', $userid],
-                ['joined_date', '>=', $start_datee],
-        
-    
-    
-            ])->WhereIn('contract', $contracte)->get();
-        }
-
-        if ($linemanager !== Null)
-        {
-            $staff = User::where('linemanager', $linemanager)->get();
-            if (count($staff))
-            {
-            $subsets = $staff->map(function ($staff) {
-                return collect($staff->toArray())
-
-                    ->only(['id'])
-                    ->all();
-            });
-
-            $users = User::whereIn('id', $subsets)->where([
-                ['joined_date', '>=', $start_datee],
-        
-            ])->WhereIn('contract', $contracte)->get();
-        }
-
-        else {
-            $users = User::where([
-                ['joined_date', '>=', $start_datee],
-        
-            ])->WhereIn('contract', $contracte)->Where('status', "nothing to show")->get();
-        }
-
-        
 
         }
 
         switch ($request->input('action')) {
             case 'view':
-                return view('admin.users.search', ['users' => $users, 'name'=>$name,'start_date' =>$start_datee]);
+                return view('admin.users.search', ['users' => $users, 'name' => $name, 'start_date' => $start_datee]);
                 break;
-    
+
             case 'excel':
                 return Excel::download(new UsersExport($users), 'users.xlsx');
                 break;
-            }
-        
+        }
 
-        
     }
-
-
 }

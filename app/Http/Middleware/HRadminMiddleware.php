@@ -18,7 +18,6 @@ class HRadminMiddleware
     /**
      * Create a new filter instance.
      *
-     * @param  Guard  $auth
      * @return void
      */
     public function __construct(Guard $auth)
@@ -30,12 +29,11 @@ class HRadminMiddleware
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
-        if (Auth::check() && Auth::user()->hradmin !== "yes") {
+        if (Auth::check() && Auth::user()->hradmin !== 'yes') {
             abort(403, 'Unauthorized action.');
         }
 

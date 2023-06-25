@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
@@ -174,7 +175,6 @@ class BalanceTableSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-
 
         DB::table('balances')->insert([
             'name' => 'CTO (Compensatory Time off) - hours',

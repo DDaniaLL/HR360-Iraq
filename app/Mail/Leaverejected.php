@@ -12,6 +12,7 @@ class Leaverejected extends Mailable implements ShouldQueue
     use Queueable, SerializesModels;
 
     public $details;
+
     /**
      * Create a new message instance.
      *
@@ -30,8 +31,8 @@ class Leaverejected extends Mailable implements ShouldQueue
     public function build()
     {
         return $this
-        ->from('hr360@systems.nrc.no', 'HR 360')
-        ->subject('Leave Request - Rejected')
-        ->markdown('emails.leaverejected');
+            ->from('hr360@systems.nrc.no', 'HR 360')
+            ->subject('Leave Request - Rejected')
+            ->markdown('emails.leaverejected');
     }
 }

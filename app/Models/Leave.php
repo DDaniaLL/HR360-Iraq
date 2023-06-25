@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
-use illuminate\Database\Eloquent\SoftDeletes;
 
 class Leave extends Model
 {
@@ -15,6 +15,7 @@ class Leave extends Model
     use HasFactory;
     use Notifiable;
     use SoftDeletes;
+
     // use SoftDeletes;
     protected $fillable = [
         'start_date',
@@ -23,12 +24,12 @@ class Leave extends Model
         'reason',
     ];
 
-    protected static $recordEvents = ['updated','deleted'];
+    protected static $recordEvents = ['updated', 'deleted'];
 
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['status','deleted_at', 'user.name']);
+            ->logOnly(['status', 'deleted_at', 'user.name']);
 
         // Chain fluent methods for configuration options
     }

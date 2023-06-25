@@ -3,26 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Exports\LeavesExport;
-use App\Models\Balance;
-use App\Models\Leave;
-use App\Models\Leavetype;
-use App\Models\User;
-use Carbon\Carbon;
-use DateInterval;
-use DatePeriod;
-use DateTime;
-use File;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 use App\Mail\Leave as MailLeave;
 use App\Mail\Leaveafterlm as MailLeaveafterlm;
 use App\Mail\Leavefinal as MailLeavefinal;
 use App\Mail\Leaverejected as MailLeaverejected;
-use Maatwebsite\Excel\Facades\Excel;
+use App\Models\Balance;
+use App\Models\Leave;
+use App\Models\Leavetype;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Carbon\CarbonPeriod;
-use Illuminate\Support\Facades\Crypt;
+use DateInterval;
+use DatePeriod;
+use DateTime;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LeaveController extends Controller
 {
@@ -36,6 +34,7 @@ class LeaveController extends Controller
         $user = Auth::user();
         $leave = Leave::where('user_id', $user->id)->get();
         $variable = '';
+
         return view('leaves.index', ['leaves' => $leave, 'variable' => $variable]);
     }
 
@@ -48,18 +47,16 @@ class LeaveController extends Controller
     {
 
         $user = Auth::user();
-        $leavesIds = [1,13,14,15,16,17];
-        if ($user->contract == "International")
-        {
+        $leavesIds = [1, 13, 14, 15, 16, 17];
+        if ($user->contract == 'International') {
             $leavetypes = Leavetype::whereIn('id', $leavesIds)->get();
+
             return view('leaves.create', ['leavetypes' => $leavetypes]);
 
-        }
+        } else {
 
-        else
-        {
-            
             $leavetypes = Leavetype::all();
+
             return view('leaves.create', ['leavetypes' => $leavetypes]);
         }
     }
@@ -67,7 +64,6 @@ class LeaveController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -82,7 +78,7 @@ class LeaveController extends Controller
             $subsets = $balances->map(function ($balance) {
                 return collect($balance->toArray())
 
-                    ->only(['value', 'leavetype_id'])  
+                    ->only(['value', 'leavetype_id'])
                     ->all();
             });
             $final = $subsets->firstwhere('leavetype_id', '1');
@@ -120,7 +116,6 @@ class LeaveController extends Controller
             $sickhalfleavebalance = $finalfinal;
 
         }
-
 
         //balance of sick leave half first and second DC (4) + (6) is from sick leave  DC (3)
         elseif ($request->leavetype_id == '4' || $request->leavetype_id == '6') {
@@ -172,19 +167,17 @@ class LeaveController extends Controller
             'reason',
             'hours' => 'nullable|numeric|max:7',
             'file' => 'nullable|mimes:jpeg,png,jpg,pdf|max:3072',
-        
+
         ],
-        [
-            'start_date.required'=> trans('leaveerror.startdatereq'), // custom message
-            'end_date.required'=> trans('leaveerror.enddatereq'), // custom message
-            'end_date.after_or_equal'=> trans('leaveerror.afterorequal'), // custom message
-            'file.mimes'=> trans('leaveerror.mimes'), // custom message
-            'file.max'=> trans('leaveerror.max'), // custom message
-            'hours.max'=> trans('leaveerror.hmax'), // custom message
-        ]
+            [
+                'start_date.required' => trans('leaveerror.startdatereq'), // custom message
+                'end_date.required' => trans('leaveerror.enddatereq'), // custom message
+                'end_date.after_or_equal' => trans('leaveerror.afterorequal'), // custom message
+                'file.mimes' => trans('leaveerror.mimes'), // custom message
+                'file.max' => trans('leaveerror.max'), // custom message
+                'hours.max' => trans('leaveerror.hmax'), // custom message
+            ]
         );
-
-
 
         $nrcholidays = [
             '2023-01-01',
@@ -207,27 +200,21 @@ class LeaveController extends Controller
             '2023-08-10',
             '2023-08-10',
             '2023-12-25',
-            
+
         ];
 
         $dateRange = CarbonPeriod::create($request->start_date, $request->end_date);
-      
+
         // $dates = $dateRange->toArray();
         $dates = array_map(fn ($date) => $date->format('Y-m-d'), iterator_to_array($dateRange));
         $datess = array_values($dates);
         // $datesonly = $dates["date"];
         // dd($datess);
 
+        $numberofmatches = count($matches = array_intersect($nrcholidays, $datess));
 
-        $numberofmatches = count($matches=array_intersect($nrcholidays,$datess));
+        $hours = $request->hours;
 
-
-        
-
-
-        
-        $hours = $request->hours ;
-        
         $fdate = $request->start_date;
         $ldate = $request->end_date;
         // $datetime1 = new DateTime($fdate);
@@ -255,7 +242,7 @@ class LeaveController extends Controller
         // total days
         $sickpercentagedays = $interval->days;
         $days = $interval->days;
-        
+
         // create an iterateable period of date (P1D equates to 1 day)
         $period = new DatePeriod($start, new DateInterval('P1D'), $end);
 
@@ -270,7 +257,6 @@ class LeaveController extends Controller
         }
 
         $dayswithoutholidays = $days - $numberofmatches;
-            
 
         // $interval = $datetime1->diff($datetime2);
         // $dayss = $interval->format('%a');
@@ -285,8 +271,6 @@ class LeaveController extends Controller
         $startdayname = Carbon::parse($fdate)->format('l');
         $enddayname = Carbon::parse($ldate)->format('l');
 
-  
-
         // Annual leave conditions
         if ($request->leavetype_id == '1') {
 
@@ -294,100 +278,91 @@ class LeaveController extends Controller
 
                 if ($dayswithoutholidays <= $currentbalance) {
 
-
                     $leavessubmitted = Leave::where([
                         ['user_id', $user->id],
                         // ['start_date', $request->start_date],
-                        ])->where(function($query) use ($request) {
-                            $query->whereBetween('start_date', [$request->start_date,$request->end_date])
-                        ->orWhereBetween('end_date', [$request->start_date,$request->end_date]);
-                })->where(function($query) {
-                            $query->where('status','Pending LM Approval')
-                                        ->orWhere('status','Pending HR Approval')
-                                        ->orWhere('status','Approved');
-                })->get();
+                    ])->where(function ($query) use ($request) {
+                        $query->whereBetween('start_date', [$request->start_date, $request->end_date])
+                            ->orWhereBetween('end_date', [$request->start_date, $request->end_date]);
+                    })->where(function ($query) {
+                        $query->where('status', 'Pending LM Approval')
+                            ->orWhere('status', 'Pending HR Approval')
+                            ->orWhere('status', 'Approved');
+                    })->get();
 
-
-                $leavessubmittedcase2 = Leave::where([
-                    ['user_id', $user->id],
-                    // ['start_date', $request->start_date],
-                    ])->where(function($query) use ($request) {
+                    $leavessubmittedcase2 = Leave::where([
+                        ['user_id', $user->id],
+                        // ['start_date', $request->start_date],
+                    ])->where(function ($query) use ($request) {
                         $query->whereRaw('"'.$request->start_date.'" between `start_date` and `end_date`')
-                        ->orwhereRaw('"'.$request->end_date.'" between `start_date` and `end_date`');       
-                 })->where(function($query) {
-                        $query->where('status','Pending LM Approval')
-                                    ->orWhere('status','Pending HR Approval')
-                                    ->orWhere('status','Approved');
-                })->get();
-
+                            ->orwhereRaw('"'.$request->end_date.'" between `start_date` and `end_date`');
+                    })->where(function ($query) {
+                        $query->where('status', 'Pending LM Approval')
+                            ->orWhere('status', 'Pending HR Approval')
+                            ->orWhere('status', 'Approved');
+                    })->get();
 
                     $counted = count($leavessubmitted);
                     $countedcase2 = count($leavessubmittedcase2);
 
-                    if($counted + $countedcase2 > 0)
-                    {
-                        return redirect()->back()->with("error", trans('leaveerror.sameday'));
-                    }
-
-                    else
-                    {                    
-                        
-                    if ($request->hasFile('file')) {
-                        $path = $request->file('file')->store('public/leaves');
-                    }
-
-                    $leave = new Leave();
-                    $leave->start_date = $request->start_date;
-                    $leave->end_date = $request->end_date;
-                    $leave->reason = $request->reason;
-                    if ($request->hasFile('file')) {
-                        $leave->path = $path;
-                    }
-                    $leave->days = $dayswithoutholidays;
-                    $leave->leavetype_id = $request->leavetype_id;
-                    $leave->user_id = auth()->user()->id;
-                    if (!isset($user->linemanager)) {
-                        $leave->status = 'Pending HR Approval';
-
+                    if ($counted + $countedcase2 > 0) {
+                        return redirect()->back()->with('error', trans('leaveerror.sameday'));
                     } else {
 
-                        $leave->status = 'Pending LM Approval';
+                        if ($request->hasFile('file')) {
+                            $path = $request->file('file')->store('public/leaves');
+                        }
 
+                        $leave = new Leave();
+                        $leave->start_date = $request->start_date;
+                        $leave->end_date = $request->end_date;
+                        $leave->reason = $request->reason;
+                        if ($request->hasFile('file')) {
+                            $leave->path = $path;
+                        }
+                        $leave->days = $dayswithoutholidays;
+                        $leave->leavetype_id = $request->leavetype_id;
+                        $leave->user_id = auth()->user()->id;
+                        if (! isset($user->linemanager)) {
+                            $leave->status = 'Pending HR Approval';
 
-                        $linemanageremail = User::where('name',$user->linemanager)->value('email');
+                        } else {
 
-                        // dd($linemanageremail);
-                        $details = [
-                            'requestername' => $user->name,
-                            'linemanagername' => $user->linemanager,
-                            'linemanageremail' => $linemanageremail,
-                            'title' => 'Leave Request Approval - '.$leave->leavetype->name,
-                            'leavetype' => $leave->leavetype->name,
-                            'startdayname' => $startdayname,
-                            'start_date' => $leave->start_date,
-                            'enddayname' => $enddayname,
-                            'end_date' =>  $leave->end_date,
-                            'days' => $leave->days,
-                            'comment' =>  $leave->reason
-                        ];
-                       
-                        Mail::to($linemanageremail)->send(new MailLeave($details));
+                            $leave->status = 'Pending LM Approval';
 
-                        
+                            $linemanageremail = User::where('name', $user->linemanager)->value('email');
+
+                            // dd($linemanageremail);
+                            $details = [
+                                'requestername' => $user->name,
+                                'linemanagername' => $user->linemanager,
+                                'linemanageremail' => $linemanageremail,
+                                'title' => 'Leave Request Approval - '.$leave->leavetype->name,
+                                'leavetype' => $leave->leavetype->name,
+                                'startdayname' => $startdayname,
+                                'start_date' => $leave->start_date,
+                                'enddayname' => $enddayname,
+                                'end_date' => $leave->end_date,
+                                'days' => $leave->days,
+                                'comment' => $leave->reason,
+                            ];
+
+                            Mail::to($linemanageremail)->send(new MailLeave($details));
+
+                        }
+
+                        $leave->save();
+                        $request->session()->flash('successMsg', trans('overtimeerror.success'));
+
+                        return redirect()->route('leaves.index');
+
                     }
-
-                    $leave->save();
-                    $request->session()->flash('successMsg',trans('overtimeerror.success')); 
-                    return redirect()->route('leaves.index');
-
-                    }
-  
 
                 } else {
-                    return redirect()->back()->with("error",trans('leaveerror.nobalance'));
+                    return redirect()->back()->with('error', trans('leaveerror.nobalance'));
                 }
             } else {
-                return redirect()->back()->with("error", trans('leaveerror.prob'));
+                return redirect()->back()->with('error', trans('leaveerror.prob'));
             }
         }
 
@@ -397,80 +372,72 @@ class LeaveController extends Controller
 
                 if ($request->hasFile('file')) {
                     $path = $request->file('file')->store('public/leaves');
+                } elseif ($request->hasFile('file') == null) {
+                    return redirect()->back()->with('error', trans('leaveerror.attachment'));
                 }
-                else if ($request->hasFile('file') == null) {
-                    return redirect()->back()->with("error",trans('leaveerror.attachment'));
-                }
-
 
                 $leavesinstances = Leave::Where([
                     ['user_id', $user->id],
-                ])->where(function($query) {
+                ])->where(function ($query) {
                     $query->where('leavetype_id', '2')
-                                ->orWhere('leavetype_id', '20')
-                                ->orWhere('leavetype_id', '21');
-        })->get();
-        $counteinstances = count($leavesinstances);
-            // dd($counteinstances);
-            if ($counteinstances > 3) {
-                return redirect()->back()->with("error",trans('leaveerror.scinstances'));
-            }
-
-            $leavessubmitted = Leave::where([
-                ['user_id', $user->id],
-                // ['start_date', $request->start_date],
-                ])->where(function($query) use ($request) {
-                    $query->whereBetween('start_date', [$request->start_date,$request->end_date])
-                ->orWhereBetween('end_date', [$request->start_date,$request->end_date]);
-        })->where(function($query) {
-                    $query->where('status','Pending LM Approval')
-                                ->orWhere('status','Pending HR Approval')
-                                ->orWhere('status','Approved');
-        })->get();
-
-
-        $leavessubmittedcase2 = Leave::where([
-            ['user_id', $user->id],
-            // ['start_date', $request->start_date],
-            ])->where(function($query) use ($request) {
-                $query->whereRaw('"'.$request->start_date.'" between `start_date` and `end_date`')
-                ->orwhereRaw('"'.$request->end_date.'" between `start_date` and `end_date`');       
-         })->where(function($query) {
-                $query->where('status','Pending LM Approval')
-                            ->orWhere('status','Pending HR Approval')
-                            ->orWhere('status','Approved');
-        })->get();
-
-
-            $counted = count($leavessubmitted);
-            $countedcase2 = count($leavessubmittedcase2);
-
-            if($counted + $countedcase2 > 0)
-            {
-                return redirect()->back()->with("error", trans('leaveerror.sameday'));
-            }
-
-                else
-                {
-
-                $leave = new Leave();
-                $leave->start_date = $request->start_date;
-                $leave->end_date = $request->end_date;
-                $leave->reason = $request->reason;
-                if ($request->hasFile('file')) {
-                    $leave->path = $path;
+                        ->orWhere('leavetype_id', '20')
+                        ->orWhere('leavetype_id', '21');
+                })->get();
+                $counteinstances = count($leavesinstances);
+                // dd($counteinstances);
+                if ($counteinstances > 3) {
+                    return redirect()->back()->with('error', trans('leaveerror.scinstances'));
                 }
 
-                $leave->days = $dayswithoutholidays;
-                $leave->leavetype_id = $request->leavetype_id;
-                $leave->user_id = auth()->user()->id;
-                if (!isset($user->linemanager)) {
-                    $leave->status = 'Pending HR Approval';
+                $leavessubmitted = Leave::where([
+                    ['user_id', $user->id],
+                    // ['start_date', $request->start_date],
+                ])->where(function ($query) use ($request) {
+                    $query->whereBetween('start_date', [$request->start_date, $request->end_date])
+                        ->orWhereBetween('end_date', [$request->start_date, $request->end_date]);
+                })->where(function ($query) {
+                    $query->where('status', 'Pending LM Approval')
+                        ->orWhere('status', 'Pending HR Approval')
+                        ->orWhere('status', 'Approved');
+                })->get();
 
+                $leavessubmittedcase2 = Leave::where([
+                    ['user_id', $user->id],
+                    // ['start_date', $request->start_date],
+                ])->where(function ($query) use ($request) {
+                    $query->whereRaw('"'.$request->start_date.'" between `start_date` and `end_date`')
+                        ->orwhereRaw('"'.$request->end_date.'" between `start_date` and `end_date`');
+                })->where(function ($query) {
+                    $query->where('status', 'Pending LM Approval')
+                        ->orWhere('status', 'Pending HR Approval')
+                        ->orWhere('status', 'Approved');
+                })->get();
+
+                $counted = count($leavessubmitted);
+                $countedcase2 = count($leavessubmittedcase2);
+
+                if ($counted + $countedcase2 > 0) {
+                    return redirect()->back()->with('error', trans('leaveerror.sameday'));
                 } else {
 
-                    $leave->status = 'Pending LM Approval';
-                    $linemanageremail = User::where('name',$user->linemanager)->value('email');
+                    $leave = new Leave();
+                    $leave->start_date = $request->start_date;
+                    $leave->end_date = $request->end_date;
+                    $leave->reason = $request->reason;
+                    if ($request->hasFile('file')) {
+                        $leave->path = $path;
+                    }
+
+                    $leave->days = $dayswithoutholidays;
+                    $leave->leavetype_id = $request->leavetype_id;
+                    $leave->user_id = auth()->user()->id;
+                    if (! isset($user->linemanager)) {
+                        $leave->status = 'Pending HR Approval';
+
+                    } else {
+
+                        $leave->status = 'Pending LM Approval';
+                        $linemanageremail = User::where('name', $user->linemanager)->value('email');
 
                         // dd($linemanageremail);
                         $details = [
@@ -482,25 +449,25 @@ class LeaveController extends Controller
                             'startdayname' => $startdayname,
                             'start_date' => $leave->start_date,
                             'enddayname' => $enddayname,
-                            'end_date' =>  $leave->end_date,
+                            'end_date' => $leave->end_date,
                             'days' => $leave->days,
-                            'comment' =>  $leave->reason
+                            'comment' => $leave->reason,
                         ];
-                       
+
                         Mail::to($linemanageremail)->send(new MailLeave($details));
+                    }
+
+                    $leave->save();
+                    // $user->notify(new EmailNotification($leave));
+                    $request->session()->flash('successMsg', trans('overtimeerror.success'));
+
+                    return redirect()->route('leaves.index');
                 }
 
-                $leave->save();
-                // $user->notify(new EmailNotification($leave));
-                $request->session()->flash('successMsg',trans('overtimeerror.success')); 
-                return redirect()->route('leaves.index');
-            }
-
             } else {
-                return redirect()->back()->with("error",trans('leaveerror.nobalance'));
+                return redirect()->back()->with('error', trans('leaveerror.nobalance'));
             }
         }
-
 
         //sick leave SC half day
         elseif ($request->leavetype_id == '20' || $request->leavetype_id == '21') {
@@ -508,36 +475,34 @@ class LeaveController extends Controller
 
                 if ($request->hasFile('file')) {
                     $path = $request->file('file')->store('public/leaves');
-                }
-                else if ($request->hasFile('file') == null) {
-                    return redirect()->back()->with("error",trans('leaveerror.attachment'));
+                } elseif ($request->hasFile('file') == null) {
+                    return redirect()->back()->with('error', trans('leaveerror.attachment'));
                 }
 
                 $leavesinstances = Leave::Where([
                     ['user_id', $user->id],
-                ])->where(function($query) {
+                ])->where(function ($query) {
                     $query->where('leavetype_id', '2')
-                                ->orWhere('leavetype_id', '20')
-                                ->orWhere('leavetype_id', '21');
-        })->get();
-        $counteinstances = count($leavesinstances);
-            // dd($counteinstances);
-            if ($counteinstances > 3) {
-                return redirect()->back()->with("error",trans('leaveerror.sixmonthserv'));
-            }
+                        ->orWhere('leavetype_id', '20')
+                        ->orWhere('leavetype_id', '21');
+                })->get();
+                $counteinstances = count($leavesinstances);
+                // dd($counteinstances);
+                if ($counteinstances > 3) {
+                    return redirect()->back()->with('error', trans('leaveerror.sixmonthserv'));
+                }
 
-            
                 $leavessubmitted = Leave::where([
                     ['user_id', $user->id],
-                    ['leavetype_id','!=', '13'],
-                    ['leavetype_id','!=', '14'],
-                    ['leavetype_id','!=', '16'],
-                    ['leavetype_id','!=', '17'],
-                    ['leavetype_id','!=', '19'],
-                    ['leavetype_id','!=', '20'],
-                    ['leavetype_id','!=', '21'],
+                    ['leavetype_id', '!=', '13'],
+                    ['leavetype_id', '!=', '14'],
+                    ['leavetype_id', '!=', '16'],
+                    ['leavetype_id', '!=', '17'],
+                    ['leavetype_id', '!=', '19'],
+                    ['leavetype_id', '!=', '20'],
+                    ['leavetype_id', '!=', '21'],
                     // ['start_date', $request->start_date],
-                    ])
+                ])
                     // ->whereBetween(
                     //     'start_date', [$request->start_date,$request->end_date]
                     // )->orWhereBetween(
@@ -547,59 +512,54 @@ class LeaveController extends Controller
                         '"'.$request->start_date.'" between `start_date` and `end_date`'
                     )->whereRaw(
                         '"'.$request->end_date.'" between `start_date` and `end_date`'
-                    )->where(function($query) {
-                        $query->where('status','Pending LM Approval')
-                                    ->orWhere('status','Pending HR Approval')
-                                    ->orWhere('status','Approved');
-            })->get();
+                    )->where(function ($query) {
+                        $query->where('status', 'Pending LM Approval')
+                            ->orWhere('status', 'Pending HR Approval')
+                            ->orWhere('status', 'Approved');
+                    })->get();
 
-// for not submitting two halfdays from same type (first or second) on the same day
-            $leavessubmittedcase2 = Leave::where([
-                ['user_id', $user->id],
-                ['leavetype_id', $request->leavetype_id],
-                // ['start_date', $request->start_date],
+                // for not submitting two halfdays from same type (first or second) on the same day
+                $leavessubmittedcase2 = Leave::where([
+                    ['user_id', $user->id],
+                    ['leavetype_id', $request->leavetype_id],
+                    // ['start_date', $request->start_date],
                 ])->whereRaw(
                     '"'.$request->start_date.'" between `start_date` and `end_date`'
                 )->whereRaw(
                     '"'.$request->end_date.'" between `start_date` and `end_date`'
-                )->where(function($query) {
-                    $query->where('status','Pending LM Approval')
-                                ->orWhere('status','Pending HR Approval')
-                                ->orWhere('status','Approved');
-        })->get();
-
+                )->where(function ($query) {
+                    $query->where('status', 'Pending LM Approval')
+                        ->orWhere('status', 'Pending HR Approval')
+                        ->orWhere('status', 'Approved');
+                })->get();
 
                 $counted = count($leavessubmitted);
                 $countedcase2 = count($leavessubmittedcase2);
 
                 // dd($counted);
 
-                if($counted + $countedcase2 > 0)
-                {
-                    return redirect()->back()->with("error", trans('leaveerror.sameday'));
-                }
-
-                else
-                {
-
-                $leave = new Leave();
-                $leave->start_date = $request->start_date;
-                $leave->end_date = $request->end_date;
-                $leave->reason = $request->reason;
-                if ($request->hasFile('file')) {
-                    $leave->path = $path;
-                }
-
-                $leave->days = '0.5';
-                $leave->leavetype_id = $request->leavetype_id;
-                $leave->user_id = auth()->user()->id;
-                if (!isset($user->linemanager)) {
-                    $leave->status = 'Pending HR Approval';
-
+                if ($counted + $countedcase2 > 0) {
+                    return redirect()->back()->with('error', trans('leaveerror.sameday'));
                 } else {
 
-                    $leave->status = 'Pending LM Approval';
-                    $linemanageremail = User::where('name',$user->linemanager)->value('email');
+                    $leave = new Leave();
+                    $leave->start_date = $request->start_date;
+                    $leave->end_date = $request->end_date;
+                    $leave->reason = $request->reason;
+                    if ($request->hasFile('file')) {
+                        $leave->path = $path;
+                    }
+
+                    $leave->days = '0.5';
+                    $leave->leavetype_id = $request->leavetype_id;
+                    $leave->user_id = auth()->user()->id;
+                    if (! isset($user->linemanager)) {
+                        $leave->status = 'Pending HR Approval';
+
+                    } else {
+
+                        $leave->status = 'Pending LM Approval';
+                        $linemanageremail = User::where('name', $user->linemanager)->value('email');
 
                         // dd($linemanageremail);
                         $details = [
@@ -611,48 +571,46 @@ class LeaveController extends Controller
                             'startdayname' => $startdayname,
                             'start_date' => $leave->start_date,
                             'enddayname' => $enddayname,
-                            'end_date' =>  $leave->end_date,
+                            'end_date' => $leave->end_date,
                             'days' => $leave->days,
-                            'comment' =>  $leave->reason
+                            'comment' => $leave->reason,
                         ];
-                       
+
                         Mail::to($linemanageremail)->send(new MailLeave($details));
+                    }
+
+                    $leave->save();
+                    // $user->notify(new EmailNotification($leave));
+                    $request->session()->flash('successMsg', trans('overtimeerror.success'));
+
+                    return redirect()->route('leaves.index');
                 }
 
-                $leave->save();
-                // $user->notify(new EmailNotification($leave));
-                $request->session()->flash('successMsg',trans('overtimeerror.success')); 
-                return redirect()->route('leaves.index');
-            }
-
             } else {
-                return redirect()->back()->with("error",trans('leaveerror.nobalance'));
+                return redirect()->back()->with('error', trans('leaveerror.nobalance'));
             }
         }
 
-
-
-         //sick leave DC half day
-         elseif ($request->leavetype_id == '4' || $request->leavetype_id == '6') {
+        //sick leave DC half day
+        elseif ($request->leavetype_id == '4' || $request->leavetype_id == '6') {
             if ($sickDChalfleavebalance >= '0.5') {
 
                 if ($request->hasFile('file')) {
                     $path = $request->file('file')->store('public/leaves');
-                }
-                else if ($request->hasFile('file') == null) {
-                    return redirect()->back()->with("error",trans('leaveerror.attachment'));
+                } elseif ($request->hasFile('file') == null) {
+                    return redirect()->back()->with('error', trans('leaveerror.attachment'));
                 }
                 $leavessubmitted = Leave::where([
                     ['user_id', $user->id],
-                    ['leavetype_id','!=', '13'],
-                    ['leavetype_id','!=', '14'],
-                    ['leavetype_id','!=', '16'],
-                    ['leavetype_id','!=', '17'],
-                    ['leavetype_id','!=', '19'],
-                    ['leavetype_id','!=', '20'],
-                    ['leavetype_id','!=', '21'],
+                    ['leavetype_id', '!=', '13'],
+                    ['leavetype_id', '!=', '14'],
+                    ['leavetype_id', '!=', '16'],
+                    ['leavetype_id', '!=', '17'],
+                    ['leavetype_id', '!=', '19'],
+                    ['leavetype_id', '!=', '20'],
+                    ['leavetype_id', '!=', '21'],
                     // ['start_date', $request->start_date],
-                    ])
+                ])
                     // ->whereBetween(
                     //     'start_date', [$request->start_date,$request->end_date]
                     // )->orWhereBetween(
@@ -662,59 +620,54 @@ class LeaveController extends Controller
                         '"'.$request->start_date.'" between `start_date` and `end_date`'
                     )->whereRaw(
                         '"'.$request->end_date.'" between `start_date` and `end_date`'
-                    )->where(function($query) {
-                        $query->where('status','Pending LM Approval')
-                                    ->orWhere('status','Pending HR Approval')
-                                    ->orWhere('status','Approved');
-            })->get();
+                    )->where(function ($query) {
+                        $query->where('status', 'Pending LM Approval')
+                            ->orWhere('status', 'Pending HR Approval')
+                            ->orWhere('status', 'Approved');
+                    })->get();
 
-// for not submitting two halfdays from same type (first or second) on the same day
-            $leavessubmittedcase2 = Leave::where([
-                ['user_id', $user->id],
-                ['leavetype_id', $request->leavetype_id],
-                // ['start_date', $request->start_date],
+                // for not submitting two halfdays from same type (first or second) on the same day
+                $leavessubmittedcase2 = Leave::where([
+                    ['user_id', $user->id],
+                    ['leavetype_id', $request->leavetype_id],
+                    // ['start_date', $request->start_date],
                 ])->whereRaw(
                     '"'.$request->start_date.'" between `start_date` and `end_date`'
                 )->whereRaw(
                     '"'.$request->end_date.'" between `start_date` and `end_date`'
-                )->where(function($query) {
-                    $query->where('status','Pending LM Approval')
-                                ->orWhere('status','Pending HR Approval')
-                                ->orWhere('status','Approved');
-        })->get();
-
+                )->where(function ($query) {
+                    $query->where('status', 'Pending LM Approval')
+                        ->orWhere('status', 'Pending HR Approval')
+                        ->orWhere('status', 'Approved');
+                })->get();
 
                 $counted = count($leavessubmitted);
                 $countedcase2 = count($leavessubmittedcase2);
 
                 // dd($counted);
 
-                if($counted + $countedcase2 > 0)
-                {
-                    return redirect()->back()->with("error", trans('leaveerror.sameday'));
-                }
-
-                else
-                {
-
-                $leave = new Leave();
-                $leave->start_date = $request->start_date;
-                $leave->end_date = $request->end_date;
-                $leave->reason = $request->reason;
-                if ($request->hasFile('file')) {
-                    $leave->path = $path;
-                }
-
-                $leave->days = '0.5';
-                $leave->leavetype_id = $request->leavetype_id;
-                $leave->user_id = auth()->user()->id;
-                if (!isset($user->linemanager)) {
-                    $leave->status = 'Pending HR Approval';
-
+                if ($counted + $countedcase2 > 0) {
+                    return redirect()->back()->with('error', trans('leaveerror.sameday'));
                 } else {
 
-                    $leave->status = 'Pending LM Approval';
-                    $linemanageremail = User::where('name',$user->linemanager)->value('email');
+                    $leave = new Leave();
+                    $leave->start_date = $request->start_date;
+                    $leave->end_date = $request->end_date;
+                    $leave->reason = $request->reason;
+                    if ($request->hasFile('file')) {
+                        $leave->path = $path;
+                    }
+
+                    $leave->days = '0.5';
+                    $leave->leavetype_id = $request->leavetype_id;
+                    $leave->user_id = auth()->user()->id;
+                    if (! isset($user->linemanager)) {
+                        $leave->status = 'Pending HR Approval';
+
+                    } else {
+
+                        $leave->status = 'Pending LM Approval';
+                        $linemanageremail = User::where('name', $user->linemanager)->value('email');
 
                         // dd($linemanageremail);
                         $details = [
@@ -726,106 +679,95 @@ class LeaveController extends Controller
                             'startdayname' => $startdayname,
                             'start_date' => $leave->start_date,
                             'enddayname' => $enddayname,
-                            'end_date' =>  $leave->end_date,
+                            'end_date' => $leave->end_date,
                             'days' => $leave->days,
-                            'comment' =>  $leave->reason
+                            'comment' => $leave->reason,
                         ];
-                       
+
                         Mail::to($linemanageremail)->send(new MailLeave($details));
+                    }
+
+                    $leave->save();
+                    // $user->notify(new EmailNotification($leave));
+                    $request->session()->flash('successMsg', trans('overtimeerror.success'));
+
+                    return redirect()->route('leaves.index');
                 }
 
-                $leave->save();
-                // $user->notify(new EmailNotification($leave));
-                $request->session()->flash('successMsg',trans('overtimeerror.success')); 
-                return redirect()->route('leaves.index');
-            }
-
             } else {
-                return redirect()->back()->with("error",trans('leaveerror.nobalance'));
+                return redirect()->back()->with('error', trans('leaveerror.nobalance'));
             }
         }
-
-
-
 
         //sick DC leave
         elseif ($request->leavetype_id == '3') {
 
-         if ($days <= $currentbalance) {
+            if ($days <= $currentbalance) {
 
                 if ($request->hasFile('file')) {
                     $path = $request->file('file')->store('public/leaves');
                 } else {
-                    return redirect()->back()->with("error",trans('leaveerror.attachment'));
+                    return redirect()->back()->with('error', trans('leaveerror.attachment'));
                 }
 
+                //     $leavessubmitted = Leave::where([
+                //         ['user_id', $user->id],
+                //         ['start_date', $request->start_date],
+                //         ])->where(function($query) {
+                //             $query->where('status','Pending LM Approval')
+                //                         ->orWhere('status','Pending HR Approval')
+                //                         ->orWhere('status','Approved');
+                // })->get();
 
-            //     $leavessubmitted = Leave::where([
-            //         ['user_id', $user->id],
-            //         ['start_date', $request->start_date],
-            //         ])->where(function($query) {
-            //             $query->where('status','Pending LM Approval')
-            //                         ->orWhere('status','Pending HR Approval')
-            //                         ->orWhere('status','Approved');
-            // })->get();
-            
-            $leavessubmitted = Leave::where([
-                ['user_id', $user->id],
-                // ['start_date', $request->start_date],
-                ])->where(function($query) use ($request) {
-                    $query->whereBetween('start_date', [$request->start_date,$request->end_date])
-                ->orWhereBetween('end_date', [$request->start_date,$request->end_date]);
-        })->where(function($query) {
-                    $query->where('status','Pending LM Approval')
-                                ->orWhere('status','Pending HR Approval')
-                                ->orWhere('status','Approved');
-        })->get();
+                $leavessubmitted = Leave::where([
+                    ['user_id', $user->id],
+                    // ['start_date', $request->start_date],
+                ])->where(function ($query) use ($request) {
+                    $query->whereBetween('start_date', [$request->start_date, $request->end_date])
+                        ->orWhereBetween('end_date', [$request->start_date, $request->end_date]);
+                })->where(function ($query) {
+                    $query->where('status', 'Pending LM Approval')
+                        ->orWhere('status', 'Pending HR Approval')
+                        ->orWhere('status', 'Approved');
+                })->get();
 
+                $leavessubmittedcase2 = Leave::where([
+                    ['user_id', $user->id],
+                    // ['start_date', $request->start_date],
+                ])->where(function ($query) use ($request) {
+                    $query->whereRaw('"'.$request->start_date.'" between `start_date` and `end_date`')
+                        ->orwhereRaw('"'.$request->end_date.'" between `start_date` and `end_date`');
+                })->where(function ($query) {
+                    $query->where('status', 'Pending LM Approval')
+                        ->orWhere('status', 'Pending HR Approval')
+                        ->orWhere('status', 'Approved');
+                })->get();
 
-        $leavessubmittedcase2 = Leave::where([
-            ['user_id', $user->id],
-            // ['start_date', $request->start_date],
-            ])->where(function($query) use ($request) {
-                $query->whereRaw('"'.$request->start_date.'" between `start_date` and `end_date`')
-                ->orwhereRaw('"'.$request->end_date.'" between `start_date` and `end_date`');       
-         })->where(function($query) {
-                $query->where('status','Pending LM Approval')
-                            ->orWhere('status','Pending HR Approval')
-                            ->orWhere('status','Approved');
-        })->get();
+                $counted = count($leavessubmitted);
+                $countedcase2 = count($leavessubmittedcase2);
 
-
-            $counted = count($leavessubmitted);
-            $countedcase2 = count($leavessubmittedcase2);
-
-            if($counted + $countedcase2 > 0)
-            {
-                return redirect()->back()->with("error", trans('leaveerror.sameday'));
-            }
-
-
-                else
-                {
-
-                
-                $leave = new Leave();
-                $leave->start_date = $request->start_date;
-                $leave->end_date = $request->end_date;
-                $leave->reason = $request->reason;
-                if ($request->hasFile('file')) {
-                    $leave->path = $path;
-                }
-
-                $leave->days = $sickpercentagedays;
-                $leave->leavetype_id = $request->leavetype_id;
-                $leave->user_id = auth()->user()->id;
-                if (!isset($user->linemanager)) {
-                    $leave->status = 'Pending HR Approval';
-
+                if ($counted + $countedcase2 > 0) {
+                    return redirect()->back()->with('error', trans('leaveerror.sameday'));
                 } else {
 
-                    $leave->status = 'Pending LM Approval';
-                    $linemanageremail = User::where('name',$user->linemanager)->value('email');
+                    $leave = new Leave();
+                    $leave->start_date = $request->start_date;
+                    $leave->end_date = $request->end_date;
+                    $leave->reason = $request->reason;
+                    if ($request->hasFile('file')) {
+                        $leave->path = $path;
+                    }
+
+                    $leave->days = $sickpercentagedays;
+                    $leave->leavetype_id = $request->leavetype_id;
+                    $leave->user_id = auth()->user()->id;
+                    if (! isset($user->linemanager)) {
+                        $leave->status = 'Pending HR Approval';
+
+                    } else {
+
+                        $leave->status = 'Pending LM Approval';
+                        $linemanageremail = User::where('name', $user->linemanager)->value('email');
 
                         // dd($linemanageremail);
                         $details = [
@@ -837,27 +779,26 @@ class LeaveController extends Controller
                             'startdayname' => $startdayname,
                             'start_date' => $leave->start_date,
                             'enddayname' => $enddayname,
-                            'end_date' =>  $leave->end_date,
+                            'end_date' => $leave->end_date,
                             'days' => $leave->days,
-                            'comment' =>  $leave->reason
+                            'comment' => $leave->reason,
                         ];
-                       
+
                         Mail::to($linemanageremail)->send(new MailLeave($details));
+                    }
+
+                    $leave->save();
+                    // $user->notify(new EmailNotification($leave));
+                    $request->session()->flash('successMsg', trans('overtimeerror.success'));
+
+                    return redirect()->route('leaves.index');
+
                 }
 
-                $leave->save();
-                // $user->notify(new EmailNotification($leave));
-                $request->session()->flash('successMsg',trans('overtimeerror.success')); 
-                return redirect()->route('leaves.index');
-
-            }
-
             } else {
-                return redirect()->back()->with("error",trans('leaveerror.nobalance'));
+                return redirect()->back()->with('error', trans('leaveerror.nobalance'));
             }
         }
-
-      
 
         // Marriage leave conditions
         elseif ($request->leavetype_id == '5') {
@@ -870,102 +811,94 @@ class LeaveController extends Controller
                         $path = $request->file('file')->store('public/leaves');
                     }
 
+                    //     $leavessubmitted = Leave::where([
+                    //         ['user_id', $user->id],
+                    //         ['start_date', $request->start_date],
+                    //         ])->where(function($query) {
+                    //             $query->where('status','Pending LM Approval')
+                    //                         ->orWhere('status','Pending HR Approval')
+                    //                         ->orWhere('status','Approved');
+                    // })->get();
 
-                //     $leavessubmitted = Leave::where([
-                //         ['user_id', $user->id],
-                //         ['start_date', $request->start_date],
-                //         ])->where(function($query) {
-                //             $query->where('status','Pending LM Approval')
-                //                         ->orWhere('status','Pending HR Approval')
-                //                         ->orWhere('status','Approved');
-                // })->get();
-    
-                $leavessubmitted = Leave::where([
-                    ['user_id', $user->id],
-                    // ['start_date', $request->start_date],
-                    ])->where(function($query) use ($request) {
-                        $query->whereBetween('start_date', [$request->start_date,$request->end_date])
-                    ->orWhereBetween('end_date', [$request->start_date,$request->end_date]);
-            })->where(function($query) {
-                        $query->where('status','Pending LM Approval')
-                                    ->orWhere('status','Pending HR Approval')
-                                    ->orWhere('status','Approved');
-            })->get();
-    
-    
-            $leavessubmittedcase2 = Leave::where([
-                ['user_id', $user->id],
-                // ['start_date', $request->start_date],
-                ])->where(function($query) use ($request) {
-                    $query->whereRaw('"'.$request->start_date.'" between `start_date` and `end_date`')
-                    ->orwhereRaw('"'.$request->end_date.'" between `start_date` and `end_date`');       
-             })->where(function($query) {
-                    $query->where('status','Pending LM Approval')
-                                ->orWhere('status','Pending HR Approval')
-                                ->orWhere('status','Approved');
-            })->get();
-    
-    
-                $counted = count($leavessubmitted);
-                $countedcase2 = count($leavessubmittedcase2);
-    
-                if($counted + $countedcase2 > 0)
-                {
-                    return redirect()->back()->with("error", trans('leaveerror.sameday'));
-                }
+                    $leavessubmitted = Leave::where([
+                        ['user_id', $user->id],
+                        // ['start_date', $request->start_date],
+                    ])->where(function ($query) use ($request) {
+                        $query->whereBetween('start_date', [$request->start_date, $request->end_date])
+                            ->orWhereBetween('end_date', [$request->start_date, $request->end_date]);
+                    })->where(function ($query) {
+                        $query->where('status', 'Pending LM Approval')
+                            ->orWhere('status', 'Pending HR Approval')
+                            ->orWhere('status', 'Approved');
+                    })->get();
 
-                    else
+                    $leavessubmittedcase2 = Leave::where([
+                        ['user_id', $user->id],
+                        // ['start_date', $request->start_date],
+                    ])->where(function ($query) use ($request) {
+                        $query->whereRaw('"'.$request->start_date.'" between `start_date` and `end_date`')
+                            ->orwhereRaw('"'.$request->end_date.'" between `start_date` and `end_date`');
+                    })->where(function ($query) {
+                        $query->where('status', 'Pending LM Approval')
+                            ->orWhere('status', 'Pending HR Approval')
+                            ->orWhere('status', 'Approved');
+                    })->get();
 
-                    {
+                    $counted = count($leavessubmitted);
+                    $countedcase2 = count($leavessubmittedcase2);
 
-                    
-                    $leave = new Leave();
-                    $leave->start_date = $request->start_date;
-                    $leave->end_date = $request->end_date;
-                    $leave->reason = $request->reason;
-                    if ($request->hasFile('file')) {
-                        $leave->path = $path;
-                    }
-
-                    $leave->days = $days;
-                    $leave->leavetype_id = $request->leavetype_id;
-                    $leave->user_id = auth()->user()->id;
-                    if (!isset($user->linemanager)) {
-                        $leave->status = 'Pending HR Approval';
-
+                    if ($counted + $countedcase2 > 0) {
+                        return redirect()->back()->with('error', trans('leaveerror.sameday'));
                     } else {
 
-                        $leave->status = 'Pending LM Approval';
-                        $linemanageremail = User::where('name',$user->linemanager)->value('email');
+                        $leave = new Leave();
+                        $leave->start_date = $request->start_date;
+                        $leave->end_date = $request->end_date;
+                        $leave->reason = $request->reason;
+                        if ($request->hasFile('file')) {
+                            $leave->path = $path;
+                        }
 
-                        // dd($linemanageremail);
-                        $details = [
-                            'requestername' => $user->name,
-                            'linemanagername' => $user->linemanager,
-                            'linemanageremail' => $linemanageremail,
-                            'title' => 'Leave Request Approval - '.$leave->leavetype->name,
-                            'leavetype' => $leave->leavetype->name,
-                            'startdayname' => $startdayname,
-                            'start_date' => $leave->start_date,
-                            'enddayname' => $enddayname,
-                            'end_date' =>  $leave->end_date,
-                            'days' => $leave->days,
-                            'comment' =>  $leave->reason
-                        ];
-                       
-                        Mail::to($linemanageremail)->send(new MailLeave($details));
-                    }
+                        $leave->days = $days;
+                        $leave->leavetype_id = $request->leavetype_id;
+                        $leave->user_id = auth()->user()->id;
+                        if (! isset($user->linemanager)) {
+                            $leave->status = 'Pending HR Approval';
 
-                    $leave->save();
-                    $request->session()->flash('successMsg',trans('overtimeerror.success')); 
-                    return redirect()->route('leaves.index');
+                        } else {
+
+                            $leave->status = 'Pending LM Approval';
+                            $linemanageremail = User::where('name', $user->linemanager)->value('email');
+
+                            // dd($linemanageremail);
+                            $details = [
+                                'requestername' => $user->name,
+                                'linemanagername' => $user->linemanager,
+                                'linemanageremail' => $linemanageremail,
+                                'title' => 'Leave Request Approval - '.$leave->leavetype->name,
+                                'leavetype' => $leave->leavetype->name,
+                                'startdayname' => $startdayname,
+                                'start_date' => $leave->start_date,
+                                'enddayname' => $enddayname,
+                                'end_date' => $leave->end_date,
+                                'days' => $leave->days,
+                                'comment' => $leave->reason,
+                            ];
+
+                            Mail::to($linemanageremail)->send(new MailLeave($details));
+                        }
+
+                        $leave->save();
+                        $request->session()->flash('successMsg', trans('overtimeerror.success'));
+
+                        return redirect()->route('leaves.index');
 
                     }
                 } else {
-                    return redirect()->back()->with("error",trans('leaveerror.nobalance'));
+                    return redirect()->back()->with('error', trans('leaveerror.nobalance'));
                 }
             } else {
-                return redirect()->back()->with("error",trans('leaveerror.sixmonthserv'));
+                return redirect()->back()->with('error', trans('leaveerror.sixmonthserv'));
             }
 
         }
@@ -981,104 +914,93 @@ class LeaveController extends Controller
                         $path = $request->file('file')->store('public/leaves');
                     }
 
+                    //     $leavessubmitted = Leave::where([
+                    //         ['user_id', $user->id],
+                    //         ['start_date', $request->start_date],
+                    //         ])->where(function($query) {
+                    //             $query->where('status','Pending LM Approval')
+                    //                         ->orWhere('status','Pending HR Approval')
+                    //                         ->orWhere('status','Approved');
+                    // })->get();
 
-                //     $leavessubmitted = Leave::where([
-                //         ['user_id', $user->id],
-                //         ['start_date', $request->start_date],
-                //         ])->where(function($query) {
-                //             $query->where('status','Pending LM Approval')
-                //                         ->orWhere('status','Pending HR Approval')
-                //                         ->orWhere('status','Approved');
-                // })->get();
-    
-                $leavessubmitted = Leave::where([
-                    ['user_id', $user->id],
-                    // ['start_date', $request->start_date],
-                    ])->where(function($query) use ($request) {
-                        $query->whereBetween('start_date', [$request->start_date,$request->end_date])
-                    ->orWhereBetween('end_date', [$request->start_date,$request->end_date]);
-            })->where(function($query) {
-                        $query->where('status','Pending LM Approval')
-                                    ->orWhere('status','Pending HR Approval')
-                                    ->orWhere('status','Approved');
-            })->get();
-    
-    
-            $leavessubmittedcase2 = Leave::where([
-                ['user_id', $user->id],
-                // ['start_date', $request->start_date],
-                ])->where(function($query) use ($request) {
-                    $query->whereRaw('"'.$request->start_date.'" between `start_date` and `end_date`')
-                    ->orwhereRaw('"'.$request->end_date.'" between `start_date` and `end_date`');       
-             })->where(function($query) {
-                    $query->where('status','Pending LM Approval')
-                                ->orWhere('status','Pending HR Approval')
-                                ->orWhere('status','Approved');
-            })->get();
-    
-    
-                $counted = count($leavessubmitted);
-                $countedcase2 = count($leavessubmittedcase2);
-    
-                if($counted + $countedcase2 > 0)
-                {
-                    return redirect()->back()->with("error", trans('leaveerror.sameday'));
-                }
+                    $leavessubmitted = Leave::where([
+                        ['user_id', $user->id],
+                        // ['start_date', $request->start_date],
+                    ])->where(function ($query) use ($request) {
+                        $query->whereBetween('start_date', [$request->start_date, $request->end_date])
+                            ->orWhereBetween('end_date', [$request->start_date, $request->end_date]);
+                    })->where(function ($query) {
+                        $query->where('status', 'Pending LM Approval')
+                            ->orWhere('status', 'Pending HR Approval')
+                            ->orWhere('status', 'Approved');
+                    })->get();
 
+                    $leavessubmittedcase2 = Leave::where([
+                        ['user_id', $user->id],
+                        // ['start_date', $request->start_date],
+                    ])->where(function ($query) use ($request) {
+                        $query->whereRaw('"'.$request->start_date.'" between `start_date` and `end_date`')
+                            ->orwhereRaw('"'.$request->end_date.'" between `start_date` and `end_date`');
+                    })->where(function ($query) {
+                        $query->where('status', 'Pending LM Approval')
+                            ->orWhere('status', 'Pending HR Approval')
+                            ->orWhere('status', 'Approved');
+                    })->get();
 
+                    $counted = count($leavessubmitted);
+                    $countedcase2 = count($leavessubmittedcase2);
 
-                    else
-
-                    {
-                    
-
-
-                    $leave = new Leave();
-                    $leave->start_date = $request->start_date;
-                    $leave->end_date = $request->end_date;
-                    $leave->reason = $request->reason;
-                    if ($request->hasFile('file')) {
-                        $leave->path = $path;
-                    }
-
-                    $leave->days = $days;
-                    $leave->leavetype_id = $request->leavetype_id;
-                    $leave->user_id = auth()->user()->id;
-                    if (!isset($user->linemanager)) {
-                        $leave->status = 'Pending HR Approval';
-
+                    if ($counted + $countedcase2 > 0) {
+                        return redirect()->back()->with('error', trans('leaveerror.sameday'));
                     } else {
 
-                        $leave->status = 'Pending LM Approval';
-                        $linemanageremail = User::where('name',$user->linemanager)->value('email');
+                        $leave = new Leave();
+                        $leave->start_date = $request->start_date;
+                        $leave->end_date = $request->end_date;
+                        $leave->reason = $request->reason;
+                        if ($request->hasFile('file')) {
+                            $leave->path = $path;
+                        }
 
-                        // dd($linemanageremail);
-                        $details = [
-                            'requestername' => $user->name,
-                            'linemanagername' => $user->linemanager,
-                            'linemanageremail' => $linemanageremail,
-                            'title' => 'Leave Request Approval - '.$leave->leavetype->name,
-                            'leavetype' => $leave->leavetype->name,
-                            'startdayname' => $startdayname,
-                            'start_date' => $leave->start_date,
-                            'enddayname' => $enddayname,
-                            'end_date' =>  $leave->end_date,
-                            'days' => $leave->days,
-                            'comment' =>  $leave->reason
-                        ];
-                       
-                        Mail::to($linemanageremail)->send(new MailLeave($details));
+                        $leave->days = $days;
+                        $leave->leavetype_id = $request->leavetype_id;
+                        $leave->user_id = auth()->user()->id;
+                        if (! isset($user->linemanager)) {
+                            $leave->status = 'Pending HR Approval';
+
+                        } else {
+
+                            $leave->status = 'Pending LM Approval';
+                            $linemanageremail = User::where('name', $user->linemanager)->value('email');
+
+                            // dd($linemanageremail);
+                            $details = [
+                                'requestername' => $user->name,
+                                'linemanagername' => $user->linemanager,
+                                'linemanageremail' => $linemanageremail,
+                                'title' => 'Leave Request Approval - '.$leave->leavetype->name,
+                                'leavetype' => $leave->leavetype->name,
+                                'startdayname' => $startdayname,
+                                'start_date' => $leave->start_date,
+                                'enddayname' => $enddayname,
+                                'end_date' => $leave->end_date,
+                                'days' => $leave->days,
+                                'comment' => $leave->reason,
+                            ];
+
+                            Mail::to($linemanageremail)->send(new MailLeave($details));
+                        }
+
+                        $leave->save();
+                        $request->session()->flash('successMsg', trans('overtimeerror.success'));
+
+                        return redirect()->route('leaves.index');
                     }
-
-                    $leave->save();
-                    $request->session()->flash('successMsg',trans('overtimeerror.success')); 
-                    return redirect()->route('leaves.index');
-                }
                 } else {
-                    return redirect()->back()->with("error",trans('leaveerror.nobalance'));
+                    return redirect()->back()->with('error', trans('leaveerror.nobalance'));
                 }
             } else {
-                return redirect()->back()->with("error",trans('leaveerror.sixmonthserv'));
+                return redirect()->back()->with('error', trans('leaveerror.sixmonthserv'));
             }
         }
 
@@ -1093,78 +1015,66 @@ class LeaveController extends Controller
                         $path = $request->file('file')->store('public/leaves');
                     }
 
+                    $leavessubmitted = Leave::where([
+                        ['user_id', $user->id],
+                        // ['start_date', $request->start_date],
+                    ])->where(function ($query) use ($request) {
+                        $query->whereBetween('start_date', [$request->start_date, $request->end_date])
+                            ->orWhereBetween('end_date', [$request->start_date, $request->end_date]);
+                    })->where(function ($query) {
+                        $query->where('status', 'Pending LM Approval')
+                            ->orWhere('status', 'Pending HR Approval')
+                            ->orWhere('status', 'Approved');
+                    })->get();
 
-      
-    
-                $leavessubmitted = Leave::where([
-                    ['user_id', $user->id],
-                    // ['start_date', $request->start_date],
-                    ])->where(function($query) use ($request) {
-                        $query->whereBetween('start_date', [$request->start_date,$request->end_date])
-                    ->orWhereBetween('end_date', [$request->start_date,$request->end_date]);
-            })->where(function($query) {
-                        $query->where('status','Pending LM Approval')
-                                    ->orWhere('status','Pending HR Approval')
-                                    ->orWhere('status','Approved');
-            })->get();
-    
-    
-            $leavessubmittedcase2 = Leave::where([
-                ['user_id', $user->id],
-                // ['start_date', $request->start_date],
-                ])->where(function($query) use ($request) {
-                    $query->whereRaw('"'.$request->start_date.'" between `start_date` and `end_date`')
-                    ->orwhereRaw('"'.$request->end_date.'" between `start_date` and `end_date`');       
-             })->where(function($query) {
-                    $query->where('status','Pending LM Approval')
-                                ->orWhere('status','Pending HR Approval')
-                                ->orWhere('status','Approved');
-            })->get();
-    
-    
-                $counted = count($leavessubmitted);
-                $countedcase2 = count($leavessubmittedcase2);
-    
-                if($counted + $countedcase2 > 0)
-                {
-                    return redirect()->back()->with("error", trans('leaveerror.sameday'));
-                }
+                    $leavessubmittedcase2 = Leave::where([
+                        ['user_id', $user->id],
+                        // ['start_date', $request->start_date],
+                    ])->where(function ($query) use ($request) {
+                        $query->whereRaw('"'.$request->start_date.'" between `start_date` and `end_date`')
+                            ->orwhereRaw('"'.$request->end_date.'" between `start_date` and `end_date`');
+                    })->where(function ($query) {
+                        $query->where('status', 'Pending LM Approval')
+                            ->orWhere('status', 'Pending HR Approval')
+                            ->orWhere('status', 'Approved');
+                    })->get();
 
+                    $counted = count($leavessubmitted);
+                    $countedcase2 = count($leavessubmittedcase2);
 
-                    else
-
-                    {
-
-
-                    
-                    $leave = new Leave();
-                    $leave->start_date = $request->start_date;
-                    $leave->end_date = $request->end_date;
-                    $leave->reason = $request->reason;
-                    if ($request->hasFile('file')) {
-                        $leave->path = $path;
-                    }
-
-                    $leave->days = $days;
-                    $leave->leavetype_id = $request->leavetype_id;
-                    $leave->user_id = auth()->user()->id;
-                    if (!isset($user->linemanager)) {
-                        $leave->status = 'Pending HR Approval';
-
+                    if ($counted + $countedcase2 > 0) {
+                        return redirect()->back()->with('error', trans('leaveerror.sameday'));
                     } else {
 
-                        $leave->status = 'Pending LM Approval';
-                    }
+                        $leave = new Leave();
+                        $leave->start_date = $request->start_date;
+                        $leave->end_date = $request->end_date;
+                        $leave->reason = $request->reason;
+                        if ($request->hasFile('file')) {
+                            $leave->path = $path;
+                        }
 
-                    $leave->save();
-                    $request->session()->flash('successMsg',trans('overtimeerror.success')); 
-                    return redirect()->route('leaves.index');
-                }
+                        $leave->days = $days;
+                        $leave->leavetype_id = $request->leavetype_id;
+                        $leave->user_id = auth()->user()->id;
+                        if (! isset($user->linemanager)) {
+                            $leave->status = 'Pending HR Approval';
+
+                        } else {
+
+                            $leave->status = 'Pending LM Approval';
+                        }
+
+                        $leave->save();
+                        $request->session()->flash('successMsg', trans('overtimeerror.success'));
+
+                        return redirect()->route('leaves.index');
+                    }
                 } else {
-                    return redirect()->back()->with("error",trans('leaveerror.nobalance'));
+                    return redirect()->back()->with('error', trans('leaveerror.nobalance'));
                 }
             } else {
-                return redirect()->back()->with("error", trans('leaveerror.fiveyearserv'));
+                return redirect()->back()->with('error', trans('leaveerror.fiveyearserv'));
             }
         }
 
@@ -1179,88 +1089,76 @@ class LeaveController extends Controller
                         $path = $request->file('file')->store('public/leaves');
                     }
 
+                    //     $leavessubmitted = Leave::where([
+                    //         ['user_id', $user->id],
+                    //         ['start_date', $request->start_date],
+                    //         ])->where(function($query) {
+                    //             $query->where('status','Pending LM Approval')
+                    //                         ->orWhere('status','Pending HR Approval')
+                    //                         ->orWhere('status','Approved');
+                    // })->get();
 
+                    $leavessubmitted = Leave::where([
+                        ['user_id', $user->id],
+                        // ['start_date', $request->start_date],
+                    ])->where(function ($query) use ($request) {
+                        $query->whereBetween('start_date', [$request->start_date, $request->end_date])
+                            ->orWhereBetween('end_date', [$request->start_date, $request->end_date]);
+                    })->where(function ($query) {
+                        $query->where('status', 'Pending LM Approval')
+                            ->orWhere('status', 'Pending HR Approval')
+                            ->orWhere('status', 'Approved');
+                    })->get();
 
+                    $leavessubmittedcase2 = Leave::where([
+                        ['user_id', $user->id],
+                        // ['start_date', $request->start_date],
+                    ])->where(function ($query) use ($request) {
+                        $query->whereRaw('"'.$request->start_date.'" between `start_date` and `end_date`')
+                            ->orwhereRaw('"'.$request->end_date.'" between `start_date` and `end_date`');
+                    })->where(function ($query) {
+                        $query->where('status', 'Pending LM Approval')
+                            ->orWhere('status', 'Pending HR Approval')
+                            ->orWhere('status', 'Approved');
+                    })->get();
 
-                    
-                //     $leavessubmitted = Leave::where([
-                //         ['user_id', $user->id],
-                //         ['start_date', $request->start_date],
-                //         ])->where(function($query) {
-                //             $query->where('status','Pending LM Approval')
-                //                         ->orWhere('status','Pending HR Approval')
-                //                         ->orWhere('status','Approved');
-                // })->get();
-                
-                $leavessubmitted = Leave::where([
-                    ['user_id', $user->id],
-                    // ['start_date', $request->start_date],
-                    ])->where(function($query) use ($request) {
-                        $query->whereBetween('start_date', [$request->start_date,$request->end_date])
-                    ->orWhereBetween('end_date', [$request->start_date,$request->end_date]);
-            })->where(function($query) {
-                        $query->where('status','Pending LM Approval')
-                                    ->orWhere('status','Pending HR Approval')
-                                    ->orWhere('status','Approved');
-            })->get();
-    
-    
-            $leavessubmittedcase2 = Leave::where([
-                ['user_id', $user->id],
-                // ['start_date', $request->start_date],
-                ])->where(function($query) use ($request) {
-                    $query->whereRaw('"'.$request->start_date.'" between `start_date` and `end_date`')
-                    ->orwhereRaw('"'.$request->end_date.'" between `start_date` and `end_date`');       
-             })->where(function($query) {
-                    $query->where('status','Pending LM Approval')
-                                ->orWhere('status','Pending HR Approval')
-                                ->orWhere('status','Approved');
-            })->get();
-    
-    
-                $counted = count($leavessubmitted);
-                $countedcase2 = count($leavessubmittedcase2);
-    
-                if($counted + $countedcase2 > 0)
-                {
-                    return redirect()->back()->with("error", trans('leaveerror.sameday'));
-                }
+                    $counted = count($leavessubmitted);
+                    $countedcase2 = count($leavessubmittedcase2);
 
-                    else
-
-                    {
-
-
-                    
-                    $leave = new Leave();
-                    $leave->start_date = $request->start_date;
-                    $leave->end_date = $request->end_date;
-                    $leave->reason = $request->reason;
-                    if ($request->hasFile('file')) {
-                        $leave->path = $path;
-                    }
-
-                    $leave->days = $days;
-                    $leave->leavetype_id = $request->leavetype_id;
-                    $leave->user_id = auth()->user()->id;
-                    if (!isset($user->linemanager)) {
-                        $leave->status = 'Pending HR Approval';
-
+                    if ($counted + $countedcase2 > 0) {
+                        return redirect()->back()->with('error', trans('leaveerror.sameday'));
                     } else {
 
-                        $leave->status = 'Pending LM Approval';
+                        $leave = new Leave();
+                        $leave->start_date = $request->start_date;
+                        $leave->end_date = $request->end_date;
+                        $leave->reason = $request->reason;
+                        if ($request->hasFile('file')) {
+                            $leave->path = $path;
+                        }
+
+                        $leave->days = $days;
+                        $leave->leavetype_id = $request->leavetype_id;
+                        $leave->user_id = auth()->user()->id;
+                        if (! isset($user->linemanager)) {
+                            $leave->status = 'Pending HR Approval';
+
+                        } else {
+
+                            $leave->status = 'Pending LM Approval';
+                        }
+
+                        $leave->save();
+                        $request->session()->flash('successMsg', trans('overtimeerror.success'));
+
+                        return redirect()->route('leaves.index');
+
                     }
-
-                    $leave->save();
-                    $request->session()->flash('successMsg',trans('overtimeerror.success')); 
-                    return redirect()->route('leaves.index');
-
-                }
                 } else {
-                    return redirect()->back()->with("error",trans('leaveerror.nobalance'));
+                    return redirect()->back()->with('error', trans('leaveerror.nobalance'));
                 }
             } else {
-                return redirect()->back()->with("error", trans('leaveerror.fiveyearserv'));
+                return redirect()->back()->with('error', trans('leaveerror.fiveyearserv'));
             }
         }
 
@@ -1268,12 +1166,10 @@ class LeaveController extends Controller
         elseif ($request->leavetype_id == '12') {
 
             if ($days <= $currentbalance) {
-              
 
-                    if ($request->hasFile('file')) {
-                        $path = $request->file('file')->store('public/leaves');
-                    }
-
+                if ($request->hasFile('file')) {
+                    $path = $request->file('file')->store('public/leaves');
+                }
 
                 //     $leavessubmitted = Leave::where([
                 //         ['user_id', $user->id],
@@ -1283,46 +1179,38 @@ class LeaveController extends Controller
                 //                         ->orWhere('status','Pending HR Approval')
                 //                         ->orWhere('status','Approved');
                 // })->get();
-    
+
                 $leavessubmitted = Leave::where([
                     ['user_id', $user->id],
                     // ['start_date', $request->start_date],
-                    ])->where(function($query) use ($request) {
-                        $query->whereBetween('start_date', [$request->start_date,$request->end_date])
-                    ->orWhereBetween('end_date', [$request->start_date,$request->end_date]);
-            })->where(function($query) {
-                        $query->where('status','Pending LM Approval')
-                                    ->orWhere('status','Pending HR Approval')
-                                    ->orWhere('status','Approved');
-            })->get();
-    
-    
-            $leavessubmittedcase2 = Leave::where([
-                ['user_id', $user->id],
-                // ['start_date', $request->start_date],
-                ])->where(function($query) use ($request) {
+                ])->where(function ($query) use ($request) {
+                    $query->whereBetween('start_date', [$request->start_date, $request->end_date])
+                        ->orWhereBetween('end_date', [$request->start_date, $request->end_date]);
+                })->where(function ($query) {
+                    $query->where('status', 'Pending LM Approval')
+                        ->orWhere('status', 'Pending HR Approval')
+                        ->orWhere('status', 'Approved');
+                })->get();
+
+                $leavessubmittedcase2 = Leave::where([
+                    ['user_id', $user->id],
+                    // ['start_date', $request->start_date],
+                ])->where(function ($query) use ($request) {
                     $query->whereRaw('"'.$request->start_date.'" between `start_date` and `end_date`')
-                    ->orwhereRaw('"'.$request->end_date.'" between `start_date` and `end_date`');       
-             })->where(function($query) {
-                    $query->where('status','Pending LM Approval')
-                                ->orWhere('status','Pending HR Approval')
-                                ->orWhere('status','Approved');
-            })->get();
-    
-    
+                        ->orwhereRaw('"'.$request->end_date.'" between `start_date` and `end_date`');
+                })->where(function ($query) {
+                    $query->where('status', 'Pending LM Approval')
+                        ->orWhere('status', 'Pending HR Approval')
+                        ->orWhere('status', 'Approved');
+                })->get();
+
                 $counted = count($leavessubmitted);
                 $countedcase2 = count($leavessubmittedcase2);
-    
-                if($counted + $countedcase2 > 0)
-                {
-                    return redirect()->back()->with("error", trans('leaveerror.sameday'));
-                }
-                    else
 
-                    {
+                if ($counted + $countedcase2 > 0) {
+                    return redirect()->back()->with('error', trans('leaveerror.sameday'));
+                } else {
 
-
-                    
                     $leave = new Leave();
                     $leave->start_date = $request->start_date;
                     $leave->end_date = $request->end_date;
@@ -1334,13 +1222,13 @@ class LeaveController extends Controller
                     $leave->days = $days;
                     $leave->leavetype_id = $request->leavetype_id;
                     $leave->user_id = auth()->user()->id;
-                    if (!isset($user->linemanager)) {
+                    if (! isset($user->linemanager)) {
                         $leave->status = 'Pending HR Approval';
 
                     } else {
 
                         $leave->status = 'Pending LM Approval';
-                        $linemanageremail = User::where('name',$user->linemanager)->value('email');
+                        $linemanageremail = User::where('name', $user->linemanager)->value('email');
 
                         // dd($linemanageremail);
                         $details = [
@@ -1352,22 +1240,22 @@ class LeaveController extends Controller
                             'startdayname' => $startdayname,
                             'start_date' => $leave->start_date,
                             'enddayname' => $enddayname,
-                            'end_date' =>  $leave->end_date,
+                            'end_date' => $leave->end_date,
                             'days' => $leave->days,
-                            'comment' =>  $leave->reason
+                            'comment' => $leave->reason,
                         ];
-                       
+
                         Mail::to($linemanageremail)->send(new MailLeave($details));
                     }
 
                     $leave->save();
-                    $request->session()->flash('successMsg',trans('overtimeerror.success')); 
+                    $request->session()->flash('successMsg', trans('overtimeerror.success'));
+
                     return redirect()->route('leaves.index');
                 }
 
-               
             } else {
-                return redirect()->back()->with("error",trans('leaveerror.nobalance'));
+                return redirect()->back()->with('error', trans('leaveerror.nobalance'));
             }
 
         }
@@ -1383,251 +1271,105 @@ class LeaveController extends Controller
                         $path = $request->file('file')->store('public/leaves');
                     }
 
+                    //     $leavessubmitted = Leave::where([
+                    //         ['user_id', $user->id],
+                    //         ['leavetype_id','!=', '13'],
+                    //         ['leavetype_id','!=', '14'],
+                    //         ['start_date', $request->start_date],
+                    //         ])->where(function($query) {
+                    //             $query->where('status','Pending LM Approval')
+                    //                         ->orWhere('status','Pending HR Approval')
+                    //                         ->orWhere('status','Approved');
+                    // })->get();
 
-                //     $leavessubmitted = Leave::where([
-                //         ['user_id', $user->id],
-                //         ['leavetype_id','!=', '13'],
-                //         ['leavetype_id','!=', '14'],
-                //         ['start_date', $request->start_date],
-                //         ])->where(function($query) {
-                //             $query->where('status','Pending LM Approval')
-                //                         ->orWhere('status','Pending HR Approval')
-                //                         ->orWhere('status','Approved');
-                // })->get();
-    
-                //     $counted = count($leavessubmitted);
+                    //     $counted = count($leavessubmitted);
 
-                //     $leavessubmittedannual = Leave::where([
-                //         ['user_id', $user->id],
-                //         ['leavetype_id', $request->leavetype_id],
-                //         ['start_date', $request->start_date],
-                //         ])->where(function($query) {
-                //             $query->where('status','Pending LM Approval')
-                //                         ->orWhere('status','Pending HR Approval')
-                //                         ->orWhere('status','Approved');
-                // })->get();
-    
-                //     $counted1 = count($leavessubmittedannual);
-    
-    
-                //     if($counted + $counted1 > 0)
-                //     {
-                //         return redirect()->back()->with("error", trans('leaveerror.sameday'));
-                //     }
-                $leavessubmitted = Leave::where([
-                    ['user_id', $user->id],
-                    ['leavetype_id','!=', '13'],
-                    ['leavetype_id','!=', '14'],
-                    ['leavetype_id','!=', '16'],
-                    ['leavetype_id','!=', '17'],
-                    ['leavetype_id','!=', '19'],
-                    ['leavetype_id','!=', '20'],
-                    ['leavetype_id','!=', '21'],
-                    // ['start_date', $request->start_date],
+                    //     $leavessubmittedannual = Leave::where([
+                    //         ['user_id', $user->id],
+                    //         ['leavetype_id', $request->leavetype_id],
+                    //         ['start_date', $request->start_date],
+                    //         ])->where(function($query) {
+                    //             $query->where('status','Pending LM Approval')
+                    //                         ->orWhere('status','Pending HR Approval')
+                    //                         ->orWhere('status','Approved');
+                    // })->get();
+
+                    //     $counted1 = count($leavessubmittedannual);
+
+                    //     if($counted + $counted1 > 0)
+                    //     {
+                    //         return redirect()->back()->with("error", trans('leaveerror.sameday'));
+                    //     }
+                    $leavessubmitted = Leave::where([
+                        ['user_id', $user->id],
+                        ['leavetype_id', '!=', '13'],
+                        ['leavetype_id', '!=', '14'],
+                        ['leavetype_id', '!=', '16'],
+                        ['leavetype_id', '!=', '17'],
+                        ['leavetype_id', '!=', '19'],
+                        ['leavetype_id', '!=', '20'],
+                        ['leavetype_id', '!=', '21'],
+                        // ['start_date', $request->start_date],
                     ])
-                    // ->whereBetween(
-                    //     'start_date', [$request->start_date,$request->end_date]
-                    // )->orWhereBetween(
-                    //     'end_date', [$request->start_date,$request->end_date]
-                    // )
-                    ->whereRaw(
+                        // ->whereBetween(
+                        //     'start_date', [$request->start_date,$request->end_date]
+                        // )->orWhereBetween(
+                        //     'end_date', [$request->start_date,$request->end_date]
+                        // )
+                        ->whereRaw(
+                            '"'.$request->start_date.'" between `start_date` and `end_date`'
+                        )->whereRaw(
+                            '"'.$request->end_date.'" between `start_date` and `end_date`'
+                        )->where(function ($query) {
+                            $query->where('status', 'Pending LM Approval')
+                                ->orWhere('status', 'Pending HR Approval')
+                                ->orWhere('status', 'Approved');
+                        })->get();
+
+                    // for not submitting two halfdays from same type (first or second) on the same day
+                    $leavessubmittedcase2 = Leave::where([
+                        ['user_id', $user->id],
+                        ['leavetype_id', $request->leavetype_id],
+                        // ['start_date', $request->start_date],
+                    ])->whereRaw(
                         '"'.$request->start_date.'" between `start_date` and `end_date`'
                     )->whereRaw(
                         '"'.$request->end_date.'" between `start_date` and `end_date`'
-                    )->where(function($query) {
-                        $query->where('status','Pending LM Approval')
-                                    ->orWhere('status','Pending HR Approval')
-                                    ->orWhere('status','Approved');
-            })->get();
+                    )->where(function ($query) {
+                        $query->where('status', 'Pending LM Approval')
+                            ->orWhere('status', 'Pending HR Approval')
+                            ->orWhere('status', 'Approved');
+                    })->get();
 
-// for not submitting two halfdays from same type (first or second) on the same day
-            $leavessubmittedcase2 = Leave::where([
-                ['user_id', $user->id],
-                ['leavetype_id', $request->leavetype_id],
-                // ['start_date', $request->start_date],
-                ])->whereRaw(
-                    '"'.$request->start_date.'" between `start_date` and `end_date`'
-                )->whereRaw(
-                    '"'.$request->end_date.'" between `start_date` and `end_date`'
-                )->where(function($query) {
-                    $query->where('status','Pending LM Approval')
-                                ->orWhere('status','Pending HR Approval')
-                                ->orWhere('status','Approved');
-        })->get();
+                    $counted = count($leavessubmitted);
+                    $countedcase2 = count($leavessubmittedcase2);
 
+                    // dd($counted);
 
-                $counted = count($leavessubmitted);
-                $countedcase2 = count($leavessubmittedcase2);
-
-                // dd($counted);
-
-                if($counted + $countedcase2 > 0)
-                {
-                    return redirect()->back()->with("error", trans('leaveerror.sameday'));
-                }
-                    else
-
-                    {
-
-
-                    
-
-                    $leave = new Leave();
-                    $leave->start_date = $request->start_date;
-                    $leave->end_date = $request->end_date;
-                    $leave->reason = $request->reason;
-                    if ($request->hasFile('file')) {
-                        $leave->path = $path;
-                    }
-
-                    $leave->days = '0.5';
-                    $leave->leavetype_id = $request->leavetype_id;
-                    $leave->user_id = auth()->user()->id;
-                    if (!isset($user->linemanager)) {
-                        $leave->status = 'Pending HR Approval';
-
+                    if ($counted + $countedcase2 > 0) {
+                        return redirect()->back()->with('error', trans('leaveerror.sameday'));
                     } else {
 
-                        $leave->status = 'Pending LM Approval';
+                        $leave = new Leave();
+                        $leave->start_date = $request->start_date;
+                        $leave->end_date = $request->end_date;
+                        $leave->reason = $request->reason;
+                        if ($request->hasFile('file')) {
+                            $leave->path = $path;
+                        }
 
-                        $linemanageremail = User::where('name',$user->linemanager)->value('email');
+                        $leave->days = '0.5';
+                        $leave->leavetype_id = $request->leavetype_id;
+                        $leave->user_id = auth()->user()->id;
+                        if (! isset($user->linemanager)) {
+                            $leave->status = 'Pending HR Approval';
 
-                        // dd($linemanageremail);
-                        $details = [
-                            'requestername' => $user->name,
-                            'linemanagername' => $user->linemanager,
-                            'linemanageremail' => $linemanageremail,
-                            'title' => 'Leave Request Approval - '.$leave->leavetype->name,
-                            'leavetype' => $leave->leavetype->name,
-                            'startdayname' => $startdayname,
-                            'start_date' => $leave->start_date,
-                            'enddayname' => $enddayname,
-                            'end_date' =>  $leave->end_date,
-                            'days' => $leave->days,
-                            'comment' =>  $leave->reason
-                        ];
-                       
-                        Mail::to($linemanageremail)->send(new MailLeave($details));
-                    }
+                        } else {
 
-                    $leave->save();
-                    $request->session()->flash('successMsg',trans('overtimeerror.success')); 
-                    return redirect()->route('leaves.index');
+                            $leave->status = 'Pending LM Approval';
 
-                }
-                } else {
-                    return redirect()->back()->with("error",trans('leaveerror.nobalance'));
-                }
-            } else {
-                return redirect()->back()->with("error", trans('leaveerror.prob'));
-            }
-        }
+                            $linemanageremail = User::where('name', $user->linemanager)->value('email');
 
-        // CTO leave hours coditions
-        elseif ($request->leavetype_id == '19') {
-
-            
-            if ($hours <= $comphalfleavebalance) {
-
-
-                
-
-                if ($request->hasFile('file')) {
-                    $path = $request->file('file')->store('public/leaves');
-                }
-
-
-            //     $leavessubmitted = Leave::where([
-            //         ['user_id', $user->id],
-            //         ['leavetype_id','!=', '13'],
-            //         ['leavetype_id','!=', '14'],
-            //         ['leavetype_id','!=', '16'],
-            //         ['leavetype_id','!=', '17'],
-            //         ['start_date', $request->start_date],
-            //         ])->where(function($query) {
-            //             $query->where('status','Pending LM Approval')
-            //                         ->orWhere('status','Pending HR Approval')
-            //                         ->orWhere('status','Approved');
-            // })->get();
-
-            //     $counted = count($leavessubmitted);
-
-
-            //     if($counted > 0)
-            //     {
-            //         return redirect()->back()->with("error", trans('leaveerror.sameday'));
-            //     }
-
-            $leavessubmitted = Leave::where([
-            ['user_id', $user->id],
-            ['leavetype_id','!=', '13'],
-            ['leavetype_id','!=', '14'],
-            ['leavetype_id','!=', '16'],
-            ['leavetype_id','!=', '17'],
-            ['leavetype_id','!=', '19'],
-            ['leavetype_id','!=', '20'],
-            ['leavetype_id','!=', '21'],
-                // ['start_date', $request->start_date],
-                ])->whereRaw(
-                        '"'.$request->start_date.'" between `start_date` and `end_date`'
-                    )->whereRaw(
-                        '"'.$request->end_date.'" between `start_date` and `end_date`'
-                    )->where(function($query) {
-                    $query->where('status','Pending LM Approval')
-                                ->orWhere('status','Pending HR Approval')
-                                ->orWhere('status','Approved');
-        })->get();
-
-
-    //     $leavessubmittedcase2 = Leave::where([
-    //         ['user_id', $user->id],
-    //         // ['start_date', $request->start_date],
-    //         ])->whereRaw(
-    //             '"'.$request->start_date.'" between `start_date` and `end_date`'
-    //         )->whereRaw(
-    //             '"'.$request->end_date.'" between `start_date` and `end_date`'
-    //         )->where(function($query) {
-    //             $query->where('status','Pending LM Approval')
-    //                         ->orWhere('status','Pending HR Approval')
-    //                         ->orWhere('status','Approved');
-    // })->get();
-
-
-            $counted = count($leavessubmitted);
-            // $countedcase2 = count($leavessubmittedcase2);
-// dd($counted);
-
-            if($counted > 0)
-            {
-                return redirect()->back()->with("error", trans('leaveerror.sameday'));
-            }
-
-                else
-
-                {
-
-
-
-                    $leave = new Leave();
-                    $leave->start_date = $request->start_date;
-                    $leave->end_date = $request->end_date;
-                    $leave->reason = $request->reason;
-                    if ($request->hasFile('file')) {
-                        $leave->path = $path;
-                    }
-    
-                    $leave->hours = $hours;
-                    $leave->days = $leave->hours / 8;
-                    $leave->leavetype_id = $request->leavetype_id;
-                    $leave->user_id = auth()->user()->id;
-                    if (!isset($user->linemanager)) {
-                        $leave->status = 'Pending HR Approval';
-    
-                    } else {
-    
-                        $leave->status = 'Pending LM Approval';
-                        $linemanageremail = User::where('name',$user->linemanager)->value('email');
-    
                             // dd($linemanageremail);
                             $details = [
                                 'requestername' => $user->name,
@@ -1638,104 +1380,117 @@ class LeaveController extends Controller
                                 'startdayname' => $startdayname,
                                 'start_date' => $leave->start_date,
                                 'enddayname' => $enddayname,
-                                'end_date' =>  $leave->end_date,
+                                'end_date' => $leave->end_date,
                                 'days' => $leave->days,
-                                'comment' =>  $leave->reason
+                                'comment' => $leave->reason,
                             ];
-                           
+
                             Mail::to($linemanageremail)->send(new MailLeave($details));
+                        }
+
+                        $leave->save();
+                        $request->session()->flash('successMsg', trans('overtimeerror.success'));
+
+                        return redirect()->route('leaves.index');
+
                     }
-    
-                    $leave->save();
-                    $request->session()->flash('successMsg',trans('overtimeerror.success')); 
-                    return redirect()->route('leaves.index');
+                } else {
+                    return redirect()->back()->with('error', trans('leaveerror.nobalance'));
                 }
-
-
             } else {
-                return redirect()->back()->with("error",trans('leaveerror.nobalance'));
+                return redirect()->back()->with('error', trans('leaveerror.prob'));
             }
-
         }
-//CTO full day
-        elseif ($request->leavetype_id == '18') {
 
-            // $days <= $currentbalance
+        // CTO leave hours coditions
+        elseif ($request->leavetype_id == '19') {
 
-            if ($days <= $currentbalance) {
+            if ($hours <= $comphalfleavebalance) {
 
                 if ($request->hasFile('file')) {
                     $path = $request->file('file')->store('public/leaves');
                 }
 
-            //     $leavessubmitted = Leave::where([
-            //         ['user_id', $user->id],
-            //         ['start_date', $request->start_date],
-            //         ])->where(function($query) {
-            //             $query->where('status','Pending LM Approval')
-            //                         ->orWhere('status','Pending HR Approval')
-            //                         ->orWhere('status','Approved');
-            // })->get();
+                //     $leavessubmitted = Leave::where([
+                //         ['user_id', $user->id],
+                //         ['leavetype_id','!=', '13'],
+                //         ['leavetype_id','!=', '14'],
+                //         ['leavetype_id','!=', '16'],
+                //         ['leavetype_id','!=', '17'],
+                //         ['start_date', $request->start_date],
+                //         ])->where(function($query) {
+                //             $query->where('status','Pending LM Approval')
+                //                         ->orWhere('status','Pending HR Approval')
+                //                         ->orWhere('status','Approved');
+                // })->get();
 
-            $leavessubmitted = Leave::where([
-                ['user_id', $user->id],
-                // ['start_date', $request->start_date],
-                ])->where(function($query) use ($request) {
-                    $query->whereBetween('start_date', [$request->start_date,$request->end_date])
-                ->orWhereBetween('end_date', [$request->start_date,$request->end_date]);
-        })->where(function($query) {
-                    $query->where('status','Pending LM Approval')
-                                ->orWhere('status','Pending HR Approval')
-                                ->orWhere('status','Approved');
-        })->get();
+                //     $counted = count($leavessubmitted);
 
+                //     if($counted > 0)
+                //     {
+                //         return redirect()->back()->with("error", trans('leaveerror.sameday'));
+                //     }
 
-        $leavessubmittedcase2 = Leave::where([
-            ['user_id', $user->id],
-            // ['start_date', $request->start_date],
-            ])->where(function($query) use ($request) {
-                $query->whereRaw('"'.$request->start_date.'" between `start_date` and `end_date`')
-                ->orwhereRaw('"'.$request->end_date.'" between `start_date` and `end_date`');       
-         })->where(function($query) {
-                $query->where('status','Pending LM Approval')
-                            ->orWhere('status','Pending HR Approval')
-                            ->orWhere('status','Approved');
-        })->get();
+                $leavessubmitted = Leave::where([
+                    ['user_id', $user->id],
+                    ['leavetype_id', '!=', '13'],
+                    ['leavetype_id', '!=', '14'],
+                    ['leavetype_id', '!=', '16'],
+                    ['leavetype_id', '!=', '17'],
+                    ['leavetype_id', '!=', '19'],
+                    ['leavetype_id', '!=', '20'],
+                    ['leavetype_id', '!=', '21'],
+                    // ['start_date', $request->start_date],
+                ])->whereRaw(
+                    '"'.$request->start_date.'" between `start_date` and `end_date`'
+                )->whereRaw(
+                    '"'.$request->end_date.'" between `start_date` and `end_date`'
+                )->where(function ($query) {
+                    $query->where('status', 'Pending LM Approval')
+                        ->orWhere('status', 'Pending HR Approval')
+                        ->orWhere('status', 'Approved');
+                })->get();
 
+                //     $leavessubmittedcase2 = Leave::where([
+                //         ['user_id', $user->id],
+                //         // ['start_date', $request->start_date],
+                //         ])->whereRaw(
+                //             '"'.$request->start_date.'" between `start_date` and `end_date`'
+                //         )->whereRaw(
+                //             '"'.$request->end_date.'" between `start_date` and `end_date`'
+                //         )->where(function($query) {
+                //             $query->where('status','Pending LM Approval')
+                //                         ->orWhere('status','Pending HR Approval')
+                //                         ->orWhere('status','Approved');
+                // })->get();
 
-            $counted = count($leavessubmitted);
-            $countedcase2 = count($leavessubmittedcase2);
+                $counted = count($leavessubmitted);
+                // $countedcase2 = count($leavessubmittedcase2);
+                // dd($counted);
 
-            if($counted + $countedcase2 > 0)
-            {
-                return redirect()->back()->with("error", trans('leaveerror.sameday'));
-            }
-
-
-                else
-
-                {
-
-
-                
-                $leave = new Leave();
-                $leave->start_date = $request->start_date;
-                $leave->end_date = $request->end_date;
-                $leave->reason = $request->reason;
-                if ($request->hasFile('file')) {
-                    $leave->path = $path;
-                }
-
-                $leave->days = $days;
-                $leave->leavetype_id = $request->leavetype_id;
-                $leave->user_id = auth()->user()->id;
-                if (!isset($user->linemanager)) {
-                    $leave->status = 'Pending HR Approval';
-
+                if ($counted > 0) {
+                    return redirect()->back()->with('error', trans('leaveerror.sameday'));
                 } else {
 
-                    $leave->status = 'Pending LM Approval';
-                    $linemanageremail = User::where('name',$user->linemanager)->value('email');
+                    $leave = new Leave();
+                    $leave->start_date = $request->start_date;
+                    $leave->end_date = $request->end_date;
+                    $leave->reason = $request->reason;
+                    if ($request->hasFile('file')) {
+                        $leave->path = $path;
+                    }
+
+                    $leave->hours = $hours;
+                    $leave->days = $leave->hours / 8;
+                    $leave->leavetype_id = $request->leavetype_id;
+                    $leave->user_id = auth()->user()->id;
+                    if (! isset($user->linemanager)) {
+                        $leave->status = 'Pending HR Approval';
+
+                    } else {
+
+                        $leave->status = 'Pending LM Approval';
+                        $linemanageremail = User::where('name', $user->linemanager)->value('email');
 
                         // dd($linemanageremail);
                         $details = [
@@ -1747,20 +1502,120 @@ class LeaveController extends Controller
                             'startdayname' => $startdayname,
                             'start_date' => $leave->start_date,
                             'enddayname' => $enddayname,
-                            'end_date' =>  $leave->end_date,
+                            'end_date' => $leave->end_date,
                             'days' => $leave->days,
-                            'comment' =>  $leave->reason
+                            'comment' => $leave->reason,
                         ];
-                       
+
                         Mail::to($linemanageremail)->send(new MailLeave($details));
+                    }
+
+                    $leave->save();
+                    $request->session()->flash('successMsg', trans('overtimeerror.success'));
+
+                    return redirect()->route('leaves.index');
                 }
 
-                $leave->save();
-                $request->session()->flash('successMsg',trans('overtimeerror.success')); 
-                return redirect()->route('leaves.index');
-            }
             } else {
-                return redirect()->back()->with("error",trans('leaveerror.nobalance'));
+                return redirect()->back()->with('error', trans('leaveerror.nobalance'));
+            }
+
+        }
+        //CTO full day
+        elseif ($request->leavetype_id == '18') {
+
+            // $days <= $currentbalance
+
+            if ($days <= $currentbalance) {
+
+                if ($request->hasFile('file')) {
+                    $path = $request->file('file')->store('public/leaves');
+                }
+
+                //     $leavessubmitted = Leave::where([
+                //         ['user_id', $user->id],
+                //         ['start_date', $request->start_date],
+                //         ])->where(function($query) {
+                //             $query->where('status','Pending LM Approval')
+                //                         ->orWhere('status','Pending HR Approval')
+                //                         ->orWhere('status','Approved');
+                // })->get();
+
+                $leavessubmitted = Leave::where([
+                    ['user_id', $user->id],
+                    // ['start_date', $request->start_date],
+                ])->where(function ($query) use ($request) {
+                    $query->whereBetween('start_date', [$request->start_date, $request->end_date])
+                        ->orWhereBetween('end_date', [$request->start_date, $request->end_date]);
+                })->where(function ($query) {
+                    $query->where('status', 'Pending LM Approval')
+                        ->orWhere('status', 'Pending HR Approval')
+                        ->orWhere('status', 'Approved');
+                })->get();
+
+                $leavessubmittedcase2 = Leave::where([
+                    ['user_id', $user->id],
+                    // ['start_date', $request->start_date],
+                ])->where(function ($query) use ($request) {
+                    $query->whereRaw('"'.$request->start_date.'" between `start_date` and `end_date`')
+                        ->orwhereRaw('"'.$request->end_date.'" between `start_date` and `end_date`');
+                })->where(function ($query) {
+                    $query->where('status', 'Pending LM Approval')
+                        ->orWhere('status', 'Pending HR Approval')
+                        ->orWhere('status', 'Approved');
+                })->get();
+
+                $counted = count($leavessubmitted);
+                $countedcase2 = count($leavessubmittedcase2);
+
+                if ($counted + $countedcase2 > 0) {
+                    return redirect()->back()->with('error', trans('leaveerror.sameday'));
+                } else {
+
+                    $leave = new Leave();
+                    $leave->start_date = $request->start_date;
+                    $leave->end_date = $request->end_date;
+                    $leave->reason = $request->reason;
+                    if ($request->hasFile('file')) {
+                        $leave->path = $path;
+                    }
+
+                    $leave->days = $days;
+                    $leave->leavetype_id = $request->leavetype_id;
+                    $leave->user_id = auth()->user()->id;
+                    if (! isset($user->linemanager)) {
+                        $leave->status = 'Pending HR Approval';
+
+                    } else {
+
+                        $leave->status = 'Pending LM Approval';
+                        $linemanageremail = User::where('name', $user->linemanager)->value('email');
+
+                        // dd($linemanageremail);
+                        $details = [
+                            'requestername' => $user->name,
+                            'linemanagername' => $user->linemanager,
+                            'linemanageremail' => $linemanageremail,
+                            'title' => 'Leave Request Approval - '.$leave->leavetype->name,
+                            'leavetype' => $leave->leavetype->name,
+                            'startdayname' => $startdayname,
+                            'start_date' => $leave->start_date,
+                            'enddayname' => $enddayname,
+                            'end_date' => $leave->end_date,
+                            'days' => $leave->days,
+                            'comment' => $leave->reason,
+                        ];
+
+                        Mail::to($linemanageremail)->send(new MailLeave($details));
+                    }
+
+                    $leave->save();
+                    $request->session()->flash('successMsg', trans('overtimeerror.success'));
+
+                    return redirect()->route('leaves.index');
+                }
+            } else {
+                return redirect()->back()->with('error', trans('leaveerror.nobalance'));
             }
 
         }
@@ -1776,102 +1631,95 @@ class LeaveController extends Controller
                         $path = $request->file('file')->store('public/leaves');
                     }
 
-                //     $leavessubmitted = Leave::where([
-                //         ['user_id', $user->id],
-                //         ['start_date', $request->start_date],
-                //         ])->where(function($query) {
-                //             $query->where('status','Pending LM Approval')
-                //                         ->orWhere('status','Pending HR Approval')
-                //                         ->orWhere('status','Approved');
-                // })->get();
-    
-                $leavessubmitted = Leave::where([
-                    ['user_id', $user->id],
-                    // ['start_date', $request->start_date],
-                    ])->where(function($query) use ($request) {
-                        $query->whereBetween('start_date', [$request->start_date,$request->end_date])
-                    ->orWhereBetween('end_date', [$request->start_date,$request->end_date]);
-            })->where(function($query) {
-                        $query->where('status','Pending LM Approval')
-                                    ->orWhere('status','Pending HR Approval')
-                                    ->orWhere('status','Approved');
-            })->get();
-    
-    
-            $leavessubmittedcase2 = Leave::where([
-                ['user_id', $user->id],
-                // ['start_date', $request->start_date],
-                ])->where(function($query) use ($request) {
-                    $query->whereRaw('"'.$request->start_date.'" between `start_date` and `end_date`')
-                    ->orwhereRaw('"'.$request->end_date.'" between `start_date` and `end_date`');       
-             })->where(function($query) {
-                    $query->where('status','Pending LM Approval')
-                                ->orWhere('status','Pending HR Approval')
-                                ->orWhere('status','Approved');
-            })->get();
-    
-    
-                $counted = count($leavessubmitted);
-                $countedcase2 = count($leavessubmittedcase2);
-    
-                if($counted + $countedcase2 > 0)
-                {
-                    return redirect()->back()->with("error", trans('leaveerror.sameday'));
-                }
+                    //     $leavessubmitted = Leave::where([
+                    //         ['user_id', $user->id],
+                    //         ['start_date', $request->start_date],
+                    //         ])->where(function($query) {
+                    //             $query->where('status','Pending LM Approval')
+                    //                         ->orWhere('status','Pending HR Approval')
+                    //                         ->orWhere('status','Approved');
+                    // })->get();
 
-                    else
-                    {
+                    $leavessubmitted = Leave::where([
+                        ['user_id', $user->id],
+                        // ['start_date', $request->start_date],
+                    ])->where(function ($query) use ($request) {
+                        $query->whereBetween('start_date', [$request->start_date, $request->end_date])
+                            ->orWhereBetween('end_date', [$request->start_date, $request->end_date]);
+                    })->where(function ($query) {
+                        $query->where('status', 'Pending LM Approval')
+                            ->orWhere('status', 'Pending HR Approval')
+                            ->orWhere('status', 'Approved');
+                    })->get();
 
+                    $leavessubmittedcase2 = Leave::where([
+                        ['user_id', $user->id],
+                        // ['start_date', $request->start_date],
+                    ])->where(function ($query) use ($request) {
+                        $query->whereRaw('"'.$request->start_date.'" between `start_date` and `end_date`')
+                            ->orwhereRaw('"'.$request->end_date.'" between `start_date` and `end_date`');
+                    })->where(function ($query) {
+                        $query->where('status', 'Pending LM Approval')
+                            ->orWhere('status', 'Pending HR Approval')
+                            ->orWhere('status', 'Approved');
+                    })->get();
 
-                  
-                    $leave = new Leave();
-                    $leave->start_date = $request->start_date;
-                    $leave->end_date = $request->end_date;
-                    $leave->reason = $request->reason;
-                    if ($request->hasFile('file')) {
-                        $leave->path = $path;
-                    }
+                    $counted = count($leavessubmitted);
+                    $countedcase2 = count($leavessubmittedcase2);
 
-                    $leave->days = $days;
-                    $leave->leavetype_id = $request->leavetype_id;
-                    $leave->user_id = auth()->user()->id;
-                    if (!isset($user->linemanager)) {
-                        $leave->status = 'Pending HR Approval';
-
+                    if ($counted + $countedcase2 > 0) {
+                        return redirect()->back()->with('error', trans('leaveerror.sameday'));
                     } else {
 
-                        $leave->status = 'Pending LM Approval';
+                        $leave = new Leave();
+                        $leave->start_date = $request->start_date;
+                        $leave->end_date = $request->end_date;
+                        $leave->reason = $request->reason;
+                        if ($request->hasFile('file')) {
+                            $leave->path = $path;
+                        }
 
-                        $linemanageremail = User::where('name',$user->linemanager)->value('email');
+                        $leave->days = $days;
+                        $leave->leavetype_id = $request->leavetype_id;
+                        $leave->user_id = auth()->user()->id;
+                        if (! isset($user->linemanager)) {
+                            $leave->status = 'Pending HR Approval';
 
-                        // dd($linemanageremail);
-                        $details = [
-                            'requestername' => $user->name,
-                            'linemanagername' => $user->linemanager,
-                            'linemanageremail' => $linemanageremail,
-                            'title' => 'Leave Request Approval - '.$leave->leavetype->name,
-                            'leavetype' => $leave->leavetype->name,
-                            'startdayname' => $startdayname,
-                            'start_date' => $leave->start_date,
-                            'enddayname' => $enddayname,
-                            'end_date' =>  $leave->end_date,
-                            'days' => $leave->days,
-                            'comment' =>  $leave->reason
-                        ];
-                       
-                        Mail::to($linemanageremail)->send(new MailLeave($details));
+                        } else {
+
+                            $leave->status = 'Pending LM Approval';
+
+                            $linemanageremail = User::where('name', $user->linemanager)->value('email');
+
+                            // dd($linemanageremail);
+                            $details = [
+                                'requestername' => $user->name,
+                                'linemanagername' => $user->linemanager,
+                                'linemanageremail' => $linemanageremail,
+                                'title' => 'Leave Request Approval - '.$leave->leavetype->name,
+                                'leavetype' => $leave->leavetype->name,
+                                'startdayname' => $startdayname,
+                                'start_date' => $leave->start_date,
+                                'enddayname' => $enddayname,
+                                'end_date' => $leave->end_date,
+                                'days' => $leave->days,
+                                'comment' => $leave->reason,
+                            ];
+
+                            Mail::to($linemanageremail)->send(new MailLeave($details));
+                        }
+
+                        $leave->save();
+                        $request->session()->flash('successMsg', trans('overtimeerror.success'));
+
+                        return redirect()->route('leaves.index');
+
                     }
-
-                    $leave->save();
-                    $request->session()->flash('successMsg',trans('overtimeerror.success')); 
-                    return redirect()->route('leaves.index');
-
-                }
                 } else {
-                    return redirect()->back()->with("error",trans('leaveerror.nobalance'));
+                    return redirect()->back()->with('error', trans('leaveerror.nobalance'));
                 }
             } else {
-                return redirect()->back()->with("error",trans('leaveerror.sixmonthserv'));
+                return redirect()->back()->with('error', trans('leaveerror.sixmonthserv'));
             }
 
         }
@@ -1879,15 +1727,11 @@ class LeaveController extends Controller
         //unpaid halfday
         elseif ($request->leavetype_id == '16' || $request->leavetype_id == '17') {
 
-           
+            if ($unpaidleavebalance >= '0.5') {
 
-                if ($unpaidleavebalance >= '0.5') {
-
-                    if ($request->hasFile('file')) {
-                        $path = $request->file('file')->store('public/leaves');
-                    }
-
-
+                if ($request->hasFile('file')) {
+                    $path = $request->file('file')->store('public/leaves');
+                }
 
                 //     $leavessubmitted = Leave::where([
                 //         ['user_id', $user->id],
@@ -1899,7 +1743,7 @@ class LeaveController extends Controller
                 //                         ->orWhere('status','Pending HR Approval')
                 //                         ->orWhere('status','Approved');
                 // })->get();
-    
+
                 //     $countedd = count($leavessubmitted);
 
                 //     $leavessubmittedannual = Leave::where([
@@ -1911,13 +1755,9 @@ class LeaveController extends Controller
                 //                         ->orWhere('status','Pending HR Approval')
                 //                         ->orWhere('status','Approved');
                 // })->get();
-    
+
                 //     $countedd1 = count($leavessubmittedannual);
-    
-    
-    
-    
-    
+
                 //     if($countedd + $countedd1 > 0)
                 //     {
                 //         return redirect()->back()->with("error", trans('leaveerror.sameday'));
@@ -1925,53 +1765,45 @@ class LeaveController extends Controller
 
                 $leavessubmitted = Leave::where([
                     ['user_id', $user->id],
-                    ['leavetype_id','!=', '13'],
-                    ['leavetype_id','!=', '14'],
-                    ['leavetype_id','!=', '16'],
-                    ['leavetype_id','!=', '17'],
-                    ['leavetype_id','!=', '19'],
-                    ['leavetype_id','!=', '20'],
-                    ['leavetype_id','!=', '21'],
+                    ['leavetype_id', '!=', '13'],
+                    ['leavetype_id', '!=', '14'],
+                    ['leavetype_id', '!=', '16'],
+                    ['leavetype_id', '!=', '17'],
+                    ['leavetype_id', '!=', '19'],
+                    ['leavetype_id', '!=', '20'],
+                    ['leavetype_id', '!=', '21'],
                     // ['start_date', $request->start_date],
-                    ])->whereRaw(
-                        '"'.$request->start_date.'" between `start_date` and `end_date`'
-                    )->whereRaw(
-                        '"'.$request->end_date.'" between `start_date` and `end_date`'
-                    )->where(function($query) {
-                        $query->where('status','Pending LM Approval')
-                                    ->orWhere('status','Pending HR Approval')
-                                    ->orWhere('status','Approved');
-            })->get();
-
-
-            $leavessubmittedcase2 = Leave::where([
-                ['user_id', $user->id],
-                ['leavetype_id', $request->leavetype_id],
-                // ['start_date', $request->start_date],
                 ])->whereRaw(
                     '"'.$request->start_date.'" between `start_date` and `end_date`'
                 )->whereRaw(
                     '"'.$request->end_date.'" between `start_date` and `end_date`'
-                )->where(function($query) {
-                    $query->where('status','Pending LM Approval')
-                                ->orWhere('status','Pending HR Approval')
-                                ->orWhere('status','Approved');
-        })->get();
+                )->where(function ($query) {
+                    $query->where('status', 'Pending LM Approval')
+                        ->orWhere('status', 'Pending HR Approval')
+                        ->orWhere('status', 'Approved');
+                })->get();
 
+                $leavessubmittedcase2 = Leave::where([
+                    ['user_id', $user->id],
+                    ['leavetype_id', $request->leavetype_id],
+                    // ['start_date', $request->start_date],
+                ])->whereRaw(
+                    '"'.$request->start_date.'" between `start_date` and `end_date`'
+                )->whereRaw(
+                    '"'.$request->end_date.'" between `start_date` and `end_date`'
+                )->where(function ($query) {
+                    $query->where('status', 'Pending LM Approval')
+                        ->orWhere('status', 'Pending HR Approval')
+                        ->orWhere('status', 'Approved');
+                })->get();
 
                 $counted = count($leavessubmitted);
                 $countedcase2 = count($leavessubmittedcase2);
 
-                if($counted + $countedcase2 > 0)
-                {
-                    return redirect()->back()->with("error", trans('leaveerror.sameday'));
-                }
+                if ($counted + $countedcase2 > 0) {
+                    return redirect()->back()->with('error', trans('leaveerror.sameday'));
+                } else {
 
-                    else
-                    {
-
-
-                    
                     $leave = new Leave();
                     $leave->start_date = $request->start_date;
                     $leave->end_date = $request->end_date;
@@ -1983,14 +1815,14 @@ class LeaveController extends Controller
                     $leave->days = '0.5';
                     $leave->leavetype_id = $request->leavetype_id;
                     $leave->user_id = auth()->user()->id;
-                    if (!isset($user->linemanager)) {
+                    if (! isset($user->linemanager)) {
                         $leave->status = 'Pending HR Approval';
 
                     } else {
 
                         $leave->status = 'Pending LM Approval';
 
-                        $linemanageremail = User::where('name',$user->linemanager)->value('email');
+                        $linemanageremail = User::where('name', $user->linemanager)->value('email');
 
                         // dd($linemanageremail);
                         $details = [
@@ -2002,26 +1834,25 @@ class LeaveController extends Controller
                             'startdayname' => $startdayname,
                             'start_date' => $leave->start_date,
                             'enddayname' => $enddayname,
-                            'end_date' =>  $leave->end_date,
+                            'end_date' => $leave->end_date,
                             'days' => $leave->days,
-                            'comment' =>  $leave->reason
+                            'comment' => $leave->reason,
                         ];
-                       
+
                         Mail::to($linemanageremail)->send(new MailLeave($details));
                     }
 
                     $leave->save();
-                    $request->session()->flash('successMsg',trans('overtimeerror.success')); 
+                    $request->session()->flash('successMsg', trans('overtimeerror.success'));
+
                     return redirect()->route('leaves.index');
 
                 }
-                } else {
-                    return redirect()->back()->with("error",trans('leaveerror.nobalance'));
-                }
-            
-        }
+            } else {
+                return redirect()->back()->with('error', trans('leaveerror.nobalance'));
+            }
 
-       
+        }
 
         //'Compassionate' leave
         elseif ($request->leavetype_id == '7') {
@@ -2030,11 +1861,103 @@ class LeaveController extends Controller
 
                 if ($request->hasFile('file')) {
                     $path = $request->file('file')->store('public/leaves');
-                }
-                else if ($request->hasFile('file') == null) {
-                    return redirect()->back()->with("error",trans('leaveerror.attachment'));
+                } elseif ($request->hasFile('file') == null) {
+                    return redirect()->back()->with('error', trans('leaveerror.attachment'));
                 }
 
+                //     $leavessubmitted = Leave::where([
+                //         ['user_id', $user->id],
+                //         ['start_date', $request->start_date],
+                //         ])->where(function($query) {
+                //             $query->where('status','Pending LM Approval')
+                //                         ->orWhere('status','Pending HR Approval')
+                //                         ->orWhere('status','Approved');
+                // })->get();
+
+                $leavessubmitted = Leave::where([
+                    ['user_id', $user->id],
+                    // ['start_date', $request->start_date],
+                ])->where(function ($query) use ($request) {
+                    $query->whereBetween('start_date', [$request->start_date, $request->end_date])
+                        ->orWhereBetween('end_date', [$request->start_date, $request->end_date]);
+                })->where(function ($query) {
+                    $query->where('status', 'Pending LM Approval')
+                        ->orWhere('status', 'Pending HR Approval')
+                        ->orWhere('status', 'Approved');
+                })->get();
+
+                $leavessubmittedcase2 = Leave::where([
+                    ['user_id', $user->id],
+                    // ['start_date', $request->start_date],
+                ])->where(function ($query) use ($request) {
+                    $query->whereRaw('"'.$request->start_date.'" between `start_date` and `end_date`')
+                        ->orwhereRaw('"'.$request->end_date.'" between `start_date` and `end_date`');
+                })->where(function ($query) {
+                    $query->where('status', 'Pending LM Approval')
+                        ->orWhere('status', 'Pending HR Approval')
+                        ->orWhere('status', 'Approved');
+                })->get();
+
+                $counted = count($leavessubmitted);
+                $countedcase2 = count($leavessubmittedcase2);
+
+                if ($counted + $countedcase2 > 0) {
+                    return redirect()->back()->with('error', trans('leaveerror.sameday'));
+                } else {
+
+                    $leave = new Leave();
+                    $leave->start_date = $request->start_date;
+                    $leave->end_date = $request->end_date;
+                    $leave->reason = $request->reason;
+                    if ($request->hasFile('file')) {
+                        $leave->path = $path;
+                    }
+
+                    $leave->days = $days;
+                    $leave->leavetype_id = $request->leavetype_id;
+                    $leave->user_id = auth()->user()->id;
+                    if (! isset($user->linemanager)) {
+                        $leave->status = 'Pending HR Approval';
+
+                    } else {
+
+                        $leave->status = 'Pending LM Approval';
+
+                        $linemanageremail = User::where('name', $user->linemanager)->value('email');
+
+                        // dd($linemanageremail);
+                        $details = [
+                            'requestername' => $user->name,
+                            'linemanagername' => $user->linemanager,
+                            'linemanageremail' => $linemanageremail,
+                            'title' => 'Leave Request Approval - '.$leave->leavetype->name,
+                            'leavetype' => $leave->leavetype->name,
+                            'startdayname' => $startdayname,
+                            'start_date' => $leave->start_date,
+                            'enddayname' => $enddayname,
+                            'end_date' => $leave->end_date,
+                            'days' => $leave->days,
+                            'comment' => $leave->reason,
+                        ];
+
+                        Mail::to($linemanageremail)->send(new MailLeave($details));
+                    }
+
+                    $leave->save();
+                    $request->session()->flash('successMsg', trans('overtimeerror.success'));
+
+                    return redirect()->route('leaves.index');
+                }
+            } else {
+                return redirect()->back()->with('error', trans('leaveerror.threedayperrequest'));
+            }
+
+        }
+        //remining leaves type is: 15 (unpaid full day leave)
+        else {
+            if ($request->hasFile('file')) {
+                $path = $request->file('file')->store('public/leaves');
+            }
 
             //     $leavessubmitted = Leave::where([
             //         ['user_id', $user->id],
@@ -2048,43 +1971,34 @@ class LeaveController extends Controller
             $leavessubmitted = Leave::where([
                 ['user_id', $user->id],
                 // ['start_date', $request->start_date],
-                ])->where(function($query) use ($request) {
-                    $query->whereBetween('start_date', [$request->start_date,$request->end_date])
-                ->orWhereBetween('end_date', [$request->start_date,$request->end_date]);
-        })->where(function($query) {
-                    $query->where('status','Pending LM Approval')
-                                ->orWhere('status','Pending HR Approval')
-                                ->orWhere('status','Approved');
-        })->get();
+            ])->where(function ($query) use ($request) {
+                $query->whereBetween('start_date', [$request->start_date, $request->end_date])
+                    ->orWhereBetween('end_date', [$request->start_date, $request->end_date]);
+            })->where(function ($query) {
+                $query->where('status', 'Pending LM Approval')
+                    ->orWhere('status', 'Pending HR Approval')
+                    ->orWhere('status', 'Approved');
+            })->get();
 
-
-        $leavessubmittedcase2 = Leave::where([
-            ['user_id', $user->id],
-            // ['start_date', $request->start_date],
-            ])->where(function($query) use ($request) {
+            $leavessubmittedcase2 = Leave::where([
+                ['user_id', $user->id],
+                // ['start_date', $request->start_date],
+            ])->where(function ($query) use ($request) {
                 $query->whereRaw('"'.$request->start_date.'" between `start_date` and `end_date`')
-                ->orwhereRaw('"'.$request->end_date.'" between `start_date` and `end_date`');       
-         })->where(function($query) {
-                $query->where('status','Pending LM Approval')
-                            ->orWhere('status','Pending HR Approval')
-                            ->orWhere('status','Approved');
-        })->get();
-
+                    ->orwhereRaw('"'.$request->end_date.'" between `start_date` and `end_date`');
+            })->where(function ($query) {
+                $query->where('status', 'Pending LM Approval')
+                    ->orWhere('status', 'Pending HR Approval')
+                    ->orWhere('status', 'Approved');
+            })->get();
 
             $counted = count($leavessubmitted);
             $countedcase2 = count($leavessubmittedcase2);
 
-            if($counted + $countedcase2 > 0)
-            {
-                return redirect()->back()->with("error", trans('leaveerror.sameday'));
-            }
-                
+            if ($counted + $countedcase2 > 0) {
+                return redirect()->back()->with('error', trans('leaveerror.sameday'));
+            } else {
 
-                else
-                {
-
-
-                
                 $leave = new Leave();
                 $leave->start_date = $request->start_date;
                 $leave->end_date = $request->end_date;
@@ -2092,149 +2006,48 @@ class LeaveController extends Controller
                 if ($request->hasFile('file')) {
                     $leave->path = $path;
                 }
-
-                $leave->days = $days;
+                $leave->days = $sickpercentagedays;
                 $leave->leavetype_id = $request->leavetype_id;
                 $leave->user_id = auth()->user()->id;
-                if (!isset($user->linemanager)) {
+                if (! isset($user->linemanager)) {
                     $leave->status = 'Pending HR Approval';
 
                 } else {
 
                     $leave->status = 'Pending LM Approval';
 
-                    $linemanageremail = User::where('name',$user->linemanager)->value('email');
+                    $linemanageremail = User::where('name', $user->linemanager)->value('email');
 
-                        // dd($linemanageremail);
-                        $details = [
-                            'requestername' => $user->name,
-                            'linemanagername' => $user->linemanager,
-                            'linemanageremail' => $linemanageremail,
-                            'title' => 'Leave Request Approval - '.$leave->leavetype->name,
-                            'leavetype' => $leave->leavetype->name,
-                            'startdayname' => $startdayname,
-                            'start_date' => $leave->start_date,
-                            'enddayname' => $enddayname,
-                            'end_date' =>  $leave->end_date,
-                            'days' => $leave->days,
-                            'comment' =>  $leave->reason
-                        ];
-                       
-                        Mail::to($linemanageremail)->send(new MailLeave($details));
+                    // dd($linemanageremail);
+                    $details = [
+                        'requestername' => $user->name,
+                        'linemanagername' => $user->linemanager,
+                        'linemanageremail' => $linemanageremail,
+                        'title' => 'Leave Request Approval - '.$leave->leavetype->name,
+                        'leavetype' => $leave->leavetype->name,
+                        'startdayname' => $startdayname,
+                        'start_date' => $leave->start_date,
+                        'enddayname' => $enddayname,
+                        'end_date' => $leave->end_date,
+                        'days' => $leave->days,
+                        'comment' => $leave->reason,
+                    ];
+
+                    Mail::to($linemanageremail)->send(new MailLeave($details));
                 }
 
                 $leave->save();
-                $request->session()->flash('successMsg',trans('overtimeerror.success')); 
+
+                // $data = ['foo' => 'baz'];
+
+                // Mail::send('danial@admin.com', $data, function ($message) use ($user)
+                //     $message->to('danial@admin.com');
+                //     $message->subject('Welcome Mail');
+                // });
+                $request->session()->flash('successMsg', trans('overtimeerror.success'));
+
                 return redirect()->route('leaves.index');
             }
-            } else {
-                return redirect()->back()->with("error", trans('leaveerror.threedayperrequest'));
-            }
-
-        } 
-        //remining leaves type is: 15 (unpaid full day leave)
-        else {
-            if ($request->hasFile('file')) {
-                $path = $request->file('file')->store('public/leaves');
-            }
-
-            
-        //     $leavessubmitted = Leave::where([
-        //         ['user_id', $user->id],
-        //         ['start_date', $request->start_date],
-        //         ])->where(function($query) {
-        //             $query->where('status','Pending LM Approval')
-        //                         ->orWhere('status','Pending HR Approval')
-        //                         ->orWhere('status','Approved');
-        // })->get();
-
-        $leavessubmitted = Leave::where([
-            ['user_id', $user->id],
-            // ['start_date', $request->start_date],
-            ])->where(function($query) use ($request) {
-                $query->whereBetween('start_date', [$request->start_date,$request->end_date])
-            ->orWhereBetween('end_date', [$request->start_date,$request->end_date]);
-    })->where(function($query) {
-                $query->where('status','Pending LM Approval')
-                            ->orWhere('status','Pending HR Approval')
-                            ->orWhere('status','Approved');
-    })->get();
-
-
-    $leavessubmittedcase2 = Leave::where([
-        ['user_id', $user->id],
-        // ['start_date', $request->start_date],
-        ])->where(function($query) use ($request) {
-            $query->whereRaw('"'.$request->start_date.'" between `start_date` and `end_date`')
-            ->orwhereRaw('"'.$request->end_date.'" between `start_date` and `end_date`');       
-     })->where(function($query) {
-            $query->where('status','Pending LM Approval')
-                        ->orWhere('status','Pending HR Approval')
-                        ->orWhere('status','Approved');
-    })->get();
-
-
-        $counted = count($leavessubmitted);
-        $countedcase2 = count($leavessubmittedcase2);
-
-        if($counted + $countedcase2 > 0)
-        {
-            return redirect()->back()->with("error", trans('leaveerror.sameday'));
-        }
-
-            else
-            {
-
-            
-
-            $leave = new Leave();
-            $leave->start_date = $request->start_date;
-            $leave->end_date = $request->end_date;
-            $leave->reason = $request->reason;
-            if ($request->hasFile('file')) {
-                $leave->path = $path;
-            }
-            $leave->days = $sickpercentagedays;
-            $leave->leavetype_id = $request->leavetype_id;
-            $leave->user_id = auth()->user()->id;
-            if (!isset($user->linemanager)) {
-                $leave->status = 'Pending HR Approval';
-
-            } else {
-
-                $leave->status = 'Pending LM Approval';
-
-                $linemanageremail = User::where('name',$user->linemanager)->value('email');
-
-                        // dd($linemanageremail);
-                        $details = [
-                            'requestername' => $user->name,
-                            'linemanagername' => $user->linemanager,
-                            'linemanageremail' => $linemanageremail,
-                            'title' => 'Leave Request Approval - '.$leave->leavetype->name,
-                            'leavetype' => $leave->leavetype->name,
-                            'startdayname' => $startdayname,
-                            'start_date' => $leave->start_date,
-                            'enddayname' => $enddayname,
-                            'end_date' =>  $leave->end_date,
-                            'days' => $leave->days,
-                            'comment' =>  $leave->reason
-                        ];
-                       
-                        Mail::to($linemanageremail)->send(new MailLeave($details));
-            }
-
-            $leave->save();
-
-            // $data = ['foo' => 'baz'];
-
-            // Mail::send('danial@admin.com', $data, function ($message) use ($user)
-            //     $message->to('danial@admin.com');
-            //     $message->subject('Welcome Mail');
-            // });
-            $request->session()->flash('successMsg',trans('overtimeerror.success')); 
-            return redirect()->route('leaves.index');
-        }
         }
 
     }
@@ -2253,13 +2066,13 @@ class LeaveController extends Controller
         // $leavetype = Leavetype::where('id', $leave-)->get();
         $leaves = Leave::all();
         $users = User::all();
-        return view('leaves.show', ['leave' => $leave, 'leaves'=>$leaves,'users'=>$users]);
+
+        return view('leaves.show', ['leave' => $leave, 'leaves' => $leaves, 'users' => $users]);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Leave  $leave
      * @return \Illuminate\Http\Response
      */
     public function edit(Leave $leave)
@@ -2270,8 +2083,6 @@ class LeaveController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Leave  $leave
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Leave $leave)
@@ -2289,15 +2100,16 @@ class LeaveController extends Controller
     {
         $leave = Leave::find($id);
         if (isset($leave->path)) {
-            $file_path = public_path() . '/storage/leaves/' . basename($leave->path);
+            $file_path = public_path().'/storage/leaves/'.basename($leave->path);
             unlink($file_path);
         }
 
         $leave->delete();
-        return redirect()->route('leaves.index')->with("success", "Leave is canceled");
+
+        return redirect()->route('leaves.index')->with('success', 'Leave is canceled');
     }
 
-    public function approved(Request $request,$id)
+    public function approved(Request $request, $id)
     {
         $lmuser = Auth::user();
         $leave = Leave::find($id);
@@ -2309,8 +2121,7 @@ class LeaveController extends Controller
         $startdayname = Carbon::parse($leave->start_date)->format('l');
         $enddayname = Carbon::parse($leave->end_date)->format('l');
 
-
-        $requester=$leave->user;
+        $requester = $leave->user;
         // $linemanageremail = User::where('name',$requester->linemanager)->value('email');
 
         // dd($linemanageremail);
@@ -2318,17 +2129,17 @@ class LeaveController extends Controller
             'requestername' => $requester->name,
             'linemanagername' => $requester->linemanager,
             // 'linemanageremail' => $linemanageremail,
-            'title' => 'Leave Request - '.$leave->leavetype->name. ' - Approved by Line Manager',
+            'title' => 'Leave Request - '.$leave->leavetype->name.' - Approved by Line Manager',
             'startdayname' => $startdayname,
             'start_date' => $leave->start_date,
             'enddayname' => $enddayname,
-            'end_date' =>  $leave->end_date,
+            'end_date' => $leave->end_date,
             'days' => $leave->days,
             'status' => $leave->status,
-            'comment' =>  $leave->reason,
-            'lmcomment' => $leave->lmcomment
+            'comment' => $leave->reason,
+            'lmcomment' => $leave->lmcomment,
         ];
-       
+
         Mail::to($requester->email)->send(new MailLeaveafterlm($details));
 
         $leave->save();
@@ -2337,7 +2148,7 @@ class LeaveController extends Controller
 
     }
 
-    public function declined(Request $request,$id)
+    public function declined(Request $request, $id)
     {
         $lmuser = Auth::user();
         $leave = Leave::find($id);
@@ -2347,8 +2158,7 @@ class LeaveController extends Controller
         $startdayname = Carbon::parse($leave->start_date)->format('l');
         $enddayname = Carbon::parse($leave->end_date)->format('l');
 
-
-        $requester=$leave->user;
+        $requester = $leave->user;
         // $linemanageremail = User::where('name',$requester->linemanager)->value('email');
 
         // dd($linemanageremail);
@@ -2356,35 +2166,36 @@ class LeaveController extends Controller
             'requestername' => $requester->name,
             'linemanagername' => $requester->linemanager,
             // 'linemanageremail' => $linemanageremail,
-            'title' => 'Leave Request - '.$leave->leavetype->name. ' - Declined by Line Manager',
+            'title' => 'Leave Request - '.$leave->leavetype->name.' - Declined by Line Manager',
             'startdayname' => $startdayname,
             'start_date' => $leave->start_date,
             'enddayname' => $enddayname,
-            'end_date' =>  $leave->end_date,
+            'end_date' => $leave->end_date,
             'days' => $leave->days,
             'status' => $leave->status,
-            'comment' =>  $leave->reason,
-            'lmcomment' => $leave->lmcomment
+            'comment' => $leave->reason,
+            'lmcomment' => $leave->lmcomment,
         ];
-       
+
         Mail::to($requester->email)->send(new MailLeaveafterlm($details));
-        
+
         $leave->save();
 
         return redirect()->route('leaves.approval');
 
     }
 
-    public function forward(Request $request,$id)
+    public function forward(Request $request, $id)
     {
         $leave = Leave::find($id);
         $leave->status = 'Pending extra Approval';
         $leave->exapprover = $request->extra;
         $leave->save();
+
         return redirect()->route('leaves.hrapproval');
     }
 
-    public function exapproved(Request $request,$id)
+    public function exapproved(Request $request, $id)
     {
         $exuser = Auth::user();
         $leave = Leave::find($id);
@@ -2395,7 +2206,8 @@ class LeaveController extends Controller
 
         return redirect()->route('leaves.approval');
     }
-    public function exdeclined(Request $request,$id)
+
+    public function exdeclined(Request $request, $id)
     {
         $exuser = Auth::user();
         $leave = Leave::find($id);
@@ -2407,334 +2219,313 @@ class LeaveController extends Controller
         return redirect()->route('leaves.approval');
     }
 
-    public function hrapproved(Request $request,$id)
+    public function hrapproved(Request $request, $id)
     {
         $hruser = Auth::user();
         $leave = Leave::find($id);
 
-                // annual half days leaves
-                if ($leave->leavetype_id == '13' || $leave->leavetype_id == '14') {
+        // annual half days leaves
+        if ($leave->leavetype_id == '13' || $leave->leavetype_id == '14') {
 
-                    $balances = Balance::where('user_id', $leave->user->id)->get();
-                    $subsets = $balances->map(function ($balance) {
-                        return collect($balance->toArray())
-        
-                            ->only(['value', 'leavetype_id'])
-                            ->all();
-                    });
-                    $final = $subsets->firstwhere('leavetype_id', '1');
-        
-                    $finalfinal = $final['value'];
-                    $currentbalanceforannual = $finalfinal;
-        
-                    $newbalance = $currentbalanceforannual - $leave->days;
-        
-                }
-        
-                    // unpaid half days leaves
-                 elseif ($leave->leavetype_id == '16' || $leave->leavetype_id == '17') {
-        
-                    $balances = Balance::where('user_id', $leave->user->id)->get();
-                    $subsets = $balances->map(function ($balance) {
-                        return collect($balance->toArray())
-        
-                            ->only(['value', 'leavetype_id'])
-                            ->all();
-                    });
-                    $final = $subsets->firstwhere('leavetype_id', '15');
-        
-                    $finalfinal = $final['value'];
-                    $currentbalanceforunpaid = $finalfinal;
-        
-                    $newbalance = $currentbalanceforunpaid - $leave->days;
-        
-                }
-                   // sick half SC days leaves
-                   elseif ($leave->leavetype_id == '20' || $leave->leavetype_id == '21') {
-        
-                    $balances = Balance::where('user_id', $leave->user->id)->get();
-                    $subsets = $balances->map(function ($balance) {
-                        return collect($balance->toArray())
-        
-                            ->only(['value', 'leavetype_id'])
-                            ->all();
-                    });
-                    $final = $subsets->firstwhere('leavetype_id', '2');
-        
-                    $finalfinal = $final['value'];
-                    $currentbalanceforsick = $finalfinal;
-        
-                    $newbalance = $currentbalanceforsick - $leave->days;
-        
-                }
+            $balances = Balance::where('user_id', $leave->user->id)->get();
+            $subsets = $balances->map(function ($balance) {
+                return collect($balance->toArray())
 
-                   // sick half DC days leaves
-                   elseif ($leave->leavetype_id == '4' || $leave->leavetype_id == '6') {
-        
-                    $balances = Balance::where('user_id', $leave->user->id)->get();
-                    $subsets = $balances->map(function ($balance) {
-                        return collect($balance->toArray())
-        
-                            ->only(['value', 'leavetype_id'])
-                            ->all();
-                    });
-                    $final = $subsets->firstwhere('leavetype_id', '3');
-        
-                    $finalfinal = $final['value'];
-                    $currentbalanceforsick = $finalfinal;
-        
-                    $newbalance = $currentbalanceforsick - $leave->days;
-        
-                }
-                
-        
-                    
+                    ->only(['value', 'leavetype_id'])
+                    ->all();
+            });
+            $final = $subsets->firstwhere('leavetype_id', '1');
+
+            $finalfinal = $final['value'];
+            $currentbalanceforannual = $finalfinal;
+
+            $newbalance = $currentbalanceforannual - $leave->days;
+
+        }
+
+        // unpaid half days leaves
+        elseif ($leave->leavetype_id == '16' || $leave->leavetype_id == '17') {
+
+            $balances = Balance::where('user_id', $leave->user->id)->get();
+            $subsets = $balances->map(function ($balance) {
+                return collect($balance->toArray())
+
+                    ->only(['value', 'leavetype_id'])
+                    ->all();
+            });
+            $final = $subsets->firstwhere('leavetype_id', '15');
+
+            $finalfinal = $final['value'];
+            $currentbalanceforunpaid = $finalfinal;
+
+            $newbalance = $currentbalanceforunpaid - $leave->days;
+
+        }
+        // sick half SC days leaves
+        elseif ($leave->leavetype_id == '20' || $leave->leavetype_id == '21') {
+
+            $balances = Balance::where('user_id', $leave->user->id)->get();
+            $subsets = $balances->map(function ($balance) {
+                return collect($balance->toArray())
+
+                    ->only(['value', 'leavetype_id'])
+                    ->all();
+            });
+            $final = $subsets->firstwhere('leavetype_id', '2');
+
+            $finalfinal = $final['value'];
+            $currentbalanceforsick = $finalfinal;
+
+            $newbalance = $currentbalanceforsick - $leave->days;
+
+        }
+
+        // sick half DC days leaves
+        elseif ($leave->leavetype_id == '4' || $leave->leavetype_id == '6') {
+
+            $balances = Balance::where('user_id', $leave->user->id)->get();
+            $subsets = $balances->map(function ($balance) {
+                return collect($balance->toArray())
+
+                    ->only(['value', 'leavetype_id'])
+                    ->all();
+            });
+            $final = $subsets->firstwhere('leavetype_id', '3');
+
+            $finalfinal = $final['value'];
+            $currentbalanceforsick = $finalfinal;
+
+            $newbalance = $currentbalanceforsick - $leave->days;
+
+        }
+
         //comp hour
-                elseif ($leave->leavetype_id == '19') {
-        
-                    $balances = Balance::where('user_id', $leave->user->id)->get();
-                    $subsets = $balances->map(function ($balance) {
-                        return collect($balance->toArray())
-        
-                            ->only(['value', 'leavetype_id'])
-                            ->all();
-                    });
-                    $final = $subsets->firstwhere('leavetype_id', '18');
-        
-                    $finalfinal = $final['value'];
-                    $currentbalanceforcomp = $finalfinal;
-        
-                    $newbalance = $currentbalanceforcomp - ($leave->hours / 8);
-        
+        elseif ($leave->leavetype_id == '19') {
 
-                } 
+            $balances = Balance::where('user_id', $leave->user->id)->get();
+            $subsets = $balances->map(function ($balance) {
+                return collect($balance->toArray())
 
-                //Unpaid Full day
-                elseif ($leave->leavetype_id == '15') {
-        
-                    $balances = Balance::where('user_id', $leave->user->id)->get();
-                    $subsets = $balances->map(function ($balance) {
-                        return collect($balance->toArray())
-        
-                            ->only(['value', 'leavetype_id'])
-                            ->all();
-                    });
-                    $final = $subsets->firstwhere('leavetype_id', '15');
-        
-                    $finalfinal = $final['value'];
-                    $currentbalanceforcomp = $finalfinal;
-        
-                    $newbalance = 1 + $leave->days;
-        
+                    ->only(['value', 'leavetype_id'])
+                    ->all();
+            });
+            $final = $subsets->firstwhere('leavetype_id', '18');
 
-                } 
-                
-                else {
-                    $balances = Balance::where('user_id', $leave->user->id)->get();
-                    $subsets = $balances->map(function ($balance) {
-                        return collect($balance->toArray())
-        
-                            ->only(['value', 'leavetype_id'])
-                            ->all();
-                    });
-                    $final = $subsets->firstwhere('leavetype_id', $leave->leavetype_id);
-        
-                    $finalfinal = $final['value'];
-                    $currentbalance = $finalfinal;
-        
-                    $newbalance = $currentbalance - $leave->days;
-        
+            $finalfinal = $final['value'];
+            $currentbalanceforcomp = $finalfinal;
 
-                }
+            $newbalance = $currentbalanceforcomp - ($leave->hours / 8);
 
+        }
 
-                if($newbalance < 0)
-                {
-                    return redirect()->route('leaves.hrapproval')->with("error", "No enough balance for this type, you can only decline the leave");
-                    
-                }
+        //Unpaid Full day
+        elseif ($leave->leavetype_id == '15') {
 
-                else
-                {
+            $balances = Balance::where('user_id', $leave->user->id)->get();
+            $subsets = $balances->map(function ($balance) {
+                return collect($balance->toArray())
 
-                    $leave->status = 'Approved';
-                    $leave->hrapprover = $hruser->name;
-                    $leave->hrcomment = $request->comment;
-            
-                    $startdayname = Carbon::parse($leave->start_date)->format('l');
-                    $enddayname = Carbon::parse($leave->end_date)->format('l');
-                    
-                    $requester=$leave->user;
+                    ->only(['value', 'leavetype_id'])
+                    ->all();
+            });
+            $final = $subsets->firstwhere('leavetype_id', '15');
 
-                    $details = [
-                        'requestername' => $requester->name,
-                        'linemanagername' => $requester->linemanager,
-                        'hrname' => $leave->hrapprover,
-                        'title' => 'Leave Request - '.$leave->leavetype->name. ' - Approved by HR',
-                        'startdayname' => $startdayname,
-                        'start_date' => $leave->start_date,
-                        'enddayname' => $enddayname,
-                        'end_date' =>  $leave->end_date,
-                        'days' => $leave->days,
-                        'status' => $leave->status,
-                        'comment' =>  $leave->reason,
-                        'newbalance' => $newbalance,
-                        'lmcomment' => $leave->lmcomment,
-                        'hrcomment' => $leave->hrcomment
-                    ];
-                   
-                    Mail::to($requester->email)->send(new MailLeavefinal($details));
-            
-                    $leave->save();
-            
-                    // annual half days leaves
-                    if ($leave->leavetype_id == '13' || $leave->leavetype_id == '14') {
-            
-                        $balances = Balance::where('user_id', $leave->user->id)->get();
-                        $subsets = $balances->map(function ($balance) {
-                            return collect($balance->toArray())
-            
-                                ->only(['value', 'leavetype_id'])
-                                ->all();
-                        });
-                        $final = $subsets->firstwhere('leavetype_id', '1');
-            
-                        $finalfinal = $final['value'];
-                        $currentbalanceforannual = $finalfinal;
-            
-                        $newbalance = $currentbalanceforannual - $leave->days;
-            
-                        Balance::where([
-                            ['user_id', $leave->user->id],
-                            ['leavetype_id', '1'],
-                        ])->update(['value' => $newbalance]);
-                    }
-                        // unpaid half days leaves
-                     elseif ($leave->leavetype_id == '16' || $leave->leavetype_id == '17') {
-            
-                        $balances = Balance::where('user_id', $leave->user->id)->get();
-                        $subsets = $balances->map(function ($balance) {
-                            return collect($balance->toArray())
-            
-                                ->only(['value', 'leavetype_id'])
-                                ->all();
-                        });
-                        $final = $subsets->firstwhere('leavetype_id', '15');
-            
-                        $finalfinal = $final['value'];
-                        $currentbalanceforannual = $finalfinal;
-            
-                        $newbalance = $currentbalanceforannual - $leave->days;
-            
-                        Balance::where([
-                            ['user_id', $leave->user->id],
-                            ['leavetype_id', '15'],
-                        ])->update(['value' => $newbalance]);
-            
-                    }
+            $finalfinal = $final['value'];
+            $currentbalanceforcomp = $finalfinal;
 
+            $newbalance = 1 + $leave->days;
 
+        } else {
+            $balances = Balance::where('user_id', $leave->user->id)->get();
+            $subsets = $balances->map(function ($balance) {
+                return collect($balance->toArray())
 
-                        // sick half days leaves
-                        elseif ($leave->leavetype_id == '20' || $leave->leavetype_id == '21') {
-            
-                            $balances = Balance::where('user_id', $leave->user->id)->get();
-                            $subsets = $balances->map(function ($balance) {
-                                return collect($balance->toArray())
-                
-                                    ->only(['value', 'leavetype_id'])
-                                    ->all();
-                            });
-                            $final = $subsets->firstwhere('leavetype_id', '2');
-                
-                            $finalfinal = $final['value'];
-                            $currentbalanceforannual = $finalfinal;
-                
-                            $newbalance = $currentbalanceforannual - $leave->days;
-                
-                            Balance::where([
-                                ['user_id', $leave->user->id],
-                                ['leavetype_id', '2'],
-                            ])->update(['value' => $newbalance]);
-                
-                        }
+                    ->only(['value', 'leavetype_id'])
+                    ->all();
+            });
+            $final = $subsets->firstwhere('leavetype_id', $leave->leavetype_id);
 
+            $finalfinal = $final['value'];
+            $currentbalance = $finalfinal;
 
-                         // sick DC half days leaves
-                         elseif ($leave->leavetype_id == '4' || $leave->leavetype_id == '6') {
-            
-                            $balances = Balance::where('user_id', $leave->user->id)->get();
-                            $subsets = $balances->map(function ($balance) {
-                                return collect($balance->toArray())
-                
-                                    ->only(['value', 'leavetype_id'])
-                                    ->all();
-                            });
-                            $final = $subsets->firstwhere('leavetype_id', '3');
-                
-                            $finalfinal = $final['value'];
-                            $currentbalanceforannual = $finalfinal;
-                
-                            $newbalance = $currentbalanceforannual - $leave->days;
-                
-                            Balance::where([
-                                ['user_id', $leave->user->id],
-                                ['leavetype_id', '3'],
-                            ])->update(['value' => $newbalance]);
-                
-                        }
+            $newbalance = $currentbalance - $leave->days;
 
+        }
 
-            
-                     elseif ($leave->leavetype_id == '19') {
-            
-                        $balances = Balance::where('user_id', $leave->user->id)->get();
-                        $subsets = $balances->map(function ($balance) {
-                            return collect($balance->toArray())
-            
-                                ->only(['value', 'leavetype_id'])
-                                ->all();
-                        });
-                        $final = $subsets->firstwhere('leavetype_id', '18');
-            
-                        $finalfinal = $final['value'];
-                        $currentbalanceforannual = $finalfinal;
-            
-                        $newbalance = $currentbalanceforannual - ($leave->hours / 8);
-            
-                        Balance::where([
-                            ['user_id', $leave->user->id],
-                            ['leavetype_id', '18'],
-                        ])->update(['value' => $newbalance]);
-                    } else {
-                        $balances = Balance::where('user_id', $leave->user->id)->get();
-                        $subsets = $balances->map(function ($balance) {
-                            return collect($balance->toArray())
-            
-                                ->only(['value', 'leavetype_id'])
-                                ->all();
-                        });
-                        $final = $subsets->firstwhere('leavetype_id', $leave->leavetype_id);
-            
-                        $finalfinal = $final['value'];
-                        $currentbalance = $finalfinal;
-            
-                        $newbalance = $currentbalance - $leave->days;
-            
-                        Balance::where([
-                            ['user_id', $leave->user->id],
-                            ['leavetype_id', $leave->leavetype_id],
-                        ])->update(['value' => $newbalance]);
-                    }
-            
-                    return redirect()->route('leaves.hrapproval');
-                }
+        if ($newbalance < 0) {
+            return redirect()->route('leaves.hrapproval')->with('error', 'No enough balance for this type, you can only decline the leave');
 
-        
+        } else {
+
+            $leave->status = 'Approved';
+            $leave->hrapprover = $hruser->name;
+            $leave->hrcomment = $request->comment;
+
+            $startdayname = Carbon::parse($leave->start_date)->format('l');
+            $enddayname = Carbon::parse($leave->end_date)->format('l');
+
+            $requester = $leave->user;
+
+            $details = [
+                'requestername' => $requester->name,
+                'linemanagername' => $requester->linemanager,
+                'hrname' => $leave->hrapprover,
+                'title' => 'Leave Request - '.$leave->leavetype->name.' - Approved by HR',
+                'startdayname' => $startdayname,
+                'start_date' => $leave->start_date,
+                'enddayname' => $enddayname,
+                'end_date' => $leave->end_date,
+                'days' => $leave->days,
+                'status' => $leave->status,
+                'comment' => $leave->reason,
+                'newbalance' => $newbalance,
+                'lmcomment' => $leave->lmcomment,
+                'hrcomment' => $leave->hrcomment,
+            ];
+
+            Mail::to($requester->email)->send(new MailLeavefinal($details));
+
+            $leave->save();
+
+            // annual half days leaves
+            if ($leave->leavetype_id == '13' || $leave->leavetype_id == '14') {
+
+                $balances = Balance::where('user_id', $leave->user->id)->get();
+                $subsets = $balances->map(function ($balance) {
+                    return collect($balance->toArray())
+
+                        ->only(['value', 'leavetype_id'])
+                        ->all();
+                });
+                $final = $subsets->firstwhere('leavetype_id', '1');
+
+                $finalfinal = $final['value'];
+                $currentbalanceforannual = $finalfinal;
+
+                $newbalance = $currentbalanceforannual - $leave->days;
+
+                Balance::where([
+                    ['user_id', $leave->user->id],
+                    ['leavetype_id', '1'],
+                ])->update(['value' => $newbalance]);
+            }
+            // unpaid half days leaves
+            elseif ($leave->leavetype_id == '16' || $leave->leavetype_id == '17') {
+
+                $balances = Balance::where('user_id', $leave->user->id)->get();
+                $subsets = $balances->map(function ($balance) {
+                    return collect($balance->toArray())
+
+                        ->only(['value', 'leavetype_id'])
+                        ->all();
+                });
+                $final = $subsets->firstwhere('leavetype_id', '15');
+
+                $finalfinal = $final['value'];
+                $currentbalanceforannual = $finalfinal;
+
+                $newbalance = $currentbalanceforannual - $leave->days;
+
+                Balance::where([
+                    ['user_id', $leave->user->id],
+                    ['leavetype_id', '15'],
+                ])->update(['value' => $newbalance]);
+
+            }
+
+            // sick half days leaves
+            elseif ($leave->leavetype_id == '20' || $leave->leavetype_id == '21') {
+
+                $balances = Balance::where('user_id', $leave->user->id)->get();
+                $subsets = $balances->map(function ($balance) {
+                    return collect($balance->toArray())
+
+                        ->only(['value', 'leavetype_id'])
+                        ->all();
+                });
+                $final = $subsets->firstwhere('leavetype_id', '2');
+
+                $finalfinal = $final['value'];
+                $currentbalanceforannual = $finalfinal;
+
+                $newbalance = $currentbalanceforannual - $leave->days;
+
+                Balance::where([
+                    ['user_id', $leave->user->id],
+                    ['leavetype_id', '2'],
+                ])->update(['value' => $newbalance]);
+
+            }
+
+            // sick DC half days leaves
+            elseif ($leave->leavetype_id == '4' || $leave->leavetype_id == '6') {
+
+                $balances = Balance::where('user_id', $leave->user->id)->get();
+                $subsets = $balances->map(function ($balance) {
+                    return collect($balance->toArray())
+
+                        ->only(['value', 'leavetype_id'])
+                        ->all();
+                });
+                $final = $subsets->firstwhere('leavetype_id', '3');
+
+                $finalfinal = $final['value'];
+                $currentbalanceforannual = $finalfinal;
+
+                $newbalance = $currentbalanceforannual - $leave->days;
+
+                Balance::where([
+                    ['user_id', $leave->user->id],
+                    ['leavetype_id', '3'],
+                ])->update(['value' => $newbalance]);
+
+            } elseif ($leave->leavetype_id == '19') {
+
+                $balances = Balance::where('user_id', $leave->user->id)->get();
+                $subsets = $balances->map(function ($balance) {
+                    return collect($balance->toArray())
+
+                        ->only(['value', 'leavetype_id'])
+                        ->all();
+                });
+                $final = $subsets->firstwhere('leavetype_id', '18');
+
+                $finalfinal = $final['value'];
+                $currentbalanceforannual = $finalfinal;
+
+                $newbalance = $currentbalanceforannual - ($leave->hours / 8);
+
+                Balance::where([
+                    ['user_id', $leave->user->id],
+                    ['leavetype_id', '18'],
+                ])->update(['value' => $newbalance]);
+            } else {
+                $balances = Balance::where('user_id', $leave->user->id)->get();
+                $subsets = $balances->map(function ($balance) {
+                    return collect($balance->toArray())
+
+                        ->only(['value', 'leavetype_id'])
+                        ->all();
+                });
+                $final = $subsets->firstwhere('leavetype_id', $leave->leavetype_id);
+
+                $finalfinal = $final['value'];
+                $currentbalance = $finalfinal;
+
+                $newbalance = $currentbalance - $leave->days;
+
+                Balance::where([
+                    ['user_id', $leave->user->id],
+                    ['leavetype_id', $leave->leavetype_id],
+                ])->update(['value' => $newbalance]);
+            }
+
+            return redirect()->route('leaves.hrapproval');
+        }
 
     }
 
-    public function hrdeclined(Request $request,$id)
+    public function hrdeclined(Request $request, $id)
     {
         $hruser = Auth::user();
         $leave = Leave::find($id);
@@ -2742,30 +2533,28 @@ class LeaveController extends Controller
         $leave->hrapprover = $hruser->name;
         $leave->hrcomment = $request->comment;
 
-
         $startdayname = Carbon::parse($leave->start_date)->format('l');
         $enddayname = Carbon::parse($leave->end_date)->format('l');
-        
-        $requester=$leave->user;
+
+        $requester = $leave->user;
 
         $details = [
             'requestername' => $requester->name,
             'linemanagername' => $requester->linemanager,
             'hrname' => $leave->hrapprover,
-            'title' => 'Leave Request - '.$leave->leavetype->name. ' - Declined by HR',
+            'title' => 'Leave Request - '.$leave->leavetype->name.' - Declined by HR',
             'startdayname' => $startdayname,
             'start_date' => $leave->start_date,
             'enddayname' => $enddayname,
-            'end_date' =>  $leave->end_date,
+            'end_date' => $leave->end_date,
             'days' => $leave->days,
             'status' => $leave->status,
-            'comment' =>  $leave->reason,
+            'comment' => $leave->reason,
             'lmcomment' => $leave->lmcomment,
-            'hrcomment' => $leave->hrcomment
+            'hrcomment' => $leave->hrcomment,
         ];
-       
-        Mail::to($requester->email)->send(new MailLeaverejected($details));
 
+        Mail::to($requester->email)->send(new MailLeaverejected($details));
 
         $leave->save();
 
@@ -2775,28 +2564,25 @@ class LeaveController extends Controller
 
     public function export()
     {
-        
-        $hruser = Auth::user();
-        if ($hruser->office == "CO-Erbil")
-        {
-            $leaves= Leave::all();
 
-        }
-        else
-        {
-        $staffwithsameoffice = User::where('office',$hruser->office)->get();
-            if (count($staffwithsameoffice))
-            {
+        $hruser = Auth::user();
+        if ($hruser->office == 'CO-Erbil') {
+            $leaves = Leave::all();
+
+        } else {
+            $staffwithsameoffice = User::where('office', $hruser->office)->get();
+            if (count($staffwithsameoffice)) {
                 $hrsubsets = $staffwithsameoffice->map(function ($staffwithsameoffice) {
                     return collect($staffwithsameoffice->toArray())
                         ->only(['id'])
                         ->all();
                 });
-                $leaves = Leave::wherein('user_id', $hrsubsets)->get(); 
-    
-    }
-}
-    return Excel::download(new LeavesExport($leaves), 'leaves.xlsx');
+                $leaves = Leave::wherein('user_id', $hrsubsets)->get();
+
+            }
+        }
+
+        return Excel::download(new LeavesExport($leaves), 'leaves.xlsx');
     }
 
     public function pdf(Request $request)
@@ -2805,49 +2591,42 @@ class LeaveController extends Controller
             'start_date' => 'required',
             'end_date' => 'required|after_or_equal:start_date',
             // 'leavetype' => 'required',
-            'name'=> 'required',
-           
+            'name' => 'required',
+
         ]);
 
-        $name= $request->name;
-        $start_date=$request->start_date;
-        $end_date=$request->end_date;
+        $name = $request->name;
+        $start_date = $request->start_date;
+        $end_date = $request->end_date;
         // $leavetype=$request->leavetype;
 
-        
-        $userid = User::where('name',$name)->value('id');
-        $userpeopleid = User::where('name',$name)->value('employee_number');
-  
- 
+        $userid = User::where('name', $name)->value('id');
+        $userpeopleid = User::where('name', $name)->value('employee_number');
+
         $leaves = Leave::where([
 
             ['user_id', $userid],
             ['start_date', '>=', $start_date],
             ['end_date', '<=', $end_date],
 
-
         ])->get();
-
 
         $hruser = Auth::user();
         $date = Carbon::now();
 
-        
+        $pdf = Pdf::loadView('admin.allstaffleaves.report', ['name' => $name, 'userpeopleid' => $userpeopleid, 'hruser' => $hruser, 'date' => $date, 'start_date' => $start_date, 'end_date' => $end_date, 'leaves' => $leaves])->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => 'true', 'isRemoteEnabled' => 'true', 'isPhpEnabled' => 'true'])->setpaper('a4', 'portrait');
 
-        $pdf = Pdf::loadView('admin.allstaffleaves.report', ['name'=>$name,'userpeopleid'=>$userpeopleid,'hruser'=>$hruser,'date'=>$date, 'start_date'=>$start_date,'end_date'=>$end_date,'leaves'=>$leaves])->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled'=> 'true', 'isRemoteEnabled'=> 'true', 'isPhpEnabled'=> 'true'])->setpaper('a4','portrait');
         return $pdf->stream();
-
 
     }
 
-    public function hrdelete(Request $request,$id)
+    public function hrdelete(Request $request, $id)
     {
         $leave = Leave::find($id);
-        
 
-         // annual half days leaves
-         if ($leave->leavetype_id == '13' || $leave->leavetype_id == '14') {
-            
+        // annual half days leaves
+        if ($leave->leavetype_id == '13' || $leave->leavetype_id == '14') {
+
             $balances = Balance::where('user_id', $leave->user->id)->get();
             $subsets = $balances->map(function ($balance) {
                 return collect($balance->toArray())
@@ -2867,8 +2646,8 @@ class LeaveController extends Controller
                 ['leavetype_id', '1'],
             ])->update(['value' => $newbalance]);
         }
-            // unpaid half days leaves
-         elseif ($leave->leavetype_id == '16' || $leave->leavetype_id == '17') {
+        // unpaid half days leaves
+        elseif ($leave->leavetype_id == '16' || $leave->leavetype_id == '17') {
 
             $balances = Balance::where('user_id', $leave->user->id)->get();
             $subsets = $balances->map(function ($balance) {
@@ -2891,59 +2670,53 @@ class LeaveController extends Controller
 
         }
 
+        // sick half days leaves
+        elseif ($leave->leavetype_id == '20' || $leave->leavetype_id == '21') {
 
+            $balances = Balance::where('user_id', $leave->user->id)->get();
+            $subsets = $balances->map(function ($balance) {
+                return collect($balance->toArray())
 
-            // sick half days leaves
-            elseif ($leave->leavetype_id == '20' || $leave->leavetype_id == '21') {
+                    ->only(['value', 'leavetype_id'])
+                    ->all();
+            });
+            $final = $subsets->firstwhere('leavetype_id', '2');
 
-                $balances = Balance::where('user_id', $leave->user->id)->get();
-                $subsets = $balances->map(function ($balance) {
-                    return collect($balance->toArray())
-    
-                        ->only(['value', 'leavetype_id'])
-                        ->all();
-                });
-                $final = $subsets->firstwhere('leavetype_id', '2');
-    
-                $finalfinal = $final['value'];
-                $currentbalanceforannual = $finalfinal;
-    
-                $newbalance = $currentbalanceforannual + $leave->days;
-    
-                Balance::where([
-                    ['user_id', $leave->user->id],
-                    ['leavetype_id', '2'],
-                ])->update(['value' => $newbalance]);
-    
-            }
+            $finalfinal = $final['value'];
+            $currentbalanceforannual = $finalfinal;
 
+            $newbalance = $currentbalanceforannual + $leave->days;
 
-            // sick DC half days leaves
-            elseif ($leave->leavetype_id == '4' || $leave->leavetype_id == '6') {
+            Balance::where([
+                ['user_id', $leave->user->id],
+                ['leavetype_id', '2'],
+            ])->update(['value' => $newbalance]);
 
-                $balances = Balance::where('user_id', $leave->user->id)->get();
-                $subsets = $balances->map(function ($balance) {
-                    return collect($balance->toArray())
-    
-                        ->only(['value', 'leavetype_id'])
-                        ->all();
-                });
-                $final = $subsets->firstwhere('leavetype_id', '3');
-    
-                $finalfinal = $final['value'];
-                $currentbalanceforannual = $finalfinal;
-    
-                $newbalance = $currentbalanceforannual + $leave->days;
-    
-                Balance::where([
-                    ['user_id', $leave->user->id],
-                    ['leavetype_id', '3'],
-                ])->update(['value' => $newbalance]);
-    
-            }
+        }
 
+        // sick DC half days leaves
+        elseif ($leave->leavetype_id == '4' || $leave->leavetype_id == '6') {
 
-         elseif ($leave->leavetype_id == '19') {
+            $balances = Balance::where('user_id', $leave->user->id)->get();
+            $subsets = $balances->map(function ($balance) {
+                return collect($balance->toArray())
+
+                    ->only(['value', 'leavetype_id'])
+                    ->all();
+            });
+            $final = $subsets->firstwhere('leavetype_id', '3');
+
+            $finalfinal = $final['value'];
+            $currentbalanceforannual = $finalfinal;
+
+            $newbalance = $currentbalanceforannual + $leave->days;
+
+            Balance::where([
+                ['user_id', $leave->user->id],
+                ['leavetype_id', '3'],
+            ])->update(['value' => $newbalance]);
+
+        } elseif ($leave->leavetype_id == '19') {
 
             $balances = Balance::where('user_id', $leave->user->id)->get();
             $subsets = $balances->map(function ($balance) {
@@ -2985,12 +2758,13 @@ class LeaveController extends Controller
         }
 
         $leave->delete();
-        $request->session()->flash('successMsg',trans('overtimeerror.hrdelete')); 
+        $request->session()->flash('successMsg', trans('overtimeerror.hrdelete'));
+
         return redirect()->route('admin.allstaffleaves.index');
-        
+
     }
 
-    public function lmrevert(Request $request,$id)
+    public function lmrevert(Request $request, $id)
     {
         $leave = Leave::find($id);
         $leave->status = 'Pending LM Approval';
@@ -2998,10 +2772,9 @@ class LeaveController extends Controller
         $leave->lmcomment = null;
 
         $leave->save();
-   
-        
-        
-        $request->session()->flash('successMsg',trans('overtimeerror.lmrevert')); 
+
+        $request->session()->flash('successMsg', trans('overtimeerror.lmrevert'));
+
         return redirect()->route('admin.allstaffleaves.index');
     }
 
@@ -3018,22 +2791,20 @@ class LeaveController extends Controller
     public function search(Request $request)
     {
         $request->validate([
-       
+
             'start_date',
             'end_date' => 'nullable|after_or_equal:start_date',
             // 'leavetype' => 'required',
             'name',
-           
-        ]);
 
+        ]);
 
         $hruser = Auth::user();
 
-
-        $name= $request->name;
+        $name = $request->name;
         $leavetype = $request->leavetype_id;
-        $start_date=$request->start_date;
-        $end_date=$request->end_date;
+        $start_date = $request->start_date;
+        $end_date = $request->end_date;
         $office = $request->office;
         $status = $request->status;
         $staffstatus = $request->staffstatus;
@@ -3042,76 +2813,48 @@ class LeaveController extends Controller
         // dd($request->name);
         // dd($leavetype);
 
-        if ($start_date == Null)
-        {
-            $start_datee = "2023-01-01";
-        }
-
-        else if ($start_date !== Null)
-        {
+        if ($start_date == null) {
+            $start_datee = '2023-01-01';
+        } elseif ($start_date !== null) {
             $start_datee = $start_date;
         }
 
-        if ($end_date == Null)
-        {
-            $end_datee = "2023-12-31";
-        }
-
-        else if ($end_date !== Null)
-        {
+        if ($end_date == null) {
+            $end_datee = '2023-12-31';
+        } elseif ($end_date !== null) {
             $end_datee = $end_date;
         }
 
-        if ($staffstatus == Null)
-        {
-            $staffstatuse = ['active','suspended'];
-        }
-
-        else if ($staffstatus !== Null)
-        {
+        if ($staffstatus == null) {
+            $staffstatuse = ['active', 'suspended'];
+        } elseif ($staffstatus !== null) {
             $staffstatuse = $staffstatus;
         }
 
-        if ($office == Null)
-        {
-            $officee = ['CO-Erbil','NIAO','KRAO','CIAO','SIAO'];
-        }
-
-        else if ($office !== Null)
-        {
+        if ($office == null) {
+            $officee = ['CO-Erbil', 'NIAO', 'KRAO', 'CIAO', 'SIAO'];
+        } elseif ($office !== null) {
             $officee = $office;
         }
-        
-        if ($status == Null)
-        {
-            $statuse = ['Approved','Declined by HR','Declined by LM','Pending HR Approval','Pending LM Approval','Pending extra Approval','Approved by extra Approval','Declined by extra Approval'];
-            
-        }
 
-        else if ($status !== Null)
-        {
+        if ($status == null) {
+            $statuse = ['Approved', 'Declined by HR', 'Declined by LM', 'Pending HR Approval', 'Pending LM Approval', 'Pending extra Approval', 'Approved by extra Approval', 'Declined by extra Approval'];
+
+        } elseif ($status !== null) {
             $statuse = $status;
         }
 
-
-        if ($leavetype == Null)
-        {
+        if ($leavetype == null) {
             $leavetypee = Leavetype::all()->pluck('id')->toArray();
-        }
-
-        else if ($leavetype !== Null)
-        {
+        } elseif ($leavetype !== null) {
             $leavetypee = $leavetype;
         }
 
+        if ($request->name == null) {
+            if ($hruser->office == 'CO-Erbil') {
 
-        if ($request->name == null)
-        {   
-            if ($hruser->office == "CO-Erbil") {
-
-                $staffwithsameoffice = User::whereIn('office',$officee)->WhereIn('status', $staffstatuse)->get();
-                if (count($staffwithsameoffice))
-                {
+                $staffwithsameoffice = User::whereIn('office', $officee)->WhereIn('status', $staffstatuse)->get();
+                if (count($staffwithsameoffice)) {
                     $hrsubsets = $staffwithsameoffice->map(function ($staffwithsameoffice) {
                         return collect($staffwithsameoffice->toArray())
                             ->only(['id'])
@@ -3121,88 +2864,69 @@ class LeaveController extends Controller
                         ['start_date', '>=', $start_datee],
                         ['end_date', '<=', $end_datee],
                     ])->WhereIn('leavetype_id', $leavetypee)->WhereIn('status', $statuse)->get();
-                    
-                }   
 
-    
+                }
+
+            } else {
+                $staffwithsameoffice = User::where('office', $hruser->office)->WhereIn('status', $staffstatuse)->get();
+                if (count($staffwithsameoffice)) {
+                    $hrsubsets = $staffwithsameoffice->map(function ($staffwithsameoffice) {
+                        return collect($staffwithsameoffice->toArray())
+                            ->only(['id'])
+                            ->all();
+                    });
+                    $leaves = Leave::whereIn('user_id', $hrsubsets)->where([
+                        ['start_date', '>=', $start_datee],
+                        ['end_date', '<=', $end_datee],
+                    ])->WhereIn('leavetype_id', $leavetypee)->WhereIn('status', $statuse)->get();
+
+                }
             }
 
-            else {
-                $staffwithsameoffice = User::where('office',$hruser->office)->WhereIn('status', $staffstatuse)->get();
-            if (count($staffwithsameoffice))
-            {
-                $hrsubsets = $staffwithsameoffice->map(function ($staffwithsameoffice) {
-                    return collect($staffwithsameoffice->toArray())
-                        ->only(['id'])
-                        ->all();
-                });
-                $leaves = Leave::whereIn('user_id', $hrsubsets)->where([
-                    ['start_date', '>=', $start_datee],
-                    ['end_date', '<=', $end_datee],
-                ])->WhereIn('leavetype_id', $leavetypee)->WhereIn('status', $statuse)->get();
-                
-            }       
-            }
-            
+        } else {
+            $userid = User::where('name', $name)->value('id');
 
-        }
-        else
-        {
-            $userid = User::where('name',$name)->value('id');
-        
-  
- 
             $leaves = Leave::where([
-    
+
                 ['user_id', $userid],
                 ['start_date', '>=', $start_datee],
                 ['end_date', '<=', $end_datee],
-    
-    
+
             ])->WhereIn('leavetype_id', $leavetypee)->WhereIn('status', $statuse)->get();
         }
 
-        if ($linemanager !== Null)
-        {
+        if ($linemanager !== null) {
             $staff = User::where('linemanager', $linemanager)->get();
-            if (count($staff))
-            {
-            $subsets = $staff->map(function ($staff) {
-                return collect($staff->toArray())
+            if (count($staff)) {
+                $subsets = $staff->map(function ($staff) {
+                    return collect($staff->toArray())
 
-                    ->only(['id'])
-                    ->all();
-            });
+                        ->only(['id'])
+                        ->all();
+                });
 
-            $leaves = Leave::whereIn('user_id', $subsets)->where([
-                ['start_date', '>=', $start_datee],
-                ['end_date', '<=', $end_datee],
-            ])->WhereIn('leavetype_id', $leavetypee)->WhereIn('status', $statuse)->get();
-        }
-
-        else {
-            $leaves = Leave::where([
-                ['start_date', '>=', $start_datee],
-                ['end_date', '<=', $end_datee],
-            ])->WhereIn('leavetype_id', $leavetypee)->Where('status', "nothing to show")->get();
-        }
-
-        
+                $leaves = Leave::whereIn('user_id', $subsets)->where([
+                    ['start_date', '>=', $start_datee],
+                    ['end_date', '<=', $end_datee],
+                ])->WhereIn('leavetype_id', $leavetypee)->WhereIn('status', $statuse)->get();
+            } else {
+                $leaves = Leave::where([
+                    ['start_date', '>=', $start_datee],
+                    ['end_date', '<=', $end_datee],
+                ])->WhereIn('leavetype_id', $leavetypee)->Where('status', 'nothing to show')->get();
+            }
 
         }
 
         switch ($request->input('action')) {
             case 'view':
-                return view('admin.allstaffleaves.search', ['leaves' => $leaves, 'name'=>$name,'start_date' =>$start_datee, 'end_date'=>$end_datee]);
+                return view('admin.allstaffleaves.search', ['leaves' => $leaves, 'name' => $name, 'start_date' => $start_datee, 'end_date' => $end_datee]);
                 break;
-    
+
             case 'excel':
                 return Excel::download(new LeavesExport($leaves), 'leaves.xlsx');
                 break;
-            }
-        
+        }
 
-        
     }
-
 }

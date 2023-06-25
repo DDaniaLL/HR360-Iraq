@@ -45,20 +45,18 @@ class LoginController extends Controller
     public function username()
     {
         return 'employee_number';
-        
-       
 
     }
 
     protected function validateLogin(Request $request)
-{
-    $this->validate($request, [
-        $this->username() => 'exists:users,' . $this->username() . ',employee_number,1001',
-        'password' => 'required|string',
-    ], [
-        $this->username() . '.exists' => 'This login method is not accepted, Only login via Okta is possible.'
-    ]);
-}
+    {
+        $this->validate($request, [
+            $this->username() => 'exists:users,'.$this->username().',employee_number,1001',
+            'password' => 'required|string',
+        ], [
+            $this->username().'.exists' => 'This login method is not accepted, Only login via Okta is possible.',
+        ]);
+    }
 
     public function redirectToProvider()
     {
@@ -66,6 +64,7 @@ class LoginController extends Controller
         return Socialite::driver('okta')->redirect();
 
     }
+
     public function handleProviderCallback(Request $request)
     {
         $user = Socialite::driver('okta')->user();
@@ -81,11 +80,9 @@ class LoginController extends Controller
         //     ]);
         // } else {
 
-
-            if (!$localUser) {
-                return redirect(route('login'))->withErrors(['Account is not found - Contact HR']);
-            } 
-            else {
+        if (! $localUser) {
+            return redirect(route('login'))->withErrors(['Account is not found - Contact HR']);
+        } else {
 
             // if the user already exists, just update the token:
             $localUser->token = $user->token;
@@ -104,6 +101,7 @@ class LoginController extends Controller
     public function logout()
     {
         Auth::logout();
+
         return redirect('/login');
     }
 }

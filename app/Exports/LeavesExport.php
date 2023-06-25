@@ -12,21 +12,20 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 
 class LeavesExport implements FromCollection, WithHeadings, WithMapping
 {
-
     use Exportable;
+
     protected $leaves;
 
-
-    public function __construct($leaves) {
+    public function __construct($leaves)
+    {
 
         $this->leaves = $leaves;
-       
+
     }
 
     /**
      * @return \Illuminate\Support\Collection
      */
-    
     public function headings(): array
     {
         return [
@@ -49,29 +48,31 @@ class LeavesExport implements FromCollection, WithHeadings, WithMapping
             'Date Requested',
         ];
     }
+
     public function collection()
     {
         return $this->leaves;
 
-    //     $hruser = Auth::user();
-    //     if ($hruser->office == "CO-Erbil")
-    //     {
-    //         return Leave::all();
+        //     $hruser = Auth::user();
+        //     if ($hruser->office == "CO-Erbil")
+        //     {
+        //         return Leave::all();
 
-    //     }
-    //     else
-    //     $staffwithsameoffice = User::where('office',$hruser->office)->get();
-    //         if (count($staffwithsameoffice))
-    //         {
-    //             $hrsubsets = $staffwithsameoffice->map(function ($staffwithsameoffice) {
-    //                 return collect($staffwithsameoffice->toArray())
-    //                     ->only(['id'])
-    //                     ->all();
-    //             });
-    //             return Leave::wherein('user_id', $hrsubsets)->get(); 
-    
-    // }
+        //     }
+        //     else
+        //     $staffwithsameoffice = User::where('office',$hruser->office)->get();
+        //         if (count($staffwithsameoffice))
+        //         {
+        //             $hrsubsets = $staffwithsameoffice->map(function ($staffwithsameoffice) {
+        //                 return collect($staffwithsameoffice->toArray())
+        //                     ->only(['id'])
+        //                     ->all();
+        //             });
+        //             return Leave::wherein('user_id', $hrsubsets)->get();
+
+        // }
     }
+
     public function map($leave): array
     {
         return [
@@ -95,5 +96,4 @@ class LeavesExport implements FromCollection, WithHeadings, WithMapping
 
         ];
     }
-
 }

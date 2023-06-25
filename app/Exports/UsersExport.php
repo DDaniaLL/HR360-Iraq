@@ -11,15 +11,15 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 
 class UsersExport implements FromCollection, WithHeadings, WithMapping
 {
-
     use Exportable;
+
     protected $users;
 
-
-    public function __construct($users) {
+    public function __construct($users)
+    {
 
         $this->users = $users;
-       
+
     }
 
     /**
@@ -30,25 +30,24 @@ class UsersExport implements FromCollection, WithHeadings, WithMapping
 
         return $this->users;
 
+        //     $hruser = Auth::user();
+        //     if ($hruser->office == "CO-Erbil")
+        //     {
+        //         return User::all()->except(1);
 
-    //     $hruser = Auth::user();
-    //     if ($hruser->office == "CO-Erbil")
-    //     {
-    //         return User::all()->except(1);
-
-    //     }
-    //     else
-    //     $staffwithsameoffice = User::where('office',$hruser->office)->get();
-    //         if (count($staffwithsameoffice))
-    //         {
-    //             $hrsubsets = $staffwithsameoffice->map(function ($staffwithsameoffice) {
-    //                 return collect($staffwithsameoffice->toArray())
-    //                     ->only(['id'])
-    //                     ->all();
-    //             });
-    //             return User::wherein('id', $hrsubsets)->get(); 
-    // }
-}
+        //     }
+        //     else
+        //     $staffwithsameoffice = User::where('office',$hruser->office)->get();
+        //         if (count($staffwithsameoffice))
+        //         {
+        //             $hrsubsets = $staffwithsameoffice->map(function ($staffwithsameoffice) {
+        //                 return collect($staffwithsameoffice->toArray())
+        //                     ->only(['id'])
+        //                     ->all();
+        //             });
+        //             return User::wherein('id', $hrsubsets)->get();
+        // }
+    }
 
     public function map($user): array
     {

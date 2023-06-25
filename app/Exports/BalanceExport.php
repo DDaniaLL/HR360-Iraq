@@ -11,15 +11,15 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 
 class BalanceExport implements FromCollection, WithHeadings, WithMapping
 {
-
     use Exportable;
+
     protected $users;
 
-
-    public function __construct($users) {
+    public function __construct($users)
+    {
 
         $this->users = $users;
-       
+
     }
 
     /**
@@ -30,31 +30,29 @@ class BalanceExport implements FromCollection, WithHeadings, WithMapping
 
         return $this->users;
 
+        //     $hruser = Auth::user();
+        //     if ($hruser->office == "CO-Erbil")
+        //     {
+        //         return User::all()->except(1);
 
-    //     $hruser = Auth::user();
-    //     if ($hruser->office == "CO-Erbil")
-    //     {
-    //         return User::all()->except(1);
-
-    //     }
-    //     else
-    //     $staffwithsameoffice = User::where('office',$hruser->office)->get();
-    //         if (count($staffwithsameoffice))
-    //         {
-    //             $hrsubsets = $staffwithsameoffice->map(function ($staffwithsameoffice) {
-    //                 return collect($staffwithsameoffice->toArray())
-    //                     ->only(['id'])
-    //                     ->all();
-    //             });
-    //             return User::wherein('id', $hrsubsets)->get(); 
-    // }
-}
+        //     }
+        //     else
+        //     $staffwithsameoffice = User::where('office',$hruser->office)->get();
+        //         if (count($staffwithsameoffice))
+        //         {
+        //             $hrsubsets = $staffwithsameoffice->map(function ($staffwithsameoffice) {
+        //                 return collect($staffwithsameoffice->toArray())
+        //                     ->only(['id'])
+        //                     ->all();
+        //             });
+        //             return User::wherein('id', $hrsubsets)->get();
+        // }
+    }
 
     public function map($user): array
     {
 
-        if ($user->contract !== "National")
-        {
+        if ($user->contract !== 'National') {
             return [
 
                 $user->employee_number,
@@ -68,23 +66,19 @@ class BalanceExport implements FromCollection, WithHeadings, WithMapping
                 $user->balances->get(7)->value,
                 $user->balances->get(8)->value,
                 $user->balances->get(17)->value,
-            
-    
-            ];
-        }
 
-        else{
+            ];
+        } else {
             return [
 
                 $user->employee_number,
                 $user->name,
                 $user->balances->first()->value,
-            
-    
+
             ];
 
         }
-      
+
     }
 
     public function headings(): array
@@ -102,7 +96,6 @@ class BalanceExport implements FromCollection, WithHeadings, WithMapping
             'Maternity',
             'Paternity',
             'Compensation',
-           
 
         ];
     }

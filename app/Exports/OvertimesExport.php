@@ -12,14 +12,15 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 
 class OvertimesExport implements FromCollection, WithHeadings, WithMapping
 {
-
     use Exportable;
+
     protected $overtimes;
 
-    public function __construct($overtimes) {
+    public function __construct($overtimes)
+    {
 
         $this->overtimes = $overtimes;
-       
+
     }
 
     /**
@@ -30,24 +31,24 @@ class OvertimesExport implements FromCollection, WithHeadings, WithMapping
 
         return $this->overtimes;
 
-    //     $hruser = Auth::user();
-    //     if ($hruser->office == "CO-Erbil")
-    //     {
-    //         return Overtime::all();
+        //     $hruser = Auth::user();
+        //     if ($hruser->office == "CO-Erbil")
+        //     {
+        //         return Overtime::all();
 
-    //     }
-    //     else
-    //     $staffwithsameoffice = User::where('office',$hruser->office)->get();
-    //         if (count($staffwithsameoffice))
-    //         {
-    //             $hrsubsets = $staffwithsameoffice->map(function ($staffwithsameoffice) {
-    //                 return collect($staffwithsameoffice->toArray())
-    //                     ->only(['id'])
-    //                     ->all();
-    //             });
-    //             return Overtime::wherein('user_id', $hrsubsets)->get(); 
-    
-    // }
+        //     }
+        //     else
+        //     $staffwithsameoffice = User::where('office',$hruser->office)->get();
+        //         if (count($staffwithsameoffice))
+        //         {
+        //             $hrsubsets = $staffwithsameoffice->map(function ($staffwithsameoffice) {
+        //                 return collect($staffwithsameoffice->toArray())
+        //                     ->only(['id'])
+        //                     ->all();
+        //             });
+        //             return Overtime::wherein('user_id', $hrsubsets)->get();
+
+        // }
     }
 
     public function headings(): array

@@ -9,17 +9,14 @@ class Comlist extends Model
 {
     use HasFactory;
 
-
     protected $fillable = [
         'user_id',
         'hours',
         'status',
         'overtime_id',
         'expired_date',
-       
 
     ];
-
 
     public function user()
     {

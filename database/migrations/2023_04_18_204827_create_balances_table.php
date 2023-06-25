@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->foreignId('leavetype_id');
             $table->foreignId('user_id');
-            $table->decimal('value',8,3)->nullable();
+            $table->decimal('value', 8, 3)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
