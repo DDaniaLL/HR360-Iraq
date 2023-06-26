@@ -34,67 +34,81 @@
                                     <form class="form-card" action="{{ route('admin.users.balanceupdate',$user) }}" method="POST">
                                         @csrf
                                         @method('PUT')
+                                        @if ($user->contract == "International")
                                         <div class="row justify-content-between text-left">
                                             <div class="form-group col-sm-6 flex-column d-flex">
-                                                <label class="form-control-label px-1">{{__('balanceedit.annualLeave')}}:</label>
-                                                <input class="form-control form-outline " type="text" id="annual_leave" value="{{$balance1}}" name="annual_leave" placeholder="">
+                                                <label class="form-control-label px-1">{{__('showuser.homeleave')}}:</label>
+                                                <input class="form-control form-outline " type="text" id="homeleave" value="{{$balance12}}" name="homeleave" placeholder="">
 
                                             </div>
                                             <div class="form-group col-sm-6 flex-column d-flex">
-                                                <label class="form-control-label px-1">{{__('balanceedit.unpaidLeave')}}:</label>
-                                                <input class="form-control form-outline" type="text" id="unpaid_leave" value="{{$balance15}}" name="unpaid_leave" placeholder="" >
+                                                <label class="form-control-label px-1">{{__('showuser.r&r')}}:</label>
+                                                <input class="form-control form-outline" type="text" id="rr" value="{{$balance11}}" name="rr" placeholder="" >
+                                            </div>
+                                        </div>
+                                        @endif
+                                        @if ($user->contract == "National")
+                                        <div class="row justify-content-between text-left">
+                                            <div class="form-group col-sm-6 flex-column d-flex">
+                                                <label class="form-control-label px-1">{{__('showuser.annualLeave')}}:</label>
+                                                <input class="form-control form-outline " type="text" id="annualLeave" value="{{$balance1}}" name="annualLeave" placeholder="">
+
+                                            </div>
+                                            <div class="form-group col-sm-6 flex-column d-flex">
+                                                <label class="form-control-label px-1">{{__('showuser.sickLeaveSC')}}:</label>
+                                                <input class="form-control form-outline" type="text" id="sickLeaveSC" value="{{$balance2}}" name="sickLeaveSC" placeholder="" >
                                             </div>
                                         </div>
                                         <div class="row justify-content-between text-left">
                                             <div class="form-group col-sm-6 flex-column d-flex">
-                                                 <label class="form-control-label px-1">{{__('balanceedit.sickLeave')}}:</label>
-                                                  <input class="form-control form-outline" type="text" id="sick_leave" value="{{$balance2}}" name="sick_leave" placeholder="" >
+                                                 <label class="form-control-label px-1">{{__('showuser.sickLeaveDC')}}:</label>
+                                                  <input class="form-control form-outline" type="text" id="sickLeaveDC" value="{{$balance3}}" name="sickLeaveDC" placeholder="" >
                                                  </div>
                                             <div class="form-group col-sm-6 flex-column d-flex">
-                                                 <label class="form-control-label px-1">{{__('balanceedit.maternityLeave')}}:</label>
-                                                 <input class="form-control form-outline" type="text" id="maternity_leave" value="{{$balance8}}" name="maternity_leave" placeholder="" >
+                                                 <label class="form-control-label px-1">{{__('showuser.marriageLeave')}}:</label>
+                                                 <input class="form-control form-outline" type="text" id="marriageLeave" value="{{$balance5}}" name="marriageLeave" placeholder="" >
                                                  </div>
                                         </div>
                                         <div class="row justify-content-between text-left">
                                             <div class="form-group  col-sm-6 flex-column d-flex">
-                                                <label class="form-control-label  px-1">{{__('balanceedit.sickLeave30%Deduction')}}:</label>
-                                                <input class="form-control form-outline " type="text" id="sick_leave30" value="{{$balance3}}" name="sick_leave30" placeholder="" >
+                                                <label class="form-control-label  px-1">{{__('showuser.compassionateSecondDegree')}}:</label>
+                                                <input class="form-control form-outline " type="text" id="compassionateSecondDegree" value="{{$balance7}}" name="compassionateSecondDegree" placeholder="" >
 
                                             </div>
                                             <div class="form-group  col-sm-6 flex-column d-flex">
-                                                <label class="form-control-label  px-1">{{__('balanceedit.paternityLeave')}}:</label>
-                                                <input class="form-control form-outline " type="text" id="paternity_leave"  value="{{$balance9}}" name="paternity_leave" placeholder="" >
+                                                <label class="form-control-label  px-1">{{__('showuser.unpaidLeave')}}:</label>
+                                                <input class="form-control form-outline " type="text" id="unpaidLeave"  value="{{$balance15}}" name="unpaidLeave" placeholder="" >
 
                                             </div>
                                         </div>
                                         <div class="row justify-content-between text-left">
                                             <div class="form-group  col-sm-6 flex-column d-flex">
-                                                <label class="form-control-label  px-1">{{__('balanceedit.sickLeave20%Deduction')}}:</label>
-                                                <input class="form-control form-outline " type="text" id="sick_leave20" value="{{$balance4}}" name="sick_leave20" placeholder="" >
+                                                <label class="form-control-label  px-1">{{__('showuser.maternityLeave')}}:</label>
+                                                <input class="form-control form-outline " type="text" id="maternityLeave" value="{{$balance8}}" name="maternityLeave" placeholder="" >
 
                                             </div>
                                             <div class="form-group  col-sm-6 flex-column d-flex">
-                                                <label class="form-control-label  px-1">{{__('balanceedit.compassionateSecondDegree')}}:</label>
-                                                <input class="form-control form-outline " type="text" id="compassion_second"  value="{{$balance7}}" name="compassion_second" placeholder="" >
+                                                <label class="form-control-label  px-1">{{__('showuser.paternityLeave')}}:</label>
+                                                <input class="form-control form-outline " type="text" id="paternityLeave"  value="{{$balance9}}" name="paternityLeave" placeholder="" >
 
                                             </div>
                                         </div>
                                         <div class="row justify-content-between text-left">
                                             <div class="form-group  col-sm-6 flex-column d-flex">
-                                                <label class="form-control-label  px-1">{{__('balanceedit.marriageLeave')}}:</label>
-                                                <input class="form-control form-outline " type="text" id="marriage_leave" value="{{$balance5}}" name="marriage_leave" placeholder="" >
+                                                <label class="form-control-label  px-1">{{__('showuser.PilgrimageLeave')}}:</label>
+                                                <input class="form-control form-outline " type="text" id="PilgrimageLeave" value="{{$balance10}}" name="PilgrimageLeave" placeholder="" >
 
                                             </div>
                                             <div class="form-group  col-sm-6 flex-column d-flex">
-                                                <label class="form-control-label  px-1">{{__('balanceedit.compassionateFirstDegree')}}:</label>
-                                                <input class="form-control form-outline " type="text" id="compassion_first"  value="{{$balance6}}" name="compassion_first" placeholder="" >
+                                                <label class="form-control-label  px-1">{{__('showuser.compansetion')}}:</label>
+                                                <input class="form-control form-outline " type="text" id="compansetion"  value="{{$balance18}}" name="compansetion" placeholder="" >
 
                                             </div>
                                         </div>
-                                        <div class="row justify-content-between text-left">
+                                        <!-- <div class="row justify-content-between text-left">
                                             <div class="form-group  col-sm-6 flex-column d-flex">
                                                 <label class="form-control-label  px-1">{{__('balanceedit.welfareLeave')}}:</label>
-                                                <input class="form-control form-outline " type="text" id="welfare_leave" value="{{$balance12}}" name="welfare_leave" placeholder="" >
+                                                <input class="form-control form-outline " type="text" id="welfare_leave" value="{{$balance18}}" name="welfare_leave" placeholder="" >
 
                                             </div>
                                             <div class="form-group  col-sm-6 flex-column d-flex">
@@ -102,10 +116,10 @@
                                                 <input class="form-control form-outline " type="text" id="compansention"  value="{{$balance18}}" name="compansention" placeholder="" >
 
                                             </div>
-                                        </div>
+                                        </div> -->
                                  
 
-                                       
+                                        @endif
                                            
 
                                         {{-- MUST ADD requirepd for radio check --}}

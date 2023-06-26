@@ -693,82 +693,164 @@ class UserController extends Controller
         } else {
 
             $balances = Balance::where('user_id', $user->id)->get();
-            $subsets = $balances->map(function ($balance) {
-                return collect($balance->toArray())
+                $subsets = $balances->map(function ($balance) {
+                    return collect($balance->toArray())
 
-                    ->only(['value', 'leavetype_id'])
-                    ->all();
-            });
-            $leave1 = $subsets->firstwhere('leavetype_id', '1');
-            $balance1 = $leave1['value'];
+                        ->only(['value', 'leavetype_id'])
+                        ->all();
+                });
+                $leave1 = $subsets->firstwhere('leavetype_id', '1');
+                $balance1 = round($leave1['value'], 3);
 
-            $leave2 = $subsets->firstwhere('leavetype_id', '2');
-            $balance2 = $leave2['value'];
+                $leave2 = $subsets->firstwhere('leavetype_id', '2');
+                $balance2 = round($leave2['value'], 3);
 
-            $leave3 = $subsets->firstwhere('leavetype_id', '3');
-            $balance3 = $leave3['value'];
+                $leave3 = $subsets->firstwhere('leavetype_id', '3');
+                $balance3 = round($leave3['value'], 3);
 
-            $leave4 = $subsets->firstwhere('leavetype_id', '4');
-            $balance4 = $leave4['value'];
+                // $leave4 = $subsets->firstwhere('leavetype_id', '4');
+                // $balance4 = round($leave4['value'],3);
 
-            $leave5 = $subsets->firstwhere('leavetype_id', '5');
-            $balance5 = $leave5['value'];
+                $leave5 = $subsets->firstwhere('leavetype_id', '5');
+                $balance5 = round($leave5['value'], 3);
 
-            $leave6 = $subsets->firstwhere('leavetype_id', '6');
-            $balance6 = $leave6['value'];
+                // $leave6 = $subsets->firstwhere('leavetype_id', '6');
+                // $balance6 = round($leave6['value'],3);
 
-            $leave7 = $subsets->firstwhere('leavetype_id', '7');
-            $balance7 = $leave7['value'];
+                $leave7 = $subsets->firstwhere('leavetype_id', '7');
+                $balance7 = round($leave7['value'], 3);
 
-            $leave8 = $subsets->firstwhere('leavetype_id', '8');
-            $balance8 = $leave8['value'];
+                $leave8 = $subsets->firstwhere('leavetype_id', '8');
+                $balance8 = round($leave8['value'], 3);
 
-            $leave9 = $subsets->firstwhere('leavetype_id', '9');
-            $balance9 = $leave9['value'];
+                $leave9 = $subsets->firstwhere('leavetype_id', '9');
+                $balance9 = round($leave9['value'], 3);
 
-            $leave10 = $subsets->firstwhere('leavetype_id', '10');
-            $balance10 = $leave10['value'];
+                $leave10 = $subsets->firstwhere('leavetype_id', '10');
+                $balance10 = round($leave10['value'], 3);
 
-            $leave11 = $subsets->firstwhere('leavetype_id', '11');
-            $balance11 = $leave11['value'];
+                $leave11 = $subsets->firstwhere('leavetype_id', '11');
+                $balance11 = round($leave11['value'], 3);
 
-            $leave12 = $subsets->firstwhere('leavetype_id', '12');
-            $balance12 = $leave12['value'];
+                $leave12 = $subsets->firstwhere('leavetype_id', '12');
+                $balance12 = round($leave12['value'], 3);
 
-            // $leave13 = $subsets->firstwhere('leavetype_id', '13');
-            // $balance13 = $leave13['value'];
+                // $leave13 = $subsets->firstwhere('leavetype_id', '13');
+                // $balance13 = round($leave13['value'],3);
 
-            // $leave14 = $subsets->firstwhere('leavetype_id', '14');
-            // $balance14 = $leave14['value'];
+                // $leave14 = $subsets->firstwhere('leavetype_id', '14');
+                // $balance14 = round($leave14['value'],3);
 
-            $leave15 = $subsets->firstwhere('leavetype_id', '15');
-            $balance15 = $leave15['value'];
+                $leave15 = $subsets->firstwhere('leavetype_id', '15');
+                $balance15 = round($leave15['value'], 3);
 
-            // $leave16 = $subsets->firstwhere('leavetype_id', '16');
-            // $balance16 = $leave16['value'];
+                // $leave16 = $subsets->firstwhere('leavetype_id', '16');
+                // $balance16 = round($leave16['value'],3);
 
-            // $leave17 = $subsets->firstwhere('leavetype_id', '17');
-            // $balance17 = $leave17['value'];
-            $leave18 = $subsets->firstwhere('leavetype_id', '18');
-            $balance18 = $leave18['value'];
+                // $leave17 = $subsets->firstwhere('leavetype_id', '17');
+                // $balance17 = round($leave17['value'],3);
+                $leave18 = $subsets->firstwhere('leavetype_id', '18');
+                $balance18 = round($leave18['value'], 3);
 
-            return view('admin.users.balanceedit', [
-                'user' => $user,
-                'balance1' => $balance1,
-                'balance2' => $balance2,
-                'balance3' => $balance3,
-                'balance4' => $balance4,
-                'balance5' => $balance5,
-                'balance6' => $balance6,
-                'balance7' => $balance7,
-                'balance8' => $balance8,
-                'balance9' => $balance9,
-                'balance10' => $balance10,
-                'balance11' => $balance11,
-                'balance12' => $balance12,
-                'balance15' => $balance15,
-                'balance18' => $balance18,
-            ]);
+                $leaves = Leave::where('user_id', $user->id)->get();
+                $overtimes = Overtime::where('user_id', $user->id)->get();
+
+                return view('admin.users.balanceedit', [
+                    'user' => $user,
+                    'balance1' => $balance1,
+                    'balance2' => $balance2,
+                    'balance3' => $balance3,
+                    'balance5' => $balance5,
+                    'balance7' => $balance7,
+                    'balance8' => $balance8,
+                    'balance9' => $balance9,
+                    'balance10' => $balance10,
+                    'balance11' => $balance11,
+                    'balance12' => $balance12,
+                    'balance15' => $balance15,
+                    'balance18' => $balance18,
+                    'leaves' => $leaves,
+                    'overtimes' => $overtimes,
+                ]);
+
+
+            // $balances = Balance::where('user_id', $user->id)->get();
+            // $subsets = $balances->map(function ($balance) {
+            //     return collect($balance->toArray())
+
+            //         ->only(['value', 'leavetype_id'])
+            //         ->all();
+            // });
+            // $leave1 = $subsets->firstwhere('leavetype_id', '1');
+            // $balance1 = $leave1['value'];
+
+            // $leave2 = $subsets->firstwhere('leavetype_id', '2');
+            // $balance2 = $leave2['value'];
+
+            // $leave3 = $subsets->firstwhere('leavetype_id', '3');
+            // $balance3 = $leave3['value'];
+
+            // $leave4 = $subsets->firstwhere('leavetype_id', '4');
+            // $balance4 = $leave4['value'];
+
+            // $leave5 = $subsets->firstwhere('leavetype_id', '5');
+            // $balance5 = $leave5['value'];
+
+            // $leave6 = $subsets->firstwhere('leavetype_id', '6');
+            // $balance6 = $leave6['value'];
+
+            // $leave7 = $subsets->firstwhere('leavetype_id', '7');
+            // $balance7 = $leave7['value'];
+
+            // $leave8 = $subsets->firstwhere('leavetype_id', '8');
+            // $balance8 = $leave8['value'];
+
+            // $leave9 = $subsets->firstwhere('leavetype_id', '9');
+            // $balance9 = $leave9['value'];
+
+            // $leave10 = $subsets->firstwhere('leavetype_id', '10');
+            // $balance10 = $leave10['value'];
+
+            // $leave11 = $subsets->firstwhere('leavetype_id', '11');
+            // $balance11 = $leave11['value'];
+
+            // $leave12 = $subsets->firstwhere('leavetype_id', '12');
+            // $balance12 = $leave12['value'];
+
+            // // $leave13 = $subsets->firstwhere('leavetype_id', '13');
+            // // $balance13 = $leave13['value'];
+
+            // // $leave14 = $subsets->firstwhere('leavetype_id', '14');
+            // // $balance14 = $leave14['value'];
+
+            // $leave15 = $subsets->firstwhere('leavetype_id', '15');
+            // $balance15 = $leave15['value'];
+
+            // // $leave16 = $subsets->firstwhere('leavetype_id', '16');
+            // // $balance16 = $leave16['value'];
+
+            // // $leave17 = $subsets->firstwhere('leavetype_id', '17');
+            // // $balance17 = $leave17['value'];
+            // $leave18 = $subsets->firstwhere('leavetype_id', '18');
+            // $balance18 = $leave18['value'];
+
+            // return view('admin.users.balanceedit', [
+            //     'user' => $user,
+            //     'balance1' => $balance1,
+            //     'balance2' => $balance2,
+            //     'balance3' => $balance3,
+            //     'balance4' => $balance4,
+            //     'balance5' => $balance5,
+            //     'balance6' => $balance6,
+            //     'balance7' => $balance7,
+            //     'balance8' => $balance8,
+            //     'balance9' => $balance9,
+            //     'balance10' => $balance10,
+            //     'balance11' => $balance11,
+            //     'balance12' => $balance12,
+            //     'balance15' => $balance15,
+            //     'balance18' => $balance18,
+            // ]);
         }
 
     }
@@ -793,63 +875,67 @@ class UserController extends Controller
 
         Balance::where([
             ['user_id', $user->id],
+            ['leavetype_id', '12'],
+        ])->first()?->update(['value' => $request->homeleave]);
+
+        Balance::where([
+            ['user_id', $user->id],
+            ['leavetype_id', '11'],
+        ])->first()?->update(['value' => $request->rr]);
+
+
+        Balance::where([
+            ['user_id', $user->id],
             ['leavetype_id', '1'],
-        ])->first()?->update(['value' => $request->annual_leave]);
+        ])->first()?->update(['value' => $request->annualLeave]);
 
         Balance::where([
             ['user_id', $user->id],
             ['leavetype_id', '2'],
-        ])->first()?->update(['value' => $request->sick_leave]);
+        ])->first()?->update(['value' => $request->sickLeaveSC]);
 
         Balance::where([
             ['user_id', $user->id],
             ['leavetype_id', '3'],
-        ])->first()?->update(['value' => $request->sick_leave30]);
+        ])->first()?->update(['value' => $request->sickLeaveDC]);
 
-        Balance::where([
-            ['user_id', $user->id],
-            ['leavetype_id', '4'],
-        ])->first()?->update(['value' => $request->sick_leave20]);
 
         Balance::where([
             ['user_id', $user->id],
             ['leavetype_id', '5'],
-        ])->first()?->update(['value' => $request->marriage_leave]);
-
-        Balance::where([
-            ['user_id', $user->id],
-            ['leavetype_id', '6'],
-        ])->first()?->update(['value' => $request->compassion_first]);
+        ])->first()?->update(['value' => $request->marriageLeave]);
 
         Balance::where([
             ['user_id', $user->id],
             ['leavetype_id', '7'],
-        ])->first()?->update(['value' => $request->compassion_second]);
-
-        Balance::where([
-            ['user_id', $user->id],
-            ['leavetype_id', '8'],
-        ])->first()?->update(['value' => $request->maternity_leave]);
-
-        Balance::where([
-            ['user_id', $user->id],
-            ['leavetype_id', '9'],
-        ])->first()?->update(['value' => $request->paternity_leave]);
-
-        Balance::where([
-            ['user_id', $user->id],
-            ['leavetype_id', '12'],
-        ])->first()?->update(['value' => $request->welfare_leave]);
+        ])->first()?->update(['value' => $request->compassionateSecondDegree]);
 
         Balance::where([
             ['user_id', $user->id],
             ['leavetype_id', '15'],
-        ])->first()?->update(['value' => $request->unpaid_leave]);
+        ])->first()?->update(['value' => $request->unpaidLeave]);
+
+        Balance::where([
+            ['user_id', $user->id],
+            ['leavetype_id', '8'],
+        ])->first()?->update(['value' => $request->maternityLeave]);
+
+        Balance::where([
+            ['user_id', $user->id],
+            ['leavetype_id', '9'],
+        ])->first()?->update(['value' => $request->paternityLeave]);
+
+        Balance::where([
+            ['user_id', $user->id],
+            ['leavetype_id', '10'],
+        ])->first()?->update(['value' => $request->PilgrimageLeave]);
 
         Balance::where([
             ['user_id', $user->id],
             ['leavetype_id', '18'],
-        ])->first()?->update(['value' => $request->compansention]);
+        ])->first()?->update(['value' => $request->compansetion]);
+
+       
 
         // $user->save();
 
