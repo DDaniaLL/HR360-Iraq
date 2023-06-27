@@ -21,7 +21,9 @@ class Balance extends Model
             ->logOnly(['name',
                 'leavetype_id',
                 'user_id',
-                'value']);
+                'user.name',
+                'value'])
+            ->logOnlyDirty();
 
         // Chain fluent methods for configuration options
     }

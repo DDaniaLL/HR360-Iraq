@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
+use Spatie\Activitylog\Contracts\Activity;
 
 class UserController extends Controller
 {
@@ -857,6 +858,7 @@ class UserController extends Controller
 
     public function balanceupdate(Request $request, User $user)
     {
+       
 
         $request->validate([
 
@@ -936,7 +938,10 @@ class UserController extends Controller
         ])->first()?->update(['value' => $request->compansetion]);
 
        
-
+        // Activity()
+        // ->causedBy($hruser)
+        // // ->performedOn($someContentModel)
+        // ->log('updated');
         // $user->save();
 
         return redirect()->route('admin.users.index');
