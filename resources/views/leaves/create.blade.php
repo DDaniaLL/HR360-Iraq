@@ -69,6 +69,10 @@
                                         @if($user->contract == "International")
                                         <option value="12">{{__('createLeave.HomeLeave')}}</option>
                                         <option value="11">{{__('createLeave.R&R')}}</option>
+                                        <option disabled>──────────</option>
+                                                    <option value="15">{{__('createLeave.Unpaidleave')}}</option>
+                                                    <option value="16">{{__('createLeave.UnpaidleaveFirsthalf')}}</option>
+                                                    <option value="17">{{__('createLeave.UnpaidleaveSecondhalf')}}</option>
 
                                         @endif
                                      

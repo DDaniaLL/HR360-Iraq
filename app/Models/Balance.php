@@ -13,7 +13,7 @@ class Balance extends Model
     use LogsActivity;
     use SoftDeletes;
 
-    protected static $recordEvents = ['created', 'updated'];
+    protected static $recordEvents = [ 'updated'];
 
     public function getActivitylogOptions(): LogOptions
     {
