@@ -16,6 +16,7 @@ return [
     'toomuch' => 'You cant request more than 40 hours of overtime in the same month',
     'gradetoohigh' => 'Only staff with grade 6 and below can submit overtime request',
     'success' => 'Request submitted successfully',
+    'createsuccess' => 'User created successfully, you can review the user balances by accessing user account page',
     'hrdelete' => 'Request deleted successfully',
     'lmrevert' => 'Request workflow was reverted back to LM successfully',
 

@@ -15,7 +15,9 @@
                 </div>
                 <br>
 
-
+                @if(Session::has('successMsg'))
+    <div class="successMsg alert alert-success"> {{ Session::get('successMsg') }}</div>
+  @endif
                           <div class="container-fluid">
                                 <div class="card">
                                 <div class="card-header card-header-primary">
@@ -167,6 +169,12 @@
 
 
     $(document).ready( function () {
+
+      setTimeout(function() {
+    $("div.successMsg").fadeOut('slow');
+}, 4000); 
+
+
     $('#table_id').DataTable({
         "aLengthMenu": [[20, 50, 100, -1], [20, 50, 100, "All"]],
         "order": [[1, "desc" ]],

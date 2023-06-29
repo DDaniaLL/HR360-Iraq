@@ -267,6 +267,7 @@ class UserController extends Controller
         //         ['day', 'LIKE', '%' . '-12-' . '%'],
         //     ])
         //     ->update(['month' => 'December']);
+        $request->session()->flash('successMsg', trans('overtimeerror.createsuccess'));
 
         return redirect()->route('admin.users.index');
     }
