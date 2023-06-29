@@ -15,8 +15,10 @@ return [
     'grade' => 'Contact HR to set grade',
     'toomuch' => 'You cant request more than 40 hours of overtime in the same month',
     'gradetoohigh' => 'Only staff with grade 6 and below can submit overtime request',
-    'success' => 'Request submitted successfully',
-    'createsuccess' => 'User created successfully, you can review the user balances by accessing user account page',
+    'success' => 'Request submitted successfully.',
+    'createsuccess' => 'User created successfully, you can review the user balances by accessing user account page.',
+    'updatesuccess' => 'User details updated successfully.',
+    'balancesuccess' => 'User balance updated successfully.',
     'hrdelete' => 'Request deleted successfully',
     'lmrevert' => 'Request workflow was reverted back to LM successfully',
 

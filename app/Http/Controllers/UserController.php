@@ -650,6 +650,8 @@ class UserController extends Controller
 
         $setlinemenager = $request->linemanager;
         DB::table('users')->where('name', $setlinemenager)->update(['usertype_id' => '2']);
+        $request->session()->flash('successMsg', trans('overtimeerror.updatesuccess'));
+
 
         return redirect()->route('admin.users.index');
 
@@ -954,7 +956,8 @@ class UserController extends Controller
         // // ->performedOn($someContentModel)
         // ->log('updated');
         // $user->save();
-
+        $request->session()->flash('successMsg', trans('overtimeerror.balancesuccess'));
+        
         return redirect()->route('admin.users.index');
 
     }
