@@ -2806,6 +2806,7 @@ class LeaveController extends Controller
         $start_date = $request->start_date;
         $end_date = $request->end_date;
         $office = $request->office;
+        $contract = $request->contract;
         $status = $request->status;
         $staffstatus = $request->staffstatus;
         $linemanager = $request->linemanager;
@@ -2843,6 +2844,11 @@ class LeaveController extends Controller
         } elseif ($status !== null) {
             $statuse = $status;
         }
+        if ($contract == null) {
+            $contracte = ['Natioanl', 'International', 'NA'];
+        } elseif ($contract !== null) {
+            $contracte = $contract;
+        }
 
         if ($leavetype == null) {
             $leavetypee = Leavetype::all()->pluck('id')->toArray();
@@ -2853,7 +2859,7 @@ class LeaveController extends Controller
         if ($request->name == null) {
             if ($hruser->office == 'CO-Erbil') {
 
-                $staffwithsameoffice = User::whereIn('office', $officee)->WhereIn('status', $staffstatuse)->get();
+                $staffwithsameoffice = User::whereIn('office', $officee)->WhereIn('status', $staffstatuse)->WhereIn('contract', $contracte)->get();
                 if (count($staffwithsameoffice)) {
                     $hrsubsets = $staffwithsameoffice->map(function ($staffwithsameoffice) {
                         return collect($staffwithsameoffice->toArray())
@@ -2868,7 +2874,7 @@ class LeaveController extends Controller
                 }
 
             } else {
-                $staffwithsameoffice = User::where('office', $hruser->office)->WhereIn('status', $staffstatuse)->get();
+                $staffwithsameoffice = User::where('office', $hruser->office)->WhereIn('status', $staffstatuse)->WhereIn('contract', $contracte)->get();
                 if (count($staffwithsameoffice)) {
                     $hrsubsets = $staffwithsameoffice->map(function ($staffwithsameoffice) {
                         return collect($staffwithsameoffice->toArray())

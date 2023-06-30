@@ -623,6 +623,7 @@ class OvertimeController extends Controller
         $start_date = $request->start_date;
         $end_date = $request->end_date;
         $office = $request->office;
+        $contract = $request->contract;
         $status = $request->status;
         $staffstatus = $request->staffstatus;
         $linemanager = $request->linemanager;
@@ -654,7 +655,15 @@ class OvertimeController extends Controller
         if ($status == null) {
             $statuse = ['Approved', 'Declined by HR', 'Declined by LM', 'Pending HR Approval', 'Pending LM Approval', 'Pending extra Approval', 'Approved by extra Approval', 'Declined by extra Approval'];
 
-        } elseif ($status !== null) {
+        } 
+        
+        if ($contract == null) {
+            $contracte = ['Natioanl', 'International', 'NA'];
+        } elseif ($contract !== null) {
+            $contracte = $contract;
+        }
+        
+        elseif ($status !== null) {
             $statuse = $status;
         }
 
@@ -669,7 +678,7 @@ class OvertimeController extends Controller
 
             if ($hruser->office == 'CO-Erbil') {
 
-                $staffwithsameoffice = User::whereIn('office', $officee)->WhereIn('status', $staffstatuse)->get();
+                $staffwithsameoffice = User::whereIn('office', $officee)->WhereIn('status', $staffstatuse)->WhereIn('contract', $contracte)->get();
                 if (count($staffwithsameoffice)) {
 
                     $hrsubsets = $staffwithsameoffice->map(function ($staffwithsameoffice) {
@@ -687,7 +696,7 @@ class OvertimeController extends Controller
                 }
 
             } else {
-                $staffwithsameoffice = User::where('office', $hruser->office)->WhereIn('status', $staffstatuse)->get();
+                $staffwithsameoffice = User::where('office', $hruser->office)->WhereIn('status', $staffstatuse)->WhereIn('contract', $contracte)->get();
                 if (count($staffwithsameoffice)) {
                     $hrsubsets = $staffwithsameoffice->map(function ($staffwithsameoffice) {
                         return collect($staffwithsameoffice->toArray())
