@@ -52,9 +52,9 @@
                                         <div class="row justify-content-between text-left">
                                         <div id="type" class="form-group col-sm-6 flex-column d-flex">
                                         <label class="form-control-label required px-1">{{__('createOvertime.overtimeType')}} 
-                                            <!-- <a class="text" style="color: #5a8efc;" id="reset" href="" > {{__('createLeave.changetype')}} -->
+                                            {{-- <!-- <a class="text" style="color: #5a8efc;" id="reset" href="" > {{__('createLeave.changetype')}} -->
                                                     <!-- <i class="fas fa-sync-alt" style="color: #5a8efc;"></i> -->
-                                                    <!-- </a> -->
+                                                    <!-- </a> --> --}}
                                                   </label>
                                 
                                         @php
@@ -138,9 +138,9 @@
                                           {{-- </div> --}}
                                         </div>
                                         <br>
-                                        <!-- <div class="row justify-content-center">
+                                        {{-- <!-- <div class="row justify-content-center">
                                         <h5 style='border-radius: 7px; padding:5px; border:2px orange solid; font-size:17px; width:fit-content; width:-webkit-fit-content; width:-moz-fit-content;'>{{__('createOvertime.note')}}</h5>
-                                        </div> -->
+                                        </div> --> --}}
                                         <br>
                                         <div class="row justify-content-center">
                                             <div class="justify-content-center form-group col-sm-2"> <button type="submit" class="btn-1">{{__('createOvertime.submit')}}</button> </div>
@@ -217,14 +217,14 @@ right: initial;
 
 $(document).ready(function() {
 
-//   $(document).on('click', '.btn-1', function () {
-// $(this).addClass('activate');
-// $(this).html(
-//         `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> `
-//       );
-// });
+  $(document).on('click', '.btn-1', function () {
+$(this).addClass('activate');
+$(this).html(
+        `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> `
+      );
+});
 
-//   $('#reset').hide();
+  $('#reset').hide();
   
 
   $('form').submit(function(){

@@ -18,8 +18,8 @@
         </div>
         <div class="card-body text-center">
           
-        <!-- <p class="h1 mb-0" style="font-size:2.3rem;"> <img class="mb-0 ml-0" src="{{url('/okta.png')}}"  alt="" style=" width:60px;height:20px;"></p> -->
-          <!-- <p class="login-box-msg pr-0 pb-3 pl-0">Sign in to start your session</p> -->
+        {{-- <p class="h1 mb-0" style="font-size:2.3rem;"> <img class="mb-0 ml-0" src="{{url('/okta.png')}}"  alt="" style=" width:60px;height:20px;"></p> --}}
+           {{-- <p class="login-box-msg pr-0 pb-3 pl-0">Sign in to start your session</p> --}}
   
         
             <form action="{{ route('login') }}" method="post">
@@ -95,18 +95,18 @@
             <div class="alert " style="color:red; font-weight:bold; padding-bottom: 0.2rem;"  >{{$errors->first()}}</></div>
 @endif
 
-          <!-- <div class="social-auth-links text-center ">
+           {{-- <div class="social-auth-links text-center ">
             <a href="{{ route('login-okta') }}" id="btn-1"class="btn-lg btn-block btn-outline-primary">
               <i class="fab fa-faecebook"></i>Sign in with Okta
               <br> تسجيل الدخول باستخدام الأوكتا
             </a>
             
         
-          </div> -->
-          <!-- /.social-auth-links
+          </div>  --}}
+          {{-- <!-- /.social-auth-links
 
         </div>
-        <!-- /.card-body -->
+        <!-- /.card-body --> --}}
       </div>
       <!-- /.card -->
 

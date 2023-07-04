@@ -44,7 +44,7 @@
                                 <th style="width: 5%" class="text-center" scope="col">{{__('allStaffOvertimes.hours')}}<small>({{__('allStaffOvertimes.value')}})</small></th>
                                 <th style="width: 10%" class="text-center" scope="col">{{__('allStaffOvertimes.status')}}</th>
                                 <th style="width: 10%" class="text-center" scope="col">{{__('allStaffOvertimes.lineManager')}}</th>
-                                <!-- <th style="width: 10%" class="text-center" scope="col">{{__('allStaffOvertimes.dateCreated')}}</th> -->
+                             
                             </tr>
                           </thead>
                           <tbody>
@@ -66,8 +66,7 @@
                               <td class="text-center">{{ $overtime->value }}</td>
                               <td class="text-center">{{__("databaseLeaves.$overtime->status")}}</td>
                               <td class="text-center">{{ $overtime->lmapprover }}</td>
-                              <!-- <td class="text-center">{{ $overtime->created_at }}</td> -->
-                              {{-- <td>edit</td> --}}
+                            
                             </tr>
                             @endforeach
                           </tbody>

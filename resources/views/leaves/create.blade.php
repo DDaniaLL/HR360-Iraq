@@ -59,9 +59,9 @@
                                                     name="leavetype_id" id="leavetype_id" type="text"
                                                     placeholder="{{ __('Leave Type') }}"
                                                     required>
-                                                    <!-- @foreach ($leavetypes as $leavetype)
+                                                    {{-- <!-- @foreach ($leavetypes as $leavetype)
                                                         <option value="{{ $leavetype->id }}"> {{__("databaseLeaves.$leavetype->name")}} </option>
-                                                    @endforeach -->
+                                                    @endforeach --> --}}
 
                                                     @php
                                         $user = Auth::user();

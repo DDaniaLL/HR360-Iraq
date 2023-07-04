@@ -48,7 +48,7 @@
                                 <th style="width: 3%" class="text-center" scope="col">{{__('allStaffLeaves.days')}}</th>
                                 <th style="width: 10%" class="text-center" scope="col">{{__('allStaffLeaves.status')}}</th>
                                 <th style="width: 10%" class="text-center" scope="col">{{__('allStaffLeaves.lineManager')}}</th>
-                                <!-- <th style="width: 10%" class="text-center" scope="col">{{__('allStaffLeaves.dateCreated')}}</th> -->
+                            
                             </tr>
                           </thead>
                           <tbody>
@@ -70,8 +70,7 @@
                               <td class="text-center">{{ $leave->days }}</td>
                               <td class="text-center">{{__("databaseLeaves.$leave->status")}}</td>
                               <td class="text-center">{{ $leave->user ? $leave->lmapprover : '-' }}</td>
-                              <!-- <td class="text-center">{{ $leave->created_at }}</td> -->
-                              {{-- <td>edit</td> --}}
+                             
                             </tr>
                             @endforeach
                           </tbody>

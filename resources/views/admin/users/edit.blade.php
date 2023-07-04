@@ -39,10 +39,7 @@
                                                 <span id="name-error" class="error text-danger" for="input-name">{{ $errors->first('name') }}</span>
                                                @endif
                                             </div>
-                                            <!-- <div class="form-group col-sm-6 flex-column d-flex">
-                                                <label class="form-control-label px-1">{{__('edituser.birthDate')}}</label>
-                                                <input class="form-control form-outline" type="date" id="birth_date" value="{{$user->birth_date}}" name="birth_date" placeholder="" >
-                                            </div> -->
+                                           
                                             <div class="form-group col-sm-6 flex-column d-flex"> <label class="form-control-label px-1">{{__('edituser.position')}}</label> <input class="form-control form-outline" type="text" id="position" value="{{$user->position}}" name="position" placeholder="" > </div>
                                         </div>
                                         <div class="row justify-content-between text-left">

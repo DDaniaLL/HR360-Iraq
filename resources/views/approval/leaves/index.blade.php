@@ -62,7 +62,7 @@
                                     </td>
                                     <td class="text-center">
                                     <div class="text-center"><button type="button" class="mb-0 form-group btn btn-xs btn-warning" data-toggle="modal" data-target="#myModal4{{$leave->id}}"><i class="fas fa-minus-circle"></i> </button></div>
-                                        <!-- <a id="buttonSelector" class="btn btn-danger" href="{{route('leaves.declined',$leave->id)}}">{{__('leaveApproval.decline')}}</a> -->
+                                        {{-- <a id="buttonSelector" class="btn btn-danger" href="{{route('leaves.declined',$leave->id)}}">{{__('leaveApproval.decline')}}</a> --}}
                                     </td>
                                   @endif 
                                   @if ($leave->status  == "Pending LM Approval")
@@ -71,7 +71,7 @@
                                     </td>
                                     <td class="text-center">
                                     <div class="text-center"><button type="button" class="mb-0 form-group btn btn-xs btn-block btn-danger" data-toggle="modal" data-target="#myModal2{{$leave->id}}"><i class="fas fa-minus-circle"></i> </button></div>
-                                        <!-- <a id="buttonSelector" class="btn btn-danger" href="{{route('leaves.declined',$leave->id)}}">{{__('leaveApproval.decline')}}</a> -->
+                                        {{-- <a id="buttonSelector" class="btn btn-danger" href="{{route('leaves.declined',$leave->id)}}">{{__('leaveApproval.decline')}}</a> --}}
                                     </td>
                                   @endif
                                   

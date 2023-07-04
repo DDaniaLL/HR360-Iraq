@@ -8,9 +8,7 @@
         <div class="row">
             <div class="col-md-6 mb-6">
                 <div class="text">
-                    {{-- @foreach ($users as $user) --}}
-                    {{-- <h3>Welcome <b>{{$user->name}}</b> </h3> --}}
-                    {{-- @endforeach --}}
+                    
                 </div>
             </div>
         </div>
@@ -105,18 +103,7 @@
 
                                             </div>
                                         </div>
-                                        <!-- <div class="row justify-content-between text-left">
-                                            <div class="form-group  col-sm-6 flex-column d-flex">
-                                                <label class="form-control-label  px-1">{{__('balanceedit.welfareLeave')}}:</label>
-                                                <input class="form-control form-outline " type="text" id="welfare_leave" value="{{$balance18}}" name="welfare_leave" placeholder="" >
-
-                                            </div>
-                                            <div class="form-group  col-sm-6 flex-column d-flex">
-                                                <label class="form-control-label  px-1">{{__('balanceedit.compansetion')}}:</label>
-                                                <input class="form-control form-outline " type="text" id="compansention"  value="{{$balance18}}" name="compansention" placeholder="" >
-
-                                            </div>
-                                        </div> -->
+                                        
                                  
 
                                         @endif

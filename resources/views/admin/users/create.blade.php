@@ -42,10 +42,7 @@
                                                 <span id="name-error" class="error text-danger" for="input-name">{{ $errors->first('name') }}</span>
                                                @endif
                                             </div>
-                                          <!-- <div class="form-group col-sm-6 flex-column d-flex">
-                                              <label class="form-control-label px-1">{{__('createUser.birthDate')}}</label>
-                                              <input class="form-control form-outline" type="date" value="{{ old('birth_date') }}" name="birth_date" id="birth_date" placeholder="" >
-                                            </div> -->
+                                         
                                             <div class="form-group col-sm-6 flex-column d-flex"> <label class="form-control-label px-1">{{__('createUser.position')}}</label> <input class="form-control form-outline" type="text" id="position"  value="{{ old('position') }}" name="position" placeholder="" > </div>
                                       </div>
                                       <div class="row justify-content-between text-left">
@@ -62,11 +59,11 @@ $authuser = Auth::user();
 
 <option value selected disabled ="">{{__('createUser.choose')}} {{__('createUser.office')}}..</option>
 
-<!-- <option value="CO-Erbil" @if (old('office') == "CO-Erbil") {{ 'selected' }} @endif>CO-Erbil</option> -->
+{{-- <!-- <option value="CO-Erbil" @if (old('office') == "CO-Erbil") {{ 'selected' }} @endif>CO-Erbil</option> --> --}}
 <option value="NIAO" @if (old('office') == "NIAO") {{ 'selected' }} @endif>NIAO</option>
-<!-- <option value="KRAO" @if (old('office') == "KRAO") {{ 'selected' }} @endif>KRAO</option>
+{{-- <!-- <option value="KRAO" @if (old('office') == "KRAO") {{ 'selected' }} @endif>KRAO</option>
 <option value="CIAO" @if (old('office') == "CIAO") {{ 'selected' }} @endif>CIAO</option>
-<option value="SIAO" @if (old('office') == "SIAO") {{ 'selected' }} @endif>SIAO</option> -->
+<option value="SIAO" @if (old('office') == "SIAO") {{ 'selected' }} @endif>SIAO</option> --> --}}
 
 </select>
 
@@ -77,11 +74,11 @@ $authuser = Auth::user();
 
 <option value selected disabled ="">{{__('createUser.choose')}} {{__('createUser.office')}}..</option>
 
-<!-- <option value="CO-Erbil" @if (old('office') == "CO-Erbil") {{ 'selected' }} @endif>CO-Erbil</option> -->
-<!-- <option value="NIAO" @if (old('office') == "NIAO") {{ 'selected' }} @endif>NIAO</option> -->
+{{-- <!-- <option value="CO-Erbil" @if (old('office') == "CO-Erbil") {{ 'selected' }} @endif>CO-Erbil</option> --> --}}
+{{-- <!-- <option value="NIAO" @if (old('office') == "NIAO") {{ 'selected' }} @endif>NIAO</option> --> --}}
 <option value="KRAO" @if (old('office') == "KRAO") {{ 'selected' }} @endif>KRAO</option>
-<!-- <option value="CIAO" @if (old('office') == "CIAO") {{ 'selected' }} @endif>CIAO</option> -->
-<!-- <option value="SIAO" @if (old('office') == "SIAO") {{ 'selected' }} @endif>SIAO</option> -->
+{{-- <!-- <option value="CIAO" @if (old('office') == "CIAO") {{ 'selected' }} @endif>CIAO</option> --> --}}
+{{-- <!-- <option value="SIAO" @if (old('office') == "SIAO") {{ 'selected' }} @endif>SIAO</option> --> --}}
 
 </select>
 
@@ -92,11 +89,11 @@ $authuser = Auth::user();
 
 <option value selected disabled ="">{{__('createUser.choose')}} {{__('createUser.office')}}..</option>
 
-<!-- <option value="CO-Erbil" @if (old('office') == "CO-Erbil") {{ 'selected' }} @endif>CO-Erbil</option> -->
-<!-- <option value="NIAO" @if (old('office') == "NIAO") {{ 'selected' }} @endif>NIAO</option> -->
-<!-- <option value="KRAO" @if (old('office') == "KRAO") {{ 'selected' }} @endif>KRAO</option> -->
+{{-- <!-- <option value="CO-Erbil" @if (old('office') == "CO-Erbil") {{ 'selected' }} @endif>CO-Erbil</option> --> --}}
+{{-- <!-- <option value="NIAO" @if (old('office') == "NIAO") {{ 'selected' }} @endif>NIAO</option> --> --}}
+{{-- <!-- <option value="KRAO" @if (old('office') == "KRAO") {{ 'selected' }} @endif>KRAO</option> --> --}}
 <option value="CIAO" @if (old('office') == "CIAO") {{ 'selected' }} @endif>CIAO</option>
-<!-- <option value="SIAO" @if (old('office') == "SIAO") {{ 'selected' }} @endif>SIAO</option> -->
+{{-- <!-- <option value="SIAO" @if (old('office') == "SIAO") {{ 'selected' }} @endif>SIAO</option> --> --}}
 
 </select>
 
@@ -106,10 +103,10 @@ $authuser = Auth::user();
 
 <option value selected disabled ="">{{__('createUser.choose')}} {{__('createUser.office')}}..</option>
 
-<!-- <option value="CO-Erbil" @if (old('office') == "CO-Erbil") {{ 'selected' }} @endif>CO-Erbil</option> -->
-<!-- <option value="NIAO" @if (old('office') == "NIAO") {{ 'selected' }} @endif>NIAO</option> -->
-<!-- <option value="KRAO" @if (old('office') == "KRAO") {{ 'selected' }} @endif>KRAO</option> -->
-<!-- <option value="CIAO" @if (old('office') == "CIAO") {{ 'selected' }} @endif>CIAO</option> -->
+{{-- <!-- <option value="CO-Erbil" @if (old('office') == "CO-Erbil") {{ 'selected' }} @endif>CO-Erbil</option> --> --}}
+{{-- <!-- <option value="NIAO" @if (old('office') == "NIAO") {{ 'selected' }} @endif>NIAO</option> --> --}}
+{{-- <!-- <option value="KRAO" @if (old('office') == "KRAO") {{ 'selected' }} @endif>KRAO</option> --> --}}
+{{-- <!-- <option value="CIAO" @if (old('office') == "CIAO") {{ 'selected' }} @endif>CIAO</option> --> --}}
 <option value="SIAO" @if (old('office') == "SIAO") {{ 'selected' }} @endif>SIAO</option>
 
 </select>
@@ -238,14 +235,14 @@ $authuser = Auth::user();
                                       </div>
                                       <div class="row justify-content-between text-left">
                                          
-                                          <!-- <div class="form-group {{ $errors->has('password') ? ' has-danger' : '' }} col-sm-6 flex-column d-flex">
+                                           {{-- <div class="form-group {{ $errors->has('password') ? ' has-danger' : '' }} col-sm-6 flex-column d-flex">
                                               <label class="form-control-label required  px-1">{{__('createUser.password')}} <small>({{__('createUser.whenSigningUsingEmployeeId')}})</small></label>
                                                <div class="input-group">
                                                    <input class="form-control form-outline  {{ $errors->has('password') ? ' is-invalid' : '' }} "  type="password" readonly onfocus="this.removeAttribute('readonly');" id="password" autocomplete="off"
                                                    name="password" autocomplete="new-password" placeholder="">
-                                                   {{-- @if ($errors->has('password'))
+                                                    @if ($errors->has('password'))
                                                 <span id="password-error" class="error text-danger" for="input-password">{{ $errors->first('password') }}</span>
-                                               @endif --}}
+                                               @endif 
                                                    <div class="input-group-append">
                                                     <div class="input-group-text ">
                                                       <i class="fas fa-eye-slash" id="eye1"></i>
@@ -255,7 +252,7 @@ $authuser = Auth::user();
                                                 @if ($errors->has('password'))
                                               <span id="password-error" class="error text-danger" for="input-password">{{ $errors->first('password') }}</span>
                                              @endif
-                                        </div> -->
+                                        </div>  --}}
                                       </div>
                                       {{-- MUST ADD requirepd for radio check --}}
                                        <br>

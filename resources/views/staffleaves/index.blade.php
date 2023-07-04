@@ -27,13 +27,12 @@
                       </div>
                       <div class="card-body table-responsive-md">
 
-                        <!-- <div class="row"> -->
+                        
                       <table id="table_iddd" class="table table-responsive table-bordered table-hover text-nowrap table-Secondary table-striped">
                       <thead>
                           <tr style=" background-color: #ffb678 !important;">
                             <th style="width: 20%" scope="col">{{__('staffleaves.name')}}</th>
-                            <!-- <th style="width: 10%" scope="col">{{__('staffleaves.birthDate')}}</th> -->
-                            <!-- <th style="width: 20%" class="text-center" scope="col">{{__('staffleaves.email')}}</th> -->
+                       
                             <th style="width: 20%" class="text-center" scope="col">{{__('staffleaves.employeeNumber')}}</th>
                             <th style="width: 20%" class="text-center" scope="col">{{__('staffleaves.balance')}}</th>
                             <th style="width: 20%" class="text-center" scope="col">{{__('staffleaves.position')}}</th>
@@ -47,8 +46,7 @@
                             <td>
                                 {{ $user->name }}
                             </td>
-                            <!-- <td>{{ $user->birth_date }}</td> -->
-                            <!-- <td class="text-center">{{ $user->email }}</td> -->
+
                             <td class="text-center">{{ $user->employee_number }}</td>
                             <td class="text-center">
                               @if ($user->contract == "Service") 
@@ -91,7 +89,7 @@
                                 <th style="width: 20%"  class="text-center"scope="col">{{__('staffleaves.endDate')}}</th>
                                 <th style="width: 10%" class="text-center" scope="col">{{__('staffleaves.days')}}</th>
                                 <th style="width: 20%" class="text-center" scope="col">{{__('staffleaves.status')}}</th>
-                                <!-- <th style="width: 10%" class="text-center" scope="col">{{__('staffleaves.dateCreated')}}</th> -->
+                                
                             </tr>
                           </thead>
                           <tbody>
@@ -108,7 +106,7 @@
                               <td class="text-center">{{__("databaseLeaves.$enddayname")}} {{ $leave->end_date }}</td>
                               <td class="text-center">{{ $leave->days }}</td>
                               <td class="text-center">{{ $leave->status }}</td>
-                              <!-- <td class="text-center"> {{ $leave->created_at }}</td> -->
+                              
                             </tr>
                             @endforeach
                           </tbody>
@@ -136,7 +134,7 @@
                               <th style="width: 10%" class="text-center" scope="col">{{__('staffleaves.endHour')}}</th>
                               <th style="width: 10%" class="text-center" scope="col">{{__('staffleaves.hours')}}</th>
                               <th style="width: 20%" class="text-center" scope="col">{{__('staffleaves.status')}}</th>
-                              <!-- <th style="width: 15%" class="text-center" scope="col">{{__('staffleaves.dateCreated')}}</th> -->
+                              
                           </tr>
                         </thead>
                         <tbody>
@@ -153,7 +151,7 @@
                             <td class="text-center">{{ $overtime->end_hour }}</td>
                             <td class="text-center">{{ $overtime->hours }}</td>
                             <td class="text-center">{{ $overtime->status }}</td>
-                            <!-- <td class="text-center"> {{ $overtime->created_at }}</td> -->
+                           
                           </tr>
                           @endforeach
                         </tbody>

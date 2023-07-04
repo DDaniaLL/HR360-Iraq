@@ -48,7 +48,7 @@
                                 <th style="width: 3%" class="text-center" scope="col">{{__('allStaffLeaves.days')}}</th>
                                 <th style="width: 10%" class="text-center" scope="col">{{__('allStaffLeaves.status')}}</th>
                                 <th style="width: 10%" class="text-center" scope="col">{{__('allStaffLeaves.lineManager')}}</th>
-                                <!-- <th style="width: 10%" class="text-center" scope="col">{{__('allStaffLeaves.dateCreated')}}</th> -->
+                              
                             </tr>
                           </thead>
                           <tbody>
@@ -65,9 +65,9 @@
     <li role="presentation"><a class="ml-2" target="_blank" role="menuitem"  href="{{ route('admin.users.show', $leave->user) }}">Staff Account </a></li>
   </ul>
 </div>
+</td>
 
-
-                              <!-- <a style = "color: #007bff;" href="{{ route('admin.users.show', $leave->user) }}" >{{ $leave->user ? $leave->user->name : 'Deleted User' }}</a></td> -->
+                              
                               @if ($hruser->office == "CO-Erbil")
                                   <td class="text-center">{{ $leave->user->office }}</td>
                                     @endif
@@ -82,8 +82,7 @@
                               <td class="text-center">{{ $leave->days }}</td>
                               <td class="text-center">{{__("databaseLeaves.$leave->status")}}</td>
                               <td class="text-center">{{ $leave->user ? $leave->lmapprover : '-' }}</td>
-                              <!-- <td class="text-center">{{ $leave->created_at }}</td> -->
-                              {{-- <td>edit</td> --}}
+                             
                             </tr>
                             @endforeach
                           </tbody>

@@ -140,22 +140,7 @@ $hruser = Auth::user();
                                                 </select>
                                      </div>
 
-                                     <!-- <div  class="form-group {{ $errors->has('staff') ? ' has-danger' : '' }} col-sm-6 flex-column d-flex">
-                                        <label class="form-control-label  px-1">{{__('advancedSearchuser.leavestatus')}}</label>
-                                        <select
-                                                    class="form-control form-outline   selectpicker" data-size="5" data-style="btn btn-outline-secondary"
-                                                    name="permission[]" id="permission" type="text" multiple>
-                                                   
-
-                                                    <option value="yes">HR Admin</option>
-                                                    <option value="no">Not HR Admin</option>
-                                                    
-
-
-                                                </select>
-                                     </div> -->
-
-
+                                     
                                      
                                      
                                       </div>

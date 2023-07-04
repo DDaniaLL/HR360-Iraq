@@ -158,9 +158,9 @@
 
                           </div>
                           <br>
-                          <!-- <div class="row justify-content-center">
+                          {{-- <!-- <div class="row justify-content-center">
                                         <h5 style='border-radius: 7px; padding:5px; border:2px orange solid; font-size:17px; width:fit-content; width:-webkit-fit-content; width:-moz-fit-content;'>{{__('createOvertime.note')}}</h5>
-                                        </div> -->
+                                        </div> --> --}}
                 </div>
             </div>
 
@@ -181,9 +181,9 @@
               <label class="form-control-label px-1">{{__('createLeave.comment')}}</small></label>
               <input class="form-control form-outline" type="text" id="comment" autocomplete="off" name="comment" placeholder="Optional">
               <br>
-                <!-- <div class="row justify-content-center">
+                {{-- <!-- <div class="row justify-content-center">
                                         <h5 style='border-radius: 7px; padding:5px; border:2px orange solid; font-size:17px; width:fit-content; width:-webkit-fit-content; width:-moz-fit-content;'>{{__('createOvertime.note')}}</h5>
-                                        </div> -->
+                                        </div> --> --}}
             </div>
             </div>
 
@@ -251,9 +251,9 @@
                 <label class="form-control-label px-1">{{__('createLeave.comment')}}</small></label>
                 <input class="form-control form-outline" type="text" id="comment" autocomplete="off" name="comment" placeholder="Optional">
                 <br>
-                <!-- <div class="row justify-content-center">
+                {{-- <!-- <div class="row justify-content-center">
                                         <h5 style='border-radius: 7px; padding:5px; border:2px orange solid; font-size:17px; width:fit-content; width:-webkit-fit-content; width:-moz-fit-content;'>{{__('createOvertime.note')}}</h5>
-                                        </div> -->
+                                        </div> --> --}}
               </div>
               </div>
 

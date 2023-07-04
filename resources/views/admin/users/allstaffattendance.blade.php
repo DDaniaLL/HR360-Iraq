@@ -7,9 +7,7 @@
             <div class="row">
                 <div class="col-md-6 mb-6">
                     <div class="text">
-                        {{-- @foreach ($users as $user) --}}
-                        {{-- <h4>Welcome <b>{{$user->name}}</b> </h4> --}}
-                        {{-- @endforeach --}}
+                        
                     </div>
                 </div>
             </div>
@@ -19,14 +17,13 @@
                     <div class="card">
                         <div class="card-header card-header-primary">
                             <h5 class="card-text "><strong>{{$user->name}}</strong> Attendance - <strong>2022</strong></h5>
-                            {{-- <p class="card-category">Here you can see the history of overtimes</p> --}}
+                            
                           </div>
 
                           <div class="card-body">
                               <div class="row">
 
-                                  {{-- <div class="col"> --}}
-                                      {{-- <div class="card-deck" > --}}
+                                 
                                           @foreach ($attendances as $attendance)
                                           <div class="col-4">
 

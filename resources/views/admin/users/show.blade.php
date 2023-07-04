@@ -89,8 +89,7 @@
                             <div class="col">
                                 <strong>{{__('showuser.fullName')}}: </strong> {{$user->name}}
                                 <br>
-                                <!-- <strong>{{__('showuser.birthDate')}}: </strong> {{$user->birth_date}}
-                                <br> -->
+                              
                                 <strong>{{__('showuser.email')}}: </strong> {{$user->email}}
                                 <br>
                                 <strong>{{__('showuser.employeeId')}}: </strong> {{$user->employee_number}}
@@ -236,7 +235,7 @@
                                 <th style="width: 10%" class="text-center" scope="col">{{__('staffleaves.days')}}</th>
                                 <th style="width: 20%" class="text-center" scope="col">{{__('staffleaves.status')}}</th>
                                 <th style="width: 10%" class="text-center" scope="col">{{__('allStaffLeaves.lineManager')}}</th>
-                                <!-- <th style="width: 10%" class="text-center" scope="col">{{__('staffleaves.dateCreated')}}</th> -->
+                              
                             </tr>
                           </thead>
                           <tbody>
@@ -254,7 +253,7 @@
                               <td class="text-center">{{ $leave->days }}</td>
                               <td class="text-center">{{ $leave->status }}</td>
                               <td class="text-center">{{ $leave->user ? $leave->lmapprover : '-' }}</td>
-                              <!-- <td class="text-center"> {{ $leave->created_at }}</td> -->
+                             
                             </tr>
                             @endforeach
                           </tbody>
@@ -284,7 +283,7 @@
                               <th style="width: 5%" class="text-center" scope="col">{{__('allStaffOvertimes.hours')}}<small>({{__('allStaffOvertimes.value')}})</small></th>
                               <th style="width: 20%" class="text-center" scope="col">{{__('staffleaves.status')}}</th>
                               <th style="width: 10%" class="text-center" scope="col">{{__('allStaffOvertimes.lineManager')}}</th>
-                              <!-- <th style="width: 15%" class="text-center" scope="col">{{__('staffleaves.dateCreated')}}</th> -->
+                              
                           </tr>
                         </thead>
                         <tbody>
@@ -303,7 +302,7 @@
                             <td class="text-center">{{ $overtime->value }}</td>
                             <td class="text-center">{{ $overtime->status }}</td>
                             <td class="text-center">{{ $overtime->lmapprover }}</td>
-                            <!-- <td class="text-center"> {{ $overtime->created_at }}</td> -->
+                          
                           </tr>
                           @endforeach
                         </tbody>

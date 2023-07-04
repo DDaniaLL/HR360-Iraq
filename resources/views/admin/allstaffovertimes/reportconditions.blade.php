@@ -48,26 +48,7 @@
                                             @endforeach
                                         </datalist>
                                      </div>
-                                     <!-- <div class="form-group col-sm-6 flex-column d-flex {{ $errors->has('leavetype') ? 'has-danger' : '' }}"> <label class="dropdown form-control-label required px-1 {{ $errors->has('leavetype') ? ' is-invalid' : '' }}">Leave type</label>
-                                        <select class="form-control form-outline {{ $errors->has('leavetype') ? ' is-invalid' : '' }}" id="leavetype" name="leavetype" aria-label="Default select example" >
-                                          
-                                        <option value selected disabled ="">Select leave Type..</option>
-
-                                          <option value="all" @if (old('leavetype') == "all") {{ 'selected' }} @endif>All leave types</option>
-                                          <option value="annual" @if (old('leavetype') == "annual") {{ 'selected' }} @endif>Annual leaves</option>
-                                          <option value="sick" @if (old('leavetype') == "sick") {{ 'selected' }} @endif>Sick leaves</option>
-                                          <option value="welfare" @if (old('leavetype') == "welfare") {{ 'selected' }} @endif>Welfare leaves</option>
-                                          <option value="compassionate" @if (old('leavetype') == "compassionate") {{ 'selected' }} @endif>Compassionate leaves</option>
-                                          <option value="ternity" @if (old('leavetype') == "ternity") {{ 'selected' }} @endif>Maternity/Paternity leaves</option>
-                                          <option value="unpaid" @if (old('leavetype') == "unpaid") {{ 'selected' }} @endif>Unpaid leaves</option>
-                                          <option value="compansetion" @if (old('leavetype') == "compansetion") {{ 'selected' }} @endif>Compansetion leaves</option>
-                                         
-                                          
-                                        </select>
-                                        @if ($errors->has('leavetype'))
-                                                <span id="leavetype-error" class="error text-danger" for="input-leavetype">{{ $errors->first('leavetype') }}</span>
-                                               @endif
-                                        </div> -->
+                                    
                                       </div>
                                       
                               

@@ -8,9 +8,7 @@
         <div class="row">
             <div class="col-md-6 mb-6">
                 <div class="text">
-                    {{-- @foreach ($users as $user) --}}
-                    {{-- <h3>Welcome <b>{{$user->name}}</b> </h3> --}}
-                    {{-- @endforeach --}}
+             
                 </div>
             </div>
         </div>
@@ -76,34 +74,7 @@
 
 
 
-                                        {{-- <div class="row">
-                                          <div class="col-md-6 mb-6">
-                                            <div class="form-outline">
-                                              <input type="text" name="name" class="form-control form-control-lg" />
-                                              <label class="form-label" >Name</label>
-                                            </div>
-                                          </div>
-                                            <div class="col-md-6 mb-6">
-                                              <div class="form-outline">
-                                                <input type="text" name="desc" class="form-control form-control-lg" />
-                                                <label class="form-label" >Desc</label>
-                                              </div>
-                                            </div>
-                                        </div> --}}
-                                        {{-- <div class="row">
-                                            <div class="col-md-6 mb-6">
-                                              <div class="form-outline">
-                                                <input type="date" name="created_date" class="form-control form-control-lg" />
-                                                <label class="form-label" >Created Date</label>
-                                              </div>
-                                            </div>
-                                              <div class="col-md-6 mb-6">
-                                                <div class="form-outline">
-                                                  <input type="date" name="lastupdate_date" class="form-control form-control-lg" />
-                                                  <label class="form-label" >Last Update</label>
-                                                </div>
-                                              </div>
-                                          </div> --}}
+                                       
                                           <div class="row justify-content-between text-left">
                                             <div class="form-group {{ $errors->has('file') ? ' has-danger' : '' }} col-sm-6 flex-column d-flex">
                                                  <label class="form-control-label required px-1">{{__('createHrPolicy.file')}} <small>(PDF only)</small></label>

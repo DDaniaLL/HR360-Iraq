@@ -140,20 +140,7 @@ $hruser = Auth::user();
                                                 </select>
                                      </div>
 
-                                     <!-- <div  class="form-group {{ $errors->has('staff') ? ' has-danger' : '' }} col-sm-6 flex-column d-flex">
-                                        <label class="form-control-label  px-1">{{__('advancedSearchuser.leavestatus')}}</label>
-                                        <select
-                                                    class="form-control form-outline   selectpicker" data-size="5" data-style="btn btn-outline-secondary"
-                                                    name="permission[]" id="permission" type="text" multiple>
-                                                   
-
-                                                    <option value="yes">HR Admin</option>
-                                                    <option value="no">Not HR Admin</option>
-                                                    
-
-
-                                                </select>
-                                     </div> -->
+ 
 
 
                                      
@@ -179,7 +166,7 @@ $hruser = Auth::user();
                                       {{-- MUST ADD requirepd for radio check --}}
                                        <br>
                                       <div class="row justify-content-center">
-                                          <!-- <div class="form-group col-sm-3"> <button type="submit" name="action" value="view" class="btn bg-gradient-primary btn-block">{{__('advancedSearchuser.view')}}</button> </div> -->
+                                          
                                           <div class="form-group col-sm-3"> <button type="submit" class="btn btn-secondary btn-block">{{__('advancedSearchuser.excel')}}</button> </div>
                                           <div class="form-group col-sm-3"> <a class="btn btn-outline-danger" href="{{route('admin.users.index')}}" >{{__('advancedSearchuser.cancel')}}</a> </div>
                                       </div>
