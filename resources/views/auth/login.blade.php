@@ -22,8 +22,7 @@
           <!-- <p class="login-box-msg pr-0 pb-3 pl-0">Sign in to start your session</p> -->
   
         
-  <!-- test
-          <form action="{{ route('login') }}" method="post">
+            <form action="{{ route('login') }}" method="post">
             @csrf
 
             <div class="bmd-form-group{{ $errors->has('employee_number') ? ' has' : '' }}">
@@ -84,11 +83,11 @@
               
               <div class="row">
                   <div class="col-12">
-                    <button type="submit" class="mb-2 btn-1 ">Sign in</button>
+                    <button type="submit" class="btn-1 mb-2">Sign in</button>
                   </div>
               </div>
               
-          </form> -->
+          </form>
 
 
           
@@ -96,14 +95,14 @@
             <div class="alert " style="color:red; font-weight:bold; padding-bottom: 0.2rem;"  >{{$errors->first()}}</></div>
 @endif
 
-          <div class="social-auth-links text-center ">
+          <!-- <div class="social-auth-links text-center ">
             <a href="{{ route('login-okta') }}" id="btn-1"class="btn-lg btn-block btn-outline-primary">
               <i class="fab fa-faecebook"></i>Sign in with Okta
               <br> تسجيل الدخول باستخدام الأوكتا
             </a>
             
         
-          </div>
+          </div> -->
           <!-- /.social-auth-links
 
         </div>
@@ -112,7 +111,7 @@
       <!-- /.card -->
 
       <style>
-#btn-1 {
+.btn-1 {
   border: none;
   width: 100%;
   height: 100%;
@@ -123,7 +122,7 @@ box-shadow: inset 0 0 0 0 #FF7602;
 transition: ease-out 5s;
 
 }
-#btn-1.activate {
+.btn-1.activate {
   box-shadow: inset 500px 0 0 0 #FF7602;
 }
 
@@ -149,7 +148,7 @@ transition: ease-out 5s;
 <script>
   $(document).ready(function() {
 
-    $(document).on('click', '#btn-1', function () {
+    $(document).on('click', '.btn-1', function () {
 $(this).addClass('activate');
 
 });
