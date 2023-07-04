@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\BalanceExport;
 use App\Exports\UsersExport;
+use App\Imports\BalancesImport;
 use App\Imports\UsersImport;
 use App\Models\Attendance;
 use App\Models\Balance;
@@ -1317,7 +1318,7 @@ class UserController extends Controller
     {
         $file = $request->file('file');
 
-        Excel::import(new UsersImport, $request->file('file'));
+        Excel::import(new BalancesImport, $request->file('file'));
 
     }
 
