@@ -50,12 +50,12 @@ class LoginController extends Controller
 
     protected function validateLogin(Request $request)
     {
-        $this->validate($request, [
-            $this->username() => 'exists:users,'.$this->username().',employee_number,1001',
-            'password' => 'required|string',
-        ], [
-            $this->username().'.exists' => 'This login method is not accepted, Only login via Okta is possible.',
-        ]);
+        // $this->validate($request, [
+        //     $this->username() => 'exists:users,'.$this->username().',employee_number,1001',
+        //     'password' => 'required|string',
+        // ], [
+        //     $this->username().'.exists' => 'This login method is not accepted, Only login via Okta is possible.',
+        // ]);
     }
 
     public function redirectToProvider()
