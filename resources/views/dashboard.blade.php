@@ -80,6 +80,7 @@
                                   <br>
                                   <strong>{{__('welcome.r&r')}}:</strong> {{$balance11}}
                                   <br>
+                                  <strong>{{__('welcome.annualLeave')}}:</strong> {{$balance1}}
                               @endif
                               @if ($user->contract == "National")
                                   <strong>{{__('welcome.annualLeave')}}:</strong> {{$balance1}}
