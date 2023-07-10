@@ -8,6 +8,9 @@
                 <div class="col ml-3">
                     <div class="text">
                         
+                @if(Session::has('successMsg'))
+                <div class="successMsg alert alert-success"> {{ Session::get('successMsg') }}</div>
+              @endif
                         <br>
                         <h3>
                         <a href="{{ URL::previous() }}"> <i style="font-size: 0.73em;" class="fas fa-arrow-alt-circle-left"></i> </a>
@@ -176,7 +179,8 @@
                               <strong>{{__('showuser.homeleave')}}:</strong> {{$balance12}}
                               <br>
                                   <strong>{{__('showuser.r&r')}}:</strong> {{$balance11}}
-
+                                <br>
+                                <strong>{{__('showuser.annualLeave')}}:</strong> {{$balance1}}
                               @endif
                                   
                                   @if ($user->contract == "National")
@@ -381,6 +385,11 @@
 @push('scripts')
    <script>
     $(document).ready(function() {
+
+      
+      setTimeout(function() {
+    $("div.successMsg").fadeOut('slow');
+}, 4000); 
 
       $('#table_id').DataTable(
         {

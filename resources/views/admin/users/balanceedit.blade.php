@@ -43,7 +43,13 @@
                                                 <label class="form-control-label px-1">{{__('showuser.r&r')}}:</label>
                                                 <input class="form-control form-outline" type="text" id="rr" value="{{$balance11}}" name="rr" placeholder="" >
                                             </div>
+                                            <div class="form-group col-sm-6 flex-column d-flex">
+                                                <label class="form-control-label px-1">{{__('showuser.annualLeave')}}:</label>
+                                                <input class="form-control form-outline " type="text" id="annualLeave" value="{{$balance1}}" name="annualLeave" placeholder="">
+
+                                            </div>
                                         </div>
+                                        
                                         @endif
                                         @if ($user->contract == "National")
                                         <div class="row justify-content-between text-left">

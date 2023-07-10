@@ -126,15 +126,15 @@ class UserController extends Controller
         } else {
 
             if ($year < $yearnow) {
-                $userannualleavebalance = '15';
+                $userannualleavebalance = '30';
             } else {
 
                 if ($day < '15') {
-                    $userannualleavebalance = (1.25 * (12 - $month + 1));
+                    $userannualleavebalance = (2.5 * (12 - $month + 1));
                 }
 
                 if ($day >= '15') {
-                    $userannualleavebalance = ((1.25 * (12 - $month)) + 0.5);
+                    $userannualleavebalance = ((2.5 * (12 - $month)) + 0.5);
                 }
             }
         }
@@ -270,7 +270,7 @@ class UserController extends Controller
         //     ->update(['month' => 'December']);
         $request->session()->flash('successMsg', trans('overtimeerror.createsuccess'));
 
-        return redirect()->route('admin.users.index');
+        return redirect()->route('admin.users.show', $user);
     }
 
     public function show(User $user)
@@ -654,7 +654,7 @@ class UserController extends Controller
         $request->session()->flash('successMsg', trans('overtimeerror.updatesuccess'));
 
 
-        return redirect()->route('admin.users.index');
+        return redirect()->route('admin.users.show', $user);
 
     }
 
@@ -674,7 +674,7 @@ class UserController extends Controller
         $user->status = 'active';
         $user->save();
 
-        return redirect()->route('admin.users.index');
+        return redirect()->route('admin.users.show', $user);
 
     }
 
@@ -684,7 +684,7 @@ class UserController extends Controller
         $user->status = 'suspended';
         $user->save();
 
-        return redirect()->route('admin.users.index');
+        return redirect()->route('admin.users.show', $user);
 
     }
 
@@ -883,6 +883,11 @@ class UserController extends Controller
         {
             Balance::where([
                 ['user_id', $user->id],
+                ['leavetype_id', '1'],
+            ])->first()?->update(['value' => $request->annualLeave]);
+
+            Balance::where([
+                ['user_id', $user->id],
                 ['leavetype_id', '12'],
             ])->first()?->update(['value' => $request->homeleave]);
     
@@ -959,7 +964,7 @@ class UserController extends Controller
         // $user->save();
         $request->session()->flash('successMsg', trans('overtimeerror.balancesuccess'));
         
-        return redirect()->route('admin.users.index');
+        return redirect()->route('admin.users.show', $user);
 
     }
 
