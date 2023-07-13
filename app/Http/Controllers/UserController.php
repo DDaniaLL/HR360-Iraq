@@ -1323,7 +1323,7 @@ class UserController extends Controller
     {
         $file = $request->file('file');
 
-        Excel::import(new BalancesImport, $request->file('file'));
+        Excel::import(new UsersImport, $request->file('file'));
 
     }
 
